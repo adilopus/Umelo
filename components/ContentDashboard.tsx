@@ -250,7 +250,7 @@ export function ContentDashboard({ role }: { role: ContentRole }) {
                 <button
                   type="button"
                   onClick={() => promote(a.id)}
-                  className="flex shrink-0 items-center gap-1 rounded-full border border-accent px-3 py-1.5 text-xs font-bold text-accent-ink transition hover:bg-accent-soft"
+                  className="inline-flex min-h-10 shrink-0 items-center gap-1 rounded-full border border-accent px-3 py-1.5 text-xs font-bold text-accent-ink transition hover:bg-accent-soft"
                 >
                   <ArrowUpCircle size={13} /> Топ за {cfg.promoteCost}
                 </button>

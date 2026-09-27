@@ -123,7 +123,7 @@ export default function SpecialistsPage() {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Поиск по имени, специализации, услуге"
-              className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-ink-faint"
+              className="min-h-8 min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-ink-faint"
             />
           </div>
           <div className="flex items-center gap-2">
@@ -147,7 +147,7 @@ export default function SpecialistsPage() {
             <button
               key={f}
               onClick={() => setFilter(f)}
-              className={`shrink-0 rounded-full border px-4 py-2 text-xs font-semibold transition ${
+              className={`inline-flex min-h-10 shrink-0 items-center rounded-full border px-4 py-2 text-xs font-semibold transition ${
                 filter === f
                   ? "border-accent bg-accent text-night"
                   : "border-line bg-paper text-ink-soft hover:border-accent/50"

@@ -94,7 +94,7 @@ export default function ProfilePage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Email или телефон"
-                className="w-full bg-transparent text-sm outline-none placeholder:text-ink-faint"
+                className="min-h-8 w-full bg-transparent text-sm outline-none placeholder:text-ink-faint"
               />
             </div>
             <div className="flex items-center gap-2 rounded-lg border border-line px-3 py-2">
@@ -104,7 +104,7 @@ export default function ProfilePage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Пароль"
-                className="w-full bg-transparent text-sm outline-none placeholder:text-ink-faint"
+                className="min-h-8 w-full bg-transparent text-sm outline-none placeholder:text-ink-faint"
               />
             </div>
 

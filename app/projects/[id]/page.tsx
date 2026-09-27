@@ -51,7 +51,7 @@ export default function ProjectDetailPage() {
   return (
     <main className="min-h-screen bg-surface pb-24 lg:pb-16">
       <div className="mx-auto max-w-page px-4 pt-5 sm:px-6 lg:px-8 lg:pt-7">
-        <Link href="/projects" className="mb-5 inline-flex items-center gap-2 text-xs font-bold text-ink-soft transition hover:text-ink">
+        <Link href="/projects" className="mb-5 -my-1.5 inline-flex items-center gap-2 py-1.5 text-xs font-bold text-ink-soft transition hover:text-ink">
           <ArrowLeft size={15} /> Все проекты
         </Link>
 
@@ -69,7 +69,14 @@ export default function ProjectDetailPage() {
 
             <div className="mt-3 grid grid-cols-5 gap-2">
               {gallery.map((image, index) => (
-                <button key={image} onClick={() => setActive(index)} className={`aspect-[4/3] overflow-hidden rounded-xl border-2 bg-paper ${active === index ? "border-accent" : "border-transparent"}`}>
+                <button
+                  key={image}
+                  type="button"
+                  onClick={() => setActive(index)}
+                  aria-label={`Фото ${index + 1} из ${gallery.length}`}
+                  aria-current={active === index}
+                  className={`aspect-[4/3] overflow-hidden rounded-xl border-2 bg-paper ${active === index ? "border-accent" : "border-transparent"}`}
+                >
                   <img src={image} alt="" className="h-full w-full object-cover" />
                 </button>
               ))}
@@ -85,9 +92,9 @@ export default function ProjectDetailPage() {
                   <p className="mt-2 flex items-center gap-1.5 text-xs text-ink-soft"><MapPin size={14} /> Rotterdam, Nederland · 2026</p>
                 </div>
                 <div className="flex gap-2">
-                  <button onClick={() => setLiked(!liked)} className={`flex h-10 items-center gap-2 rounded-full border px-3.5 text-xs font-bold ${liked ? "border-accent bg-accent-soft text-ink" : "border-line text-ink-soft"}`}><Heart size={16} fill={liked ? "currentColor" : "none"} /> {liked ? 129 : 128}</button>
-                  <button onClick={() => setSaved(!saved)} className={`flex h-10 items-center gap-2 rounded-full border px-3.5 text-xs font-bold ${saved ? "border-accent bg-accent-soft text-ink" : "border-line text-ink-soft"}`}><Bookmark size={16} fill={saved ? "currentColor" : "none"} /> {saved ? "Сохранено" : "Сохранить"}</button>
-                  <button className="hidden h-10 w-10 items-center justify-center rounded-full border border-line text-ink-soft sm:flex"><Share2 size={16} /></button>
+                  <button type="button" onClick={() => setLiked(!liked)} aria-pressed={liked} className={`flex h-10 items-center gap-2 rounded-full border px-3.5 text-xs font-bold ${liked ? "border-accent bg-accent-soft text-ink" : "border-line text-ink-soft"}`}><Heart size={16} fill={liked ? "currentColor" : "none"} /> {liked ? 129 : 128}</button>
+                  <button type="button" onClick={() => setSaved(!saved)} aria-pressed={saved} className={`flex h-10 items-center gap-2 rounded-full border px-3.5 text-xs font-bold ${saved ? "border-accent bg-accent-soft text-ink" : "border-line text-ink-soft"}`}><Bookmark size={16} fill={saved ? "currentColor" : "none"} /> {saved ? "Сохранено" : "Сохранить"}</button>
+                  <button type="button" aria-label="Поделиться проектом" className="hidden h-10 w-10 items-center justify-center rounded-full border border-line text-ink-soft transition hover:border-ink-faint hover:text-ink sm:flex"><Share2 size={16} /></button>
                 </div>
               </div>
 
@@ -99,14 +106,14 @@ export default function ProjectDetailPage() {
             </div>
 
             <section className="mt-5 rounded-[24px] border border-line bg-paper p-5 sm:p-7">
-              <div className="flex items-end justify-between"><div><h2 className="font-display text-xl font-extrabold text-ink">Команда проекта</h2><p className="mt-1 text-xs text-ink-soft">Специалисты, которые участвовали в реализации</p></div><Link href="/specialists" className="text-xs font-extrabold text-accent-ink">Все специалисты</Link></div>
+              <div className="flex items-end justify-between"><div><h2 className="font-display text-xl font-extrabold text-ink">Команда проекта</h2><p className="mt-1 text-xs text-ink-soft">Специалисты, которые участвовали в реализации</p></div><Link href="/specialists" className="-my-1.5 inline-flex items-center py-1.5 text-xs font-extrabold text-accent-ink">Все специалисты</Link></div>
               <div className="mt-4 grid gap-3 sm:grid-cols-3">
                 {team.map((person) => <Link href="/specialists" key={person.name} className="group flex items-center gap-3 rounded-2xl border border-line p-3 transition hover:border-accent"><img src={person.image} alt="" className="h-12 w-12 rounded-full object-cover" /><div className="min-w-0"><p className="truncate text-xs font-extrabold text-ink group-hover:text-accent-ink">{person.name}</p><p className="mt-0.5 truncate text-xs text-ink-soft">{person.role}</p><p className="mt-1 flex items-center gap-1 text-xs text-ink-faint"><Star size={10} fill="currentColor" className="text-accent-ink" /> {person.rating}</p></div></Link>)}
               </div>
             </section>
 
             <section className="mt-5 rounded-[24px] border border-line bg-paper p-5 sm:p-7">
-              <div className="flex items-end justify-between"><div><h2 className="font-display text-xl font-extrabold text-ink">Материалы проекта</h2><p className="mt-1 text-xs text-ink-soft">То, что использовали в этой реализации</p></div><Link href="/shops" className="text-xs font-extrabold text-accent-ink">Все материалы</Link></div>
+              <div className="flex items-end justify-between"><div><h2 className="font-display text-xl font-extrabold text-ink">Материалы проекта</h2><p className="mt-1 text-xs text-ink-soft">То, что использовали в этой реализации</p></div><Link href="/shops" className="-my-1.5 inline-flex items-center py-1.5 text-xs font-extrabold text-accent-ink">Все материалы</Link></div>
               <div className="mt-4 grid gap-3 sm:grid-cols-3">
                 {materials.map(([name, price, image]) => <Link href="/shops" key={name} className="group overflow-hidden rounded-2xl border border-line"><div className="aspect-[4/3] overflow-hidden bg-surface"><img src={image} alt="" className="h-full w-full object-cover transition duration-500 group-hover:scale-105" /></div><div className="p-3"><p className="text-xs font-extrabold text-ink">{name}</p><p className="mt-1 text-xs text-ink-soft">{price}</p></div></Link>)}
               </div>
@@ -116,7 +123,7 @@ export default function ProjectDetailPage() {
               <div className="flex items-center justify-between"><div><h2 className="font-display text-xl font-extrabold text-ink">Обсуждение</h2><p className="mt-1 text-xs text-ink-soft">24 комментария</p></div><MessageCircle size={19} className="text-ink-faint" /></div>
               <div className="mt-5 flex gap-3"><div className="h-9 w-9 shrink-0 rounded-full bg-[#e6e9e6]" /><div className="min-w-0 flex-1"><div className="rounded-2xl bg-surface p-3.5"><p className="text-xs font-extrabold text-ink">Анна К.</p><p className="mt-1 text-xs leading-5 text-ink-soft">Подскажите, какой камень использовали на фартуке?</p></div><p className="mt-1 px-2 text-xs text-ink-faint">12 мин назад · Ответить</p></div></div>
               {showAll && <div className="mt-4 flex gap-3"><div className="h-9 w-9 shrink-0 rounded-full bg-[#d9dcd8]" /><div className="rounded-2xl bg-surface p-3.5"><p className="text-xs font-extrabold text-ink">Мария Смирнова</p><p className="mt-1 text-xs leading-5 text-ink-soft">Натуральный кварцит, подбирали под цвет дерева.</p></div></div>}
-              <button onClick={() => setShowAll(!showAll)} className="mt-4 text-xs font-extrabold text-accent-ink">{showAll ? "Скрыть" : "Показать ещё комментарии"}</button>
+              <button type="button" onClick={() => setShowAll(!showAll)} className="-my-1.5 inline-flex items-center py-1.5 mt-4 text-xs font-extrabold text-accent-ink">{showAll ? "Скрыть" : "Показать ещё комментарии"}</button>
             </section>
           </section>
 

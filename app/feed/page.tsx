@@ -68,10 +68,10 @@ function ProjectCard() {
         <p className="mt-3 max-w-form text-sm leading-6 text-ink-soft">Тёплое дерево, натуральный камень и скрытая техника. Проект кухни для современной квартиры — с подбором материалов и специалистов.</p>
         <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-ink-soft"><span className="flex items-center gap-1"><MapPin size={13} /> Rotterdam, Nederland</span><span>18 фото</span><span className="font-bold text-ink">€46 000</span><span>3 специалиста</span></div>
         <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-line pt-4">
-          <div className="flex items-center gap-4 text-xs text-ink-soft"><button onClick={() => setLiked((v) => !v)} className={`flex items-center gap-1 transition ${liked ? "text-accent-ink" : "hover:text-ink"}`}><Heart size={14} fill={liked ? "currentColor" : "none"} /> {liked ? 129 : 128}</button><span className="flex items-center gap-1"><MessageCircle size={14} /> 24</span><button className="flex items-center gap-1 hover:text-ink"><Users size={14} /> Команда</button></div>
+          <div className="flex items-center gap-4 text-xs text-ink-soft"><button type="button" onClick={() => setLiked((v) => !v)} aria-pressed={liked} aria-label={liked ? "Убрать лайк" : "Поставить лайк"} className={`-my-1.5 flex items-center gap-1 py-1.5 transition ${liked ? "text-accent-ink" : "hover:text-ink"}`}><Heart size={14} fill={liked ? "currentColor" : "none"} /> {liked ? 129 : 128}</button><span className="flex items-center gap-1"><MessageCircle size={14} /> 24</span><button type="button" className="-my-1.5 flex items-center gap-1 py-1.5 hover:text-ink"><Users size={14} /> Команда</button></div>
           <div className="flex items-center gap-4">
-            <Link href="/projects" className="text-xs font-extrabold text-ink-soft hover:text-accent-ink">Все проекты</Link>
-            <Link href="/projects/modern-kitchen" className="flex items-center gap-1.5 text-xs font-extrabold text-accent-ink hover:text-accent-ink">Смотреть проект <ArrowRight size={14} /></Link>
+            <Link href="/projects" className="-my-1.5 inline-flex items-center py-1.5 text-xs font-extrabold text-ink-soft hover:text-accent-ink">Все проекты</Link>
+            <Link href="/projects/modern-kitchen" className="-my-1.5 inline-flex items-center py-1.5 gap-1.5 text-xs font-extrabold text-accent-ink hover:text-accent-ink">Смотреть проект <ArrowRight size={14} /></Link>
           </div>
         </div>
       </div>
@@ -117,8 +117,8 @@ export default function FeedPage() {
   return (
     <div className="flex min-h-[calc(100vh-64px)] flex-1 flex-col bg-surface">
       <header className="sticky top-0 z-20 border-b border-line bg-paper/95 backdrop-blur lg:hidden">
-        <div className="flex h-14 items-center justify-between px-4"><button onClick={handleLogoTap} className="flex items-center gap-2" aria-label="UMELO"><img src="/icons/logo-mark.png" alt="" className="h-7 w-7" /><span className="font-display text-lg font-extrabold text-ink">UMELO</span></button><div className="flex items-center gap-1"><Link href="/chats" className="flex h-9 w-9 items-center justify-center rounded-full text-ink-soft"><MessageCircle size={18} /></Link></div></div>
-        <div className="px-4 pb-3"><div className={`flex items-center gap-2 rounded-full border bg-surface px-3 py-2 ${searchError ? "border-red-300" : "border-line"}`}><Search size={15} className="text-ink-faint" /><input value={searchValue} onChange={(e) => { setSearchValue(e.target.value); setSearchError(null); }} onKeyDown={(e) => e.key === "Enter" && handleSearch()} placeholder="Поиск по UMELO" className="min-w-0 flex-1 bg-transparent text-xs outline-none" /></div>{searchError && <p className="px-2 pt-1 text-xs text-danger">{searchError}</p>}</div>
+        <div className="flex h-14 items-center justify-between px-4"><button onClick={handleLogoTap} className="flex items-center gap-2" aria-label="UMELO"><img src="/icons/logo-mark.png" alt="" className="h-7 w-7" /><span className="font-display text-lg font-extrabold text-ink">UMELO</span></button><div className="flex items-center gap-1"><Link href="/chats" aria-label="Сообщения" className="flex h-10 w-10 items-center justify-center rounded-full text-ink-soft transition hover:bg-surface hover:text-ink"><MessageCircle size={18} /></Link></div></div>
+        <div className="px-4 pb-3"><div className={`flex items-center gap-2 rounded-full border bg-surface px-3 py-2 ${searchError ? "border-red-300" : "border-line"}`}><Search size={15} className="text-ink-faint" /><input value={searchValue} onChange={(e) => { setSearchValue(e.target.value); setSearchError(null); }} onKeyDown={(e) => e.key === "Enter" && handleSearch()} placeholder="Поиск по UMELO" className="min-h-8 min-w-0 flex-1 bg-transparent text-xs outline-none" /></div>{searchError && <p className="px-2 pt-1 text-xs text-danger">{searchError}</p>}</div>
       </header>
 
       <main className="mx-auto w-full max-w-shell flex-1 px-4 pb-28 pt-6 sm:px-6 lg:px-8 lg:pb-12">
@@ -139,8 +139,8 @@ export default function FeedPage() {
                   <p className="mt-0.5 text-xs text-ink-soft">Реальные задачи от людей рядом с вами</p>
                 </div>
                 <div className="flex items-center gap-3">
-                  <button onClick={() => setShuffleSeed((n) => n + 1)} className="text-xs font-extrabold text-accent-ink">Другие</button>
-                  <Link href="/orders" className="text-xs font-extrabold text-accent-ink">Все заказы</Link>
+                  <button type="button" onClick={() => setShuffleSeed((n) => n + 1)} className="-my-1.5 inline-flex items-center py-1.5 text-xs font-extrabold text-accent-ink">Другие</button>
+                  <Link href="/orders" className="-my-1.5 inline-flex items-center py-1.5 text-xs font-extrabold text-accent-ink">Все заказы</Link>
                 </div>
               </div>
               {randomOrders.length > 0 ? (
@@ -163,15 +163,15 @@ export default function FeedPage() {
                     <p className="font-display text-xl font-extrabold text-ink">Знания и идеи</p>
                     <p className="mt-0.5 text-xs text-ink-soft">Статьи, кейсы и полезные материалы</p>
                   </div>
-                  <Link href="/articles" className="text-xs font-extrabold text-accent-ink">Смотреть все</Link>
+                  <Link href="/articles" className="-my-1.5 inline-flex items-center py-1.5 text-xs font-extrabold text-accent-ink">Смотреть все</Link>
                 </div>
                 {/* Фильтр по темам стоит здесь, а не в шапке ленты: он относится
                     именно к этому блоку, и вверху страницы выглядел как
                     unexplained-переключатель без связи с содержимым. */}
                 <div className="mb-3 flex gap-2 overflow-x-auto no-scrollbar">
-                  <button onClick={() => setActiveTopic(null)} className={`shrink-0 rounded-full border px-3.5 py-1.5 text-xs font-bold ${activeTopic === null ? "border-accent bg-accent text-night" : "border-line bg-paper text-ink-soft"}`}>Все темы</button>
+                  <button onClick={() => setActiveTopic(null)} className={`inline-flex min-h-10 shrink-0 items-center rounded-full border px-3.5 py-1.5 text-xs font-bold ${activeTopic === null ? "border-accent bg-accent text-night" : "border-line bg-paper text-ink-soft"}`}>Все темы</button>
                   {ARTICLE_TOPICS.map((topic) => (
-                    <button key={topic.id} onClick={() => setActiveTopic(topic.id)} className={`shrink-0 rounded-full border px-3.5 py-1.5 text-xs font-semibold ${activeTopic === topic.id ? "border-accent bg-accent-soft text-accent-ink" : "border-line bg-paper text-ink-soft"}`}>{topic.label}</button>
+                    <button key={topic.id} onClick={() => setActiveTopic(topic.id)} className={`inline-flex min-h-10 shrink-0 items-center rounded-full border px-3.5 py-1.5 text-xs font-semibold ${activeTopic === topic.id ? "border-accent bg-accent-soft text-accent-ink" : "border-line bg-paper text-ink-soft"}`}>{topic.label}</button>
                   ))}
                 </div>
                 <div className="grid gap-3 sm:grid-cols-2">
@@ -189,7 +189,7 @@ export default function FeedPage() {
                     <p className="font-display text-xl font-extrabold text-ink">Материалы и предложения</p>
                     <p className="mt-0.5 text-xs text-ink-soft">Полезное от магазинов и производителей</p>
                   </div>
-                  <Link href="/shops" className="text-xs font-extrabold text-accent-ink">Все предложения</Link>
+                  <Link href="/shops" className="-my-1.5 inline-flex items-center py-1.5 text-xs font-extrabold text-accent-ink">Все предложения</Link>
                 </div>
                 <div className="grid gap-3 sm:grid-cols-2">
                   {promoArticles.slice(0, 2).map((article) => (
@@ -204,7 +204,7 @@ export default function FeedPage() {
             <div className="rounded-2xl border border-line bg-paper p-4">
               <div className="mb-4 flex items-center justify-between">
                 <p className="font-display text-sm font-extrabold">Популярные специалисты</p>
-                <Link href="/specialists" className="text-xs font-bold text-accent-ink">Все</Link>
+                <Link href="/specialists" className="-my-1.5 inline-flex items-center py-1.5 text-xs font-bold text-accent-ink">Все</Link>
               </div>
               <div className="space-y-3">
                 {specialists.map((person) => (

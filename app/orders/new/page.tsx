@@ -203,7 +203,7 @@ export default function NewOrderPage() {
       <header className="flex items-center gap-3 border-b border-line px-4 py-3 lg:hidden">
         <button
           onClick={() => (step === 0 ? router.push("/feed") : setStep(step - 1))}
-          className="rounded-full p-1 text-ink-soft active:bg-surface"
+          className="-m-2 rounded-full p-2 text-ink-soft active:bg-surface"
           aria-label="Назад"
         >
           <ChevronLeft size={22} />

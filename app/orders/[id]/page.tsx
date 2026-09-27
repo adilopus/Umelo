@@ -67,7 +67,7 @@ export default function OrderDetailPage() {
     return (
       <div className="flex flex-1 flex-col items-center justify-center gap-3 p-6 text-center">
         <p className="text-sm text-ink-soft">Заказ не найден или уже удалён.</p>
-        <button onClick={() => router.push("/feed")} className="text-sm font-semibold text-accent-ink">
+        <button type="button" onClick={() => router.push("/feed")} className="-my-1.5 inline-flex items-center py-1.5 text-sm font-semibold text-accent-ink">
           Вернуться в ленту
         </button>
       </div>

@@ -41,7 +41,7 @@ function Field({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
-          className="w-full min-w-0 bg-transparent text-sm outline-none placeholder:text-ink-faint"
+          className="min-h-8 w-full min-w-0 bg-transparent text-sm outline-none placeholder:text-ink-faint"
         />
       </div>
     </div>

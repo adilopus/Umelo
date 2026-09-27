@@ -158,7 +158,7 @@ export default function PortfolioPage() {
           </p>
           <Link
             href="/specialists"
-            className="mt-3 inline-block text-sm font-semibold text-accent-ink"
+            className="-my-1 mt-3 inline-block py-1 text-sm font-semibold text-accent-ink"
           >
             Открыть каталог специалистов
           </Link>

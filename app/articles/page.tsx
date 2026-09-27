@@ -37,7 +37,7 @@ export default function ArticlesPage() {
           <div className="flex items-center gap-2 px-3 lg:px-0">
             <button
               onClick={() => setActiveTopic(null)}
-              className={`shrink-0 rounded-full border px-3 py-1.5 text-xs font-medium ${
+              className={`inline-flex min-h-10 shrink-0 items-center rounded-full border px-3 py-1.5 text-xs font-medium ${
                 activeTopic === null
                   ? "border-accent bg-accent-soft text-accent-ink"
                   : "border-line text-ink-soft"
@@ -50,7 +50,7 @@ export default function ArticlesPage() {
                 <button
                   key={topic.id}
                   onClick={() => setActiveTopic(topic.id)}
-                  className={`shrink-0 rounded-full border px-3 py-1.5 text-xs font-medium ${
+                  className={`inline-flex min-h-10 shrink-0 items-center rounded-full border px-3 py-1.5 text-xs font-medium ${
                     activeTopic === topic.id
                       ? "border-accent bg-accent-soft text-accent-ink"
                       : "border-line text-ink-soft"

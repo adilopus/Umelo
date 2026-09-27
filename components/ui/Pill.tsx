@@ -21,7 +21,9 @@ export function Pill({
   variant?: "solid" | "outline";
   title?: string;
 }) {
-  const base = "rounded-full px-3 py-1.5 text-xs font-semibold transition";
+  // min-h-10 вместо голого py: текст 12px давал высоту 30px — до нижней
+  // границы комфортной зоны нажатия (40px) не хватало 10px.
+  const base = "inline-flex min-h-10 items-center rounded-full px-3 py-1.5 text-xs font-semibold transition";
 
   const styles = {
     solid: active

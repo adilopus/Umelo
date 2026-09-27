@@ -54,8 +54,10 @@ export function ArticleCard({
             e.stopPropagation();
             toggleFavorite(article.id);
           }}
+          type="button"
+          aria-pressed={isFavorite}
           aria-label={isFavorite ? "Убрать из избранного" : "В избранное"}
-          className="absolute bottom-2 right-2 flex h-7 w-7 items-center justify-center rounded-full bg-ink/70 transition hover:bg-ink/90"
+          className="absolute bottom-2 right-2 flex h-9 w-9 items-center justify-center rounded-full bg-ink/70 transition hover:bg-ink/90"
         >
           <Heart
             size={14}

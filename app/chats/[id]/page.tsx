@@ -24,7 +24,7 @@ export default function ChatPage() {
   useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages.length]);
 
   if (!order) {
-    return <div className="flex flex-1 flex-col items-center justify-center gap-3 p-6 text-center"><p className="text-sm text-ink-soft">Чат не найден.</p><button onClick={() => router.push("/chats")} className="text-sm font-semibold text-accent-ink">Вернуться к чатам</button></div>;
+    return <div className="flex flex-1 flex-col items-center justify-center gap-3 p-6 text-center"><p className="text-sm text-ink-soft">Чат не найден.</p><button type="button" onClick={() => router.push("/chats")} className="-my-1.5 inline-flex items-center py-1.5 text-sm font-semibold text-accent-ink">Вернуться к чатам</button></div>;
   }
 
   function send() {

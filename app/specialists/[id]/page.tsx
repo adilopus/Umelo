@@ -211,7 +211,7 @@ export default function SpecialistDetailPage() {
       <div className="mx-auto max-w-page px-4 pt-5 sm:px-6 lg:px-8 lg:pt-7">
         <Link
           href="/specialists"
-          className="mb-5 inline-flex items-center gap-2 text-xs font-bold text-ink-soft transition hover:text-ink"
+          className="mb-5 -my-1.5 inline-flex items-center gap-2 py-1.5 text-xs font-bold text-ink-soft transition hover:text-ink"
         >
           <ArrowLeft size={15} /> Все специалисты
         </Link>
@@ -373,9 +373,11 @@ export default function SpecialistDetailPage() {
                         {[1, 2, 3, 4, 5].map((i) => (
                           <button
                             key={i}
+                            type="button"
                             onClick={() => setReviewRating(i)}
                             aria-label={`Оценка ${i}`}
-                            className="p-0.5"
+                            aria-pressed={i === reviewRating}
+                            className="-m-1 p-1.5"
                           >
                             <Star
                               size={22}

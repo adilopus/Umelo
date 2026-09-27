@@ -28,7 +28,7 @@ export default function AdminPage() {
         <p className="text-sm text-ink-soft">
           Панель администратора доступна только в роли «Администратор».
         </p>
-        <Link href="/feed" className="text-sm font-semibold text-accent-ink">
+        <Link href="/feed" className="-my-1.5 inline-flex items-center py-1.5 text-sm font-semibold text-accent-ink">
           Вернуться в ленту
         </Link>
       </div>
