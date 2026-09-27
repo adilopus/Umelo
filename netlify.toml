@@ -1,0 +1,14 @@
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# На Netlify страница "/" отдаётся статикой, и redirect() из app/page.tsx
+# превращается в 307 без заголовка Location. Редирект задаётся на уровне
+# edge, чтобы он отдавался с корректным Location.
+[[redirects]]
+  from = "/"
+  to = "/feed"
+  status = 301
