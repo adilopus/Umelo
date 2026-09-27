@@ -4,7 +4,6 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
-  Bell,
   ChevronDown,
   MapPin,
   MessageCircle,
@@ -14,6 +13,7 @@ import {
 import { useAppStore } from "@/lib/store";
 import { codesMatch } from "@/lib/orderCode";
 import { myOrdersTabHref } from "@/lib/format";
+import { NotificationsMenu } from "@/components/NotificationsMenu";
 
 export function DesktopTopNav() {
   const pathname = usePathname();
@@ -82,10 +82,7 @@ export function DesktopTopNav() {
           </div>
 
           <div className="ml-auto flex shrink-0 items-center gap-2">
-            <button className="relative flex h-9 w-9 items-center justify-center rounded-full text-white/70 hover:bg-paper/10 hover:text-white" aria-label="Уведомления">
-              <Bell size={17} />
-              <span className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-accent" />
-            </button>
+            <NotificationsMenu />
             <Link href="/chats" className="flex h-9 w-9 items-center justify-center rounded-full text-white/70 hover:bg-paper/10 hover:text-white" aria-label="Чаты">
               <MessageCircle size={17} />
             </Link>

@@ -111,6 +111,10 @@ interface AppState {
   banUser: (userId: string) => void;
   unbanUser: (userId: string) => void;
   deleteUser: (userId: string) => void;
+
+  /** id уже показанных уведомлений — по ним считается счётчик у колокольчика. */
+  readNotificationIds: string[];
+  markNotificationsRead: (ids: string[]) => void;
 }
 
 /**
@@ -333,9 +337,16 @@ export const useAppStore = create<AppState>()(
       ticketsBalance: 5,
       subscriptionActive: false,
       freeResponses: { date: "", count: 0 },
+      readNotificationIds: [],
 
       setRole: (role) => set({ role }),
       unlockAdmin: () => set({ adminUnlocked: true }),
+      // Храним только id: сами уведомления выводятся из заказов, откликов,
+      // предложений и сообщений, поэтому синхронизировать их не нужно.
+      markNotificationsRead: (ids) =>
+        set((state) => ({
+          readNotificationIds: [...new Set([...state.readNotificationIds, ...ids])].slice(-200),
+        })),
 
       addOrder: (order) => set((state) => ({ orders: [order, ...state.orders] })),
       addResponse: (response) =>
@@ -485,7 +496,7 @@ export const useAppStore = create<AppState>()(
     }),
     {
       name: "umelo-storage",
-      version: 6,
+      version: 7,
       storage: {
         getItem: (name) => {
           const value = rawLocalStorage.getItem(name);
@@ -498,6 +509,7 @@ export const useAppStore = create<AppState>()(
         const old = (persisted ?? {}) as Partial<AppState>;
         const next = {
           role: (old.role ?? "customer") as Role,
+          readNotificationIds: old.readNotificationIds ?? [],
           adminUnlocked: old.adminUnlocked ?? false,
           isAuthenticated: old.isAuthenticated ?? false,
           authName: old.authName ?? "",

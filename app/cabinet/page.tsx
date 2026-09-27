@@ -11,9 +11,12 @@ import {
   Megaphone,
   Contact,
   Crown,
+  ShoppingBag,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import type { Role } from "@/lib/types";
 import { useAppStore } from "@/lib/store";
+import { roleOption } from "@/lib/roles";
 import { BottomNav } from "@/components/BottomNav";
 import { StatsPanel } from "@/components/StatsPanel";
 import { FavoritesPanel } from "@/components/FavoritesPanel";
@@ -24,11 +27,47 @@ import { PersonalDataPanel } from "@/components/PersonalDataPanel";
 
 type TabId = "personal" | "stats" | "extra" | "favorites" | "subscription";
 
+/** Иконка роли в бейдже: она должна совпадать со смыслом вкладки, не путать. */
+const ROLE_ICON: Record<Role, LucideIcon> = {
+  customer: ShoppingBag,
+  master: UserCog,
+  blogger: Newspaper,
+  seller: Megaphone,
+  admin: Crown,
+};
+
 const EXTRA_TAB: Partial<Record<string, { label: string; icon: LucideIcon }>> = {
   master: { label: "Мастер", icon: UserCog },
   blogger: { label: "Контент", icon: Newspaper },
   seller: { label: "Анонсы", icon: Megaphone },
 };
+
+/**
+ * Роль, под которой человек работает. Раньше её можно было поменять только
+ * в /profile, а в самом кабинете не было видно ничего — вкладки «Статистика»,
+ * «Мастер» или «Контент» менялись, и по ним приходилось угадывать роль.
+ * Бейдж назван явно и ведёт к переключателю.
+ */
+function RoleBadge({ role }: { role: Role }) {
+  const option = roleOption(role);
+  const Icon = ROLE_ICON[role] ?? UserCog;
+
+  return (
+    <div className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1.5">
+      <span className="inline-flex items-center gap-1.5 rounded-full bg-accent-soft px-2.5 py-1 text-xs font-bold text-accent-ink">
+        <Icon size={13} aria-hidden="true" />
+        {option.short}
+      </span>
+      <span className="text-xs text-ink-faint">{option.hint}</span>
+      <Link
+        href="/profile"
+        className="-my-1.5 inline-flex items-center py-1.5 text-xs font-semibold text-accent-ink hover:underline"
+      >
+        Сменить роль
+      </Link>
+    </div>
+  );
+}
 
 const VALID_TABS: TabId[] = ["personal", "stats", "extra", "favorites", "subscription"];
 
@@ -68,6 +107,7 @@ export default function CabinetPage() {
     <div className="flex flex-1 flex-col">
       <header className="border-b border-line px-4 py-3 lg:mx-auto lg:w-full lg:max-w-content lg:border-0 lg:px-0 lg:pb-4 lg:pt-8">
         <p className="font-display text-lg font-extrabold">Личный кабинет</p>
+        <RoleBadge role={role} />
       </header>
 
       <div className="flex gap-1 overflow-x-auto border-b border-line px-4 no-scrollbar lg:mx-auto lg:w-full lg:max-w-content lg:border-0 lg:px-0">

@@ -12,14 +12,9 @@ import {
 } from "lucide-react";
 import { useAppStore } from "@/lib/store";
 import { BottomNav } from "@/components/BottomNav";
-import { Role } from "@/lib/types";
+import { ROLE_OPTIONS } from "@/lib/roles";
 
-const ROLE_OPTIONS: { id: Role; label: string }[] = [
-  { id: "customer", label: "Я заказчик" },
-  { id: "master", label: "Я исполнитель" },
-  { id: "blogger", label: "Я блогер" },
-  { id: "seller", label: "Я продавец" },
-];
+const ROLE_CHOICES = ROLE_OPTIONS.filter((r) => r.id !== "admin");
 
 export default function ProfilePage() {
   const role = useAppStore((s) => s.role);
@@ -125,7 +120,7 @@ export default function ProfilePage() {
         <div>
           <p className="mb-2 text-sm font-semibold">Ваша роль</p>
           <div className="flex flex-col gap-2">
-            {ROLE_OPTIONS.map((opt) => (
+            {ROLE_CHOICES.map((opt) => (
               <button
                 key={opt.id}
                 onClick={() => setRole(opt.id)}
