@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronLeft } from "lucide-react";
 import { useAppStore } from "@/lib/store";
+import { BackButton } from "@/components/ui/BackButton";
 import { ArticleCard } from "@/components/ArticleCard";
 import { ScrollRow } from "@/components/ScrollRow";
 import { BottomNav } from "@/components/BottomNav";
@@ -26,25 +27,19 @@ export default function ArticlesPage() {
 
   return (
     <div className="flex flex-1 flex-col">
-      <header className="sticky top-0 z-10 flex items-center gap-3 border-b border-line bg-paper/95 px-4 py-3 backdrop-blur lg:mx-auto lg:w-full lg:max-w-6xl lg:px-6">
-        <button
-          onClick={() => router.back()}
-          className="rounded-full p-1 text-ink-soft active:bg-surface lg:hidden"
-          aria-label="Назад"
-        >
-          <ChevronLeft size={22} />
-        </button>
+      <header className="sticky top-0 z-10 flex items-center gap-3 border-b border-line bg-paper/95 px-4 py-3 backdrop-blur lg:mx-auto lg:w-full lg:max-w-page lg:px-6">
+        <BackButton className="lg:hidden" />
         <p className="font-display text-sm font-bold lg:text-lg">Статьи и новости</p>
       </header>
 
       <main className="flex-1 pb-24 pt-4 lg:pb-12">
-        <div className="mx-auto w-full max-w-6xl lg:px-6">
+        <div className="mx-auto w-full max-w-page lg:px-6">
           <div className="flex items-center gap-2 px-3 lg:px-0">
             <button
               onClick={() => setActiveTopic(null)}
               className={`shrink-0 rounded-full border px-3 py-1.5 text-xs font-medium ${
                 activeTopic === null
-                  ? "border-accent bg-accent-soft text-accent"
+                  ? "border-accent bg-accent-soft text-accent-ink"
                   : "border-line text-ink-soft"
               }`}
             >
@@ -57,7 +52,7 @@ export default function ArticlesPage() {
                   onClick={() => setActiveTopic(topic.id)}
                   className={`shrink-0 rounded-full border px-3 py-1.5 text-xs font-medium ${
                     activeTopic === topic.id
-                      ? "border-accent bg-accent-soft text-accent"
+                      ? "border-accent bg-accent-soft text-accent-ink"
                       : "border-line text-ink-soft"
                   }`}
                 >

@@ -7,13 +7,9 @@ import { CalendarDays, Eye, MapPin, Plus, Send, X } from "lucide-react";
 import { useAppStore } from "@/lib/store";
 import { BottomNav } from "@/components/BottomNav";
 import { formatOrderDate, pluralize } from "@/lib/format";
-
-const STATUS_LABELS: Record<string, { text: string; className: string }> = {
-  open: { text: "Ищем мастера", className: "bg-accent-soft text-accent" },
-  matched: { text: "В работе", className: "bg-ok/10 text-ok" },
-  cancelled: { text: "Отменён", className: "bg-red-50 text-red-500" },
-  closed: { text: "Завершён", className: "bg-surface text-ink-soft" },
-};
+import { STATUS_META } from "@/lib/status";
+import { Chip } from "@/components/ui/Chip";
+import { ButtonLink } from "@/components/ui/Button";
 
 export default function MyOrdersPage() {
   const role = useAppStore((s) => s.role);
@@ -26,14 +22,14 @@ export default function MyOrdersPage() {
   if (role === "admin") {
     return (
       <div className="flex flex-1 flex-col">
-        <header className="border-b border-line px-4 py-3 lg:mx-auto lg:w-full lg:max-w-3xl lg:border-0 lg:px-0 lg:pb-4 lg:pt-8">
+        <header className="border-b border-line px-4 py-3 lg:mx-auto lg:w-full lg:max-w-content lg:border-0 lg:px-0 lg:pb-4 lg:pt-8">
           <p className="font-display text-lg font-extrabold">Мои заказы</p>
         </header>
-        <main className="flex-1 px-4 py-10 text-center lg:mx-auto lg:w-full lg:max-w-3xl">
+        <main className="flex-1 px-4 py-10 text-center lg:mx-auto lg:w-full lg:max-w-content">
           <p className="text-sm text-ink-soft">
             Администратор управляет всеми заказами через панель администратора.
           </p>
-          <Link href="/admin" className="mt-3 inline-block text-sm font-semibold text-accent">
+          <Link href="/admin" className="mt-3 inline-block text-sm font-semibold text-accent-ink">
             Открыть панель администратора
           </Link>
         </main>
@@ -49,7 +45,7 @@ export default function MyOrdersPage() {
 
     return (
       <div className="flex flex-1 flex-col">
-        <header className="border-b border-line px-4 py-3 lg:mx-auto lg:w-full lg:max-w-3xl lg:border-0 lg:px-0 lg:pb-4 lg:pt-8">
+        <header className="border-b border-line px-4 py-3 lg:mx-auto lg:w-full lg:max-w-content lg:border-0 lg:px-0 lg:pb-4 lg:pt-8">
           <div className="flex items-center justify-between gap-3">
             <div>
               <p className="font-display text-lg font-extrabold">Мои отклики</p>
@@ -59,29 +55,26 @@ export default function MyOrdersPage() {
               </p>
             </div>
             <div className="flex items-center gap-2">
-              <Link href="/orders" className="rounded-xl bg-accent-soft px-3 py-2 text-xs font-bold text-accent">
+              <Link href="/orders" className="rounded-xl bg-accent-soft px-3 py-2 text-xs font-bold text-accent-ink">
                 Все заказы
               </Link>
-              <Link href="/offers" className="rounded-xl bg-accent-soft px-3 py-2 text-xs font-bold text-accent">Предложения</Link>
+              <Link href="/offers" className="rounded-xl bg-accent-soft px-3 py-2 text-xs font-bold text-accent-ink">Предложения</Link>
             </div>
           </div>
         </header>
-        <main className="flex-1 space-y-3 px-4 py-4 pb-24 lg:mx-auto lg:w-full lg:max-w-3xl lg:pb-12">
+        <main className="flex-1 space-y-3 px-4 py-4 pb-24 lg:mx-auto lg:w-full lg:max-w-content lg:pb-12">
           {myResponseOrders.length === 0 && (
             <div className="mt-10 text-center">
               <p className="text-sm text-ink-soft">
                 Вы ещё не откликались на заказы.
               </p>
-              <Link
-                href="/orders"
-                className="mt-3 inline-block rounded-xl bg-accent px-4 py-2 text-sm font-bold text-white"
-              >
+              <ButtonLink href="/orders" size="sm" className="mt-3">
                 Найти заказы
-              </Link>
+              </ButtonLink>
             </div>
           )}
           {myResponseOrders.map((order) => {
-            const status = STATUS_LABELS[order.status];
+            const status = STATUS_META[order.status];
             const myResponse = responses.find((r) => r.orderId === order.id);
             return (
               <Link
@@ -101,23 +94,21 @@ export default function MyOrdersPage() {
                     <MapPin size={12} className="shrink-0" />{" "}
                     {order.address?.trim() ? order.address : "адрес не указан"}
                   </p>
-                  <p className="text-[11px] text-ink-faint">
+                  <p className="text-xs text-ink-faint">
                     № {order.code} · {formatOrderDate(order.createdAt)}
                   </p>
                   <div className="flex flex-wrap items-center gap-2 pt-0.5">
-                    <span
-                      className={`inline-block rounded-full px-2 py-0.5 text-[11px] font-medium ${status.className}`}
-                    >
-                      {status.text}
-                    </span>
+                    <Chip size="sm" tone={status.tone}>
+                      {status.label}
+                    </Chip>
                     {myResponse && (
-                      <span className="text-[11px] font-semibold text-ink">
+                      <span className="text-xs font-semibold text-ink">
                         Ваш ценник: {myResponse.price.toLocaleString("ru-RU")} ₽
                       </span>
                     )}
                   </div>
                   {myResponse?.message?.trim() && (
-                    <p className="line-clamp-2 text-[11px] text-ink-faint">
+                    <p className="line-clamp-2 text-xs text-ink-faint">
                       «{myResponse.message.trim()}»
                     </p>
                   )}
@@ -133,11 +124,11 @@ export default function MyOrdersPage() {
 
   return (
     <div className="flex flex-1 flex-col">
-      <header className="border-b border-line px-4 py-3 lg:mx-auto lg:w-full lg:max-w-3xl lg:border-0 lg:px-0 lg:pb-4 lg:pt-8">
+      <header className="border-b border-line px-4 py-3 lg:mx-auto lg:w-full lg:max-w-content lg:border-0 lg:px-0 lg:pb-4 lg:pt-8">
         <p className="font-display text-lg font-extrabold">Мои заказы</p>
       </header>
 
-      <main className="flex-1 space-y-3 px-4 py-4 pb-24 lg:mx-auto lg:w-full lg:max-w-3xl lg:pb-12">
+      <main className="flex-1 space-y-3 px-4 py-4 pb-24 lg:mx-auto lg:w-full lg:max-w-content lg:pb-12">
         {orders.length === 0 && (
           <p className="mt-10 text-center text-sm text-ink-soft">
             Вы ещё не публиковали заказы.
@@ -145,7 +136,7 @@ export default function MyOrdersPage() {
         )}
         {orders.map((order) => {
           const responseCount = responses.filter((r) => r.orderId === order.id).length;
-          const status = STATUS_LABELS[order.status];
+          const status = STATUS_META[order.status];
           const canCancel = order.status === "open" || order.status === "matched";
 
           return (
@@ -167,28 +158,26 @@ export default function MyOrdersPage() {
                       <p className="font-display text-sm font-bold leading-tight">
                         {order.serviceName}
                       </p>
-                      <span
-                        className={`shrink-0 rounded-full px-2 py-0.5 text-[11px] font-medium ${status.className}`}
-                      >
-                        {status.text}
-                      </span>
+                      <Chip size="sm" tone={status.tone} className="shrink-0">
+                        {status.label}
+                      </Chip>
                     </div>
 
                     <p className="flex items-center gap-1 truncate text-xs text-ink-soft">
                       <MapPin size={12} className="shrink-0" />{" "}
                       {order.address?.trim() ? order.address : "адрес не указан"}
                     </p>
-                    <p className="flex items-center gap-1 text-[11px] text-ink-faint">
+                    <p className="flex items-center gap-1 text-xs text-ink-faint">
                       <CalendarDays size={11} className="shrink-0" />{" "}
                       {formatOrderDate(order.createdAt)} · № {order.code}
                     </p>
 
-                    <span className="price-tag mt-1 inline-block bg-accent px-2.5 py-1 font-display text-xs font-bold text-white">
+                    <span className="price-tag mt-1 inline-block bg-accent px-2.5 py-1 font-display text-xs font-bold text-night">
                       {order.budgetMin.toLocaleString("ru-RU")}–
                       {order.budgetMax.toLocaleString("ru-RU")} ₽
                     </span>
 
-                    <div className="flex items-center gap-3 pt-0.5 text-[11px] text-ink-faint">
+                    <div className="flex items-center gap-3 pt-0.5 text-xs text-ink-faint">
                       <span className="flex items-center gap-1">
                         <Eye size={12} />{" "}
                         {Number.isFinite(order.views) && order.views > 0 ? order.views : 0}
@@ -219,7 +208,7 @@ export default function MyOrdersPage() {
                   </span>
                   <button
                     onClick={() => setConfirmingId(null)}
-                    className="shrink-0 rounded-lg px-3 py-1.5 text-xs font-medium text-ink-soft active:bg-white"
+                    className="shrink-0 rounded-lg px-3 py-1.5 text-xs font-medium text-ink-soft active:bg-paper"
                   >
                     Нет
                   </button>
@@ -228,7 +217,7 @@ export default function MyOrdersPage() {
                       cancelOrder(order.id);
                       setConfirmingId(null);
                     }}
-                    className="shrink-0 rounded-lg bg-accent px-3 py-1.5 text-xs font-semibold text-white"
+                    className="shrink-0 rounded-lg bg-accent px-3 py-1.5 text-xs font-semibold text-night"
                   >
                     Да, отменить
                   </button>
@@ -247,7 +236,7 @@ export default function MyOrdersPage() {
         <Link
           href="/orders/new"
           aria-label="Разместить заказ"
-          className="pointer-events-auto flex h-14 w-14 items-center justify-center rounded-full bg-accent text-white shadow-lg shadow-accent/30 active:scale-95"
+          className="pointer-events-auto flex h-14 w-14 items-center justify-center rounded-full bg-accent text-night shadow-pop shadow-accent/30 active:scale-95"
         >
           <Plus size={26} strokeWidth={2.5} />
         </Link>

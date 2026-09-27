@@ -25,8 +25,8 @@ export function BottomNav() {
           const active = pathname === href || (!create && pathname.startsWith(`${href}/`));
           if (create) {
             return (
-              <Link key={href} href={href} className="flex flex-col items-center gap-1 py-1.5 text-[10px] font-bold text-ink-soft">
-                <span className="-mt-5 flex h-12 w-12 items-center justify-center rounded-full bg-accent text-ink shadow-lg ring-4 ring-paper">
+              <Link key={href} href={href} className="flex flex-col items-center gap-1 py-1.5 text-xs font-bold text-ink-soft">
+                <span className="-mt-5 flex h-12 w-12 items-center justify-center rounded-full bg-accent text-ink shadow-pop ring-4 ring-paper">
                   <Icon size={22} strokeWidth={2.8} />
                 </span>
                 <span>{label}</span>
@@ -34,8 +34,8 @@ export function BottomNav() {
             );
           }
           return (
-            <Link key={href} href={href} className="flex flex-col items-center gap-1 py-2.5 text-[10px]">
-              <Icon size={21} strokeWidth={active ? 2.5 : 1.8} className={active ? "text-accent" : "text-ink-faint"} />
+            <Link key={href} href={href} className="flex flex-col items-center gap-1 py-2.5 text-xs">
+              <Icon size={21} strokeWidth={active ? 2.5 : 1.8} className={active ? "text-accent-ink" : "text-ink-faint"} />
               <span className={active ? "font-semibold text-ink" : "text-ink-faint"}>{label}</span>
             </Link>
           );

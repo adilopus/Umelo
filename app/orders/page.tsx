@@ -9,6 +9,9 @@ import { BottomNav } from "@/components/BottomNav";
 import { OrderCard } from "@/components/OrderCard";
 import { CATEGORIES } from "@/lib/jobCategories";
 import { pluralize } from "@/lib/format";
+import { Pill, PillGroup } from "@/components/ui/Pill";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { Button } from "@/components/ui/Button";
 import {
   applyOrderFilters,
   availableSubcategories,
@@ -109,7 +112,7 @@ export default function OrdersCatalogPage() {
 
   return (
     <div className="flex flex-1 flex-col">
-      <header className="border-b border-line px-4 py-3 lg:mx-auto lg:w-full lg:max-w-5xl lg:border-0 lg:px-0 lg:pb-4 lg:pt-8">
+      <header className="border-b border-line px-4 py-3 lg:mx-auto lg:w-full lg:max-w-page lg:border-0 lg:px-0 lg:pb-4 lg:pt-8">
         <div className="flex items-center justify-between gap-3">
           <div>
             <p className="font-display text-lg font-extrabold">Заказы</p>
@@ -121,7 +124,7 @@ export default function OrdersCatalogPage() {
           {role === "master" && (
             <Link
               href="/my-orders"
-              className="shrink-0 rounded-xl bg-accent-soft px-3 py-2 text-xs font-bold text-accent"
+              className="shrink-0 rounded-xl bg-accent-soft px-3 py-2 text-xs font-bold text-accent-ink"
             >
               Мои отклики
             </Link>
@@ -129,8 +132,8 @@ export default function OrdersCatalogPage() {
         </div>
       </header>
 
-      <main className="flex-1 px-4 py-4 pb-24 lg:mx-auto lg:w-full lg:max-w-5xl lg:pb-12">
-        <div className="rounded-2xl border border-line bg-white shadow-sm">
+      <main className="flex-1 px-4 py-4 pb-24 lg:mx-auto lg:w-full lg:max-w-page lg:pb-12">
+        <div className="rounded-2xl border border-line bg-paper shadow-card">
           <div className="flex gap-2 p-2.5">
             <label className="relative min-w-0 flex-1">
               <Search
@@ -150,14 +153,14 @@ export default function OrdersCatalogPage() {
               aria-expanded={expanded}
               className={`flex shrink-0 items-center gap-1.5 rounded-xl border px-3 text-sm font-semibold transition ${
                 expanded || activeCount > 0
-                  ? "border-accent bg-accent-soft text-accent"
+                  ? "border-accent bg-accent-soft text-accent-ink"
                   : "border-line text-ink"
               }`}
             >
               <SlidersHorizontal size={16} />
               <span className="hidden sm:inline">Фильтры</span>
               {activeCount > 0 && (
-                <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-accent px-1 text-[10px] font-bold text-white">
+                <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-night px-1 text-xs font-bold text-white">
                   {activeCount}
                 </span>
               )}
@@ -174,7 +177,7 @@ export default function OrdersCatalogPage() {
                 <button
                   key={pill.key}
                   onClick={() => clearPill(pill.key)}
-                  className="flex max-w-full items-center gap-1 rounded-full bg-surface px-2.5 py-1 text-[11px] font-semibold text-ink-soft"
+                  className="flex max-w-full items-center gap-1 rounded-full bg-surface px-2.5 py-1 text-xs font-semibold text-ink-soft"
                 >
                   <span className="truncate">{pill.label}</span>
                   <X size={12} className="shrink-0" />
@@ -182,7 +185,7 @@ export default function OrdersCatalogPage() {
               ))}
               <button
                 onClick={() => setFilters(EMPTY_ORDER_FILTERS)}
-                className="rounded-full px-2 py-1 text-[11px] font-bold text-accent"
+                className="rounded-full px-2 py-1 text-xs font-bold text-accent-ink"
               >
                 Сбросить всё
               </button>
@@ -192,80 +195,59 @@ export default function OrdersCatalogPage() {
           {expanded && (
             <div className="space-y-4 border-t border-line p-3">
               <div>
-                <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wide text-ink-faint">
+                <p className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-ink-faint">
                   Тематика работ
                 </p>
-                <div className="flex flex-wrap gap-1.5">
-                  <button
-                    type="button"
-                    onClick={() => setFilter("category", "")}
-                    className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${
-                      filters.category === ""
-                        ? "bg-accent text-white"
-                        : "bg-surface text-ink-soft hover:text-ink"
-                    }`}
-                  >
+                <PillGroup>
+                  <Pill active={filters.category === ""} onClick={() => setFilter("category", "")}>
                     Все
-                  </button>
+                  </Pill>
                   {CATEGORIES.map((c) => (
-                    <button
+                    <Pill
                       key={c.name}
-                      type="button"
+                      active={filters.category === c.name}
                       onClick={() =>
                         setFilter("category", filters.category === c.name ? "" : c.name)
                       }
-                      className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${
-                        filters.category === c.name
-                          ? "bg-accent text-white"
-                          : "bg-surface text-ink-soft hover:text-ink"
-                      }`}
                     >
                       {c.name}
-                    </button>
+                    </Pill>
                   ))}
-                </div>
+                </PillGroup>
               </div>
 
               <div>
                 <div className="mb-1.5 flex items-center justify-between">
-                  <p className="text-[11px] font-semibold uppercase tracking-wide text-ink-faint">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-ink-faint">
                     Вид работ
                   </p>
                   {!filters.category && (
-                    <p className="text-[11px] text-ink-faint">сначала выберите тематику</p>
+                    <p className="text-xs text-ink-faint">сначала выберите тематику</p>
                   )}
                 </div>
                 {filters.category ? (
                   subcategories.length > 0 ? (
-                    <div className="flex flex-wrap gap-1.5">
-                      <button
-                        type="button"
+                    <PillGroup>
+                      <Pill
+                        variant="outline"
+                        active={filters.subcategory === ""}
                         onClick={() => setFilter("subcategory", "")}
-                        className={`rounded-lg border px-2.5 py-1.5 text-xs font-semibold transition ${
-                          filters.subcategory === ""
-                            ? "border-accent text-accent"
-                            : "border-line text-ink-soft"
-                        }`}
                       >
                         Все виды
-                      </button>
+                      </Pill>
                       {subcategories.map((s) => (
-                        <button
+                        <Pill
                           key={s}
-                          type="button"
+                          variant="outline"
+                          active={filters.subcategory === s}
                           onClick={() =>
                             setFilter("subcategory", filters.subcategory === s ? "" : s)
                           }
-                          className={`rounded-lg border px-2.5 py-1.5 text-xs font-semibold transition ${
-                            filters.subcategory === s
-                              ? "border-accent text-accent"
-                              : "border-line text-ink-soft"
-                          }`}
                         >
                           {s}
-                        </button>
+                        </Pill>
                       ))}
-                    </div>
+                    </PillGroup>
                   ) : (
                     <p className="text-xs text-ink-soft">
                       В этой тематике сейчас нет открытых заказов.
@@ -281,7 +263,7 @@ export default function OrdersCatalogPage() {
 
               <div className="grid gap-3 sm:grid-cols-2">
                 <div>
-                  <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wide text-ink-faint">
+                  <p className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-ink-faint">
                     Бюджет, ₽
                   </p>
                   <div className="flex items-center gap-2">
@@ -308,7 +290,7 @@ export default function OrdersCatalogPage() {
                 </div>
 
                 <div>
-                  <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wide text-ink-faint">
+                  <p className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-ink-faint">
                     Локация
                   </p>
                   <div className="flex gap-2">
@@ -340,7 +322,7 @@ export default function OrdersCatalogPage() {
                 </div>
 
                 <div>
-                  <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wide text-ink-faint">
+                  <p className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-ink-faint">
                     Дата публикации
                   </p>
                   <select
@@ -357,7 +339,7 @@ export default function OrdersCatalogPage() {
                 </div>
 
                 <div>
-                  <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wide text-ink-faint">
+                  <p className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-ink-faint">
                     Сортировка
                   </p>
                   <select
@@ -383,17 +365,24 @@ export default function OrdersCatalogPage() {
         </p>
 
         {result.length === 0 ? (
-          <div className="mt-10 text-center">
-            <p className="text-sm text-ink-soft">По вашим фильтрам заказов не нашлось.</p>
-            {activeCount > 0 && (
-              <button
-                onClick={() => setFilters(EMPTY_ORDER_FILTERS)}
-                className="mt-3 text-sm font-semibold text-accent"
-              >
-                Сбросить фильтры
-              </button>
-            )}
-          </div>
+          <EmptyState
+            className="mt-6"
+            icon={<Search size={28} />}
+            title="По ващим фильтрам заказов не нашлось"
+            hint="Попробуйте убрать часть условий — возможно, слишком узкий набор. Сброс фильтров вернёт все открытые заказы."
+            action={
+              activeCount > 0 ? (
+                <Button
+                  variant="subtle"
+                  size="sm"
+                  className="mt-1"
+                  onClick={() => setFilters(EMPTY_ORDER_FILTERS)}
+                >
+                  Сбросить фильтры
+                </Button>
+              ) : undefined
+            }
+          />
         ) : (
           <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
             {result.map((order) => (

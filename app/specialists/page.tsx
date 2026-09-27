@@ -2,7 +2,10 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { BadgeCheck, Clock3, MapPin, Search, Star, ArrowRight, Send, Check, Plus } from "lucide-react";
+import { BadgeCheck, Clock3, MapPin, Search, ArrowRight, Send, Check, Plus } from "lucide-react";
+import { Stars } from "@/components/ui/Stars";
+import { Chip } from "@/components/ui/Chip";
+import { Stat, StatGrid } from "@/components/ui/Stat";
 import { useAppStore } from "@/lib/store";
 import { ProposeWorkModal } from "@/components/ProposeWorkModal";
 import { SPECIALIST_ME } from "@/lib/mockSpecialists";
@@ -86,9 +89,9 @@ export default function SpecialistsPage() {
   }
 
   return (
-    <main className="min-h-[calc(100vh-64px)] bg-[#f7f8f7] px-4 pb-16 pt-8 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-[1100px]">
-        <p className="text-xs font-bold uppercase tracking-[0.14em] text-accent">Люди UMELO</p>
+    <main className="min-h-[calc(100vh-64px)] bg-surface px-4 pb-16 pt-8 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-page">
+        <p className="text-xs font-bold uppercase tracking-[0.14em] text-accent-ink">Люди UMELO</p>
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <h1 className="mt-1 font-display text-3xl font-extrabold text-ink">Специалисты</h1>
@@ -99,7 +102,7 @@ export default function SpecialistsPage() {
           {role === "master" && (
             <Link
               href="/offers"
-              className="hidden rounded-xl border border-line bg-white px-4 py-2.5 text-sm font-semibold text-ink lg:block"
+              className="hidden rounded-xl border border-line bg-paper px-4 py-2.5 text-sm font-semibold text-ink lg:block"
             >
               Мои предложения
             </Link>
@@ -114,7 +117,7 @@ export default function SpecialistsPage() {
         )}
 
         <div className="mt-6 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-          <div className="flex min-w-0 items-center gap-2 rounded-2xl border border-line bg-white px-4 py-3 lg:w-96">
+          <div className="flex min-w-0 items-center gap-2 rounded-2xl border border-line bg-paper px-4 py-3 lg:w-96">
             <Search size={17} className="shrink-0 text-ink-faint" />
             <input
               value={query}
@@ -127,7 +130,7 @@ export default function SpecialistsPage() {
             <select
               value={sort}
               onChange={(e) => setSort(e.target.value as SortId)}
-              className="rounded-xl border border-line bg-white px-3 py-2.5 text-xs font-semibold text-ink-soft outline-none"
+              className="rounded-xl border border-line bg-paper px-3 py-2.5 text-xs font-semibold text-ink-soft outline-none"
               aria-label="Сортировка"
             >
               {SORTS.map((s) => (
@@ -146,8 +149,8 @@ export default function SpecialistsPage() {
               onClick={() => setFilter(f)}
               className={`shrink-0 rounded-full border px-4 py-2 text-xs font-semibold transition ${
                 filter === f
-                  ? "border-accent bg-accent text-white"
-                  : "border-line bg-white text-ink-soft hover:border-accent/50"
+                  ? "border-accent bg-accent text-night"
+                  : "border-line bg-paper text-ink-soft hover:border-accent/50"
               }`}
             >
               {f}
@@ -156,7 +159,7 @@ export default function SpecialistsPage() {
         </div>
 
         {visible.length === 0 ? (
-          <div className="mt-10 rounded-2xl border border-dashed border-line bg-white p-10 text-center">
+          <div className="mt-10 rounded-2xl border border-dashed border-line bg-paper p-10 text-center">
             <p className="font-display text-base font-extrabold text-ink">Никого не нашли</p>
             <p className="mt-1 text-sm text-ink-soft">Попробуйте изменить запрос или сбросить фильтр.</p>
           </div>
@@ -168,7 +171,7 @@ export default function SpecialistsPage() {
               return (
                 <article
                   key={person.id}
-                  className={`flex flex-col rounded-2xl border bg-white p-5 transition hover:shadow-md ${
+                  className={`flex flex-col rounded-2xl border bg-paper p-5 transition hover:shadow-card-hover ${
                     isMe ? "border-accent" : "border-line"
                   }`}
                 >
@@ -183,17 +186,17 @@ export default function SpecialistsPage() {
                           {person.name}
                         </h2>
                         {isMe && (
-                          <span className="shrink-0 rounded-full bg-accent px-2 py-0.5 text-[10px] font-bold text-white">
+                          <Chip size="sm" tone="accent" className="shrink-0">
                             Это вы
-                          </span>
+                          </Chip>
                         )}
-                        {person.verified && <BadgeCheck size={16} className="shrink-0 text-accent" />}
+                        {person.verified && <BadgeCheck size={16} className="shrink-0 text-accent-ink" />}
                       </div>
                       <p className="mt-0.5 truncate text-xs text-ink-soft">
                         {person.profession || "Профессия не указана"}
                       </p>
                       <p className="mt-2 flex items-center gap-1 text-xs">
-                        <Star size={13} fill="currentColor" className="text-accent" />
+                        <Stars value={person.rating || 0} size={13} />
                         <b>{person.rating ? person.rating.toFixed(1) : "—"}</b>
                         <span className="text-ink-faint">
                           ({person.reviewsCount}{" "}
@@ -205,30 +208,26 @@ export default function SpecialistsPage() {
 
                   <div className="mt-4 flex flex-wrap gap-1.5">
                     {person.services.slice(0, 3).map((service) => (
-                      <span key={service} className="rounded-full bg-surface px-2.5 py-1 text-[10px] font-bold text-ink-soft">
+                      <Chip key={service} size="sm">
                         {service}
-                      </span>
+                      </Chip>
                     ))}
                   </div>
 
-                  <div className="mt-4 grid grid-cols-3 gap-2 rounded-xl bg-[#f7f8f7] p-3 text-center">
-                    <div>
-                      <p className="font-display text-sm font-extrabold text-ink">{person.experienceYears} лет</p>
-                      <p className="text-[10px] text-ink-faint">опыт</p>
-                    </div>
-                    <div>
-                      <p className="font-display text-sm font-extrabold text-ink">{person.projectsCount}</p>
-                      <p className="text-[10px] text-ink-faint">работ</p>
-                    </div>
-                    <div>
-                      <p className="flex items-center justify-center gap-1 font-display text-sm font-extrabold text-ink">
-                        <MapPin size={11} /> {person.distanceKm}
-                      </p>
-                      <p className="text-[10px] text-ink-faint">км</p>
-                    </div>
-                  </div>
+                  <StatGrid className="mt-4 rounded-xl p-3">
+                    <Stat value={`${person.experienceYears} лет`} label="опыт" />
+                    <Stat value={person.projectsCount} label="работ" />
+                    <Stat
+                      value={
+                        <span className="flex items-center justify-center gap-1">
+                          <MapPin size={12} /> {person.distanceKm}
+                        </span>
+                      }
+                      label="км от вас"
+                    />
+                  </StatGrid>
 
-                  <div className="mt-4 flex items-center gap-2 text-[11px] text-ink-faint">
+                  <div className="mt-4 flex items-center gap-2 text-xs text-ink-faint">
                     <Clock3 size={12} /> Отвечает {person.responseTime}
                   </div>
 
@@ -242,7 +241,7 @@ export default function SpecialistsPage() {
                     {isMe ? (
                       <Link
                         href="/portfolio"
-                        className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-accent py-2.5 text-xs font-bold text-white transition hover:bg-accent-dark"
+                        className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-accent py-2.5 text-xs font-bold text-night transition hover:bg-accent-dark"
                       >
                         <Plus size={13} /> Моё портфолио
                       </Link>
@@ -250,7 +249,7 @@ export default function SpecialistsPage() {
                       <button
                         onClick={() => setProposing(person.name)}
                         disabled={offered}
-                        className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-accent py-2.5 text-xs font-bold text-white transition hover:bg-accent-dark disabled:opacity-60"
+                        className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-accent py-2.5 text-xs font-bold text-night transition hover:bg-accent-dark disabled:opacity-60"
                       >
                         {offered ? (
                           <>

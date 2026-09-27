@@ -22,7 +22,7 @@ export function SubscriptionPanel() {
     <div className="space-y-3">
       <div className="rounded-2xl border border-line p-4">
         <p className="flex items-center gap-1.5 font-display text-sm font-bold">
-          <Ticket size={16} className="text-accent" /> Баланс билетов
+          <Ticket size={16} className="text-accent-ink" /> Баланс билетов
         </p>
         <p className="mt-2 font-display text-2xl font-extrabold text-ink">
           {ticketsBalance} <span className="text-sm font-normal text-ink-soft">билетов</span>
@@ -45,7 +45,7 @@ export function SubscriptionPanel() {
         <button
           onClick={toggleSubscription}
           className={`mt-3 w-full rounded-xl py-2.5 text-sm font-semibold ${
-            subscriptionActive ? "bg-ok/10 text-ok" : "bg-accent text-white"
+            subscriptionActive ? "bg-ok/10 text-ok" : "bg-accent text-night"
           }`}
         >
           {subscriptionActive ? "Подписка активна ✓" : "Оформить подписку (демо)"}

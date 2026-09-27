@@ -97,10 +97,10 @@ export function ProjectOrderDrawer({ onClose, projectTitle, projectLocation, pro
     <div className="fixed inset-0 z-50">
       <button aria-label="Закрыть" onClick={onClose} className="absolute inset-0 bg-black/35 backdrop-blur-[2px]" />
 
-      <aside className="absolute right-0 top-0 flex h-full w-full max-w-[590px] flex-col bg-white shadow-2xl">
+      <aside className="absolute right-0 top-0 flex h-full w-full max-w-[590px] flex-col bg-paper shadow-pop">
         <header className="flex items-center justify-between border-b border-line px-5 py-4 sm:px-7">
           <div>
-            <p className="text-[10px] font-extrabold uppercase tracking-[0.14em] text-accent">Новый заказ</p>
+            <p className="text-xs font-extrabold uppercase tracking-[0.14em] text-accent-ink">Новый заказ</p>
             <h2 className="mt-1 font-display text-xl font-extrabold text-ink">Хочу такой проект</h2>
           </div>
           <button onClick={onClose} className="flex h-9 w-9 items-center justify-center rounded-full bg-surface text-ink-soft hover:text-ink" aria-label="Закрыть">
@@ -113,7 +113,7 @@ export function ProjectOrderDrawer({ onClose, projectTitle, projectLocation, pro
             <div className="flex items-center gap-3">
               <img src={projectImage} alt="" className="h-16 w-20 rounded-xl object-cover" />
               <div className="min-w-0">
-                <p className="text-[10px] font-bold uppercase tracking-wide text-ink-faint">Из проекта</p>
+                <p className="text-xs font-bold uppercase tracking-wide text-ink-faint">Из проекта</p>
                 <p className="mt-1 truncate text-sm font-extrabold text-ink">{projectTitle}</p>
                 <p className="mt-1 text-xs text-ink-soft">{projectLocation}</p>
               </div>
@@ -128,7 +128,7 @@ export function ProjectOrderDrawer({ onClose, projectTitle, projectLocation, pro
                   key={option}
                   onClick={() => setLiked(option)}
                   className={`rounded-full border px-3.5 py-2 text-xs font-bold transition ${
-                    liked === option ? "border-accent bg-accent text-ink" : "border-line bg-white text-ink-soft hover:border-accent"
+                    liked === option ? "border-accent bg-accent text-ink" : "border-line bg-paper text-ink-soft hover:border-accent"
                   }`}
                 >
                   {option}
@@ -147,7 +147,7 @@ export function ProjectOrderDrawer({ onClose, projectTitle, projectLocation, pro
                     key={option}
                     onClick={() => toggleNeed(option)}
                     className={`flex items-center gap-3 rounded-2xl border p-3.5 text-left text-xs font-bold transition ${
-                      selected ? "border-accent bg-[#fffbe2] text-ink" : "border-line text-ink-soft hover:border-accent"
+                      selected ? "border-accent bg-accent-soft text-ink" : "border-line text-ink-soft hover:border-accent"
                     }`}
                   >
                     <span className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full ${selected ? "bg-accent text-ink" : "bg-surface text-transparent"}`}>
@@ -164,20 +164,20 @@ export function ProjectOrderDrawer({ onClose, projectTitle, projectLocation, pro
             <p className="font-display text-base font-extrabold text-ink">Объект</p>
             <div className="mt-3 grid gap-3 sm:grid-cols-2">
               <label className="block sm:col-span-2">
-                <span className="mb-1.5 block text-[11px] font-bold text-ink-soft">Город</span>
-                <input value={city} onChange={(event) => setCity(event.target.value)} className="h-11 w-full rounded-xl border border-line bg-white px-3 text-sm outline-none focus:border-accent" />
+                <span className="mb-1.5 block text-xs font-bold text-ink-soft">Город</span>
+                <input value={city} onChange={(event) => setCity(event.target.value)} className="h-11 w-full rounded-xl border border-line bg-paper px-3 text-sm outline-none focus:border-accent" />
               </label>
               <label className="block">
-                <span className="mb-1.5 block text-[11px] font-bold text-ink-soft">Тип объекта</span>
-                <select value={objectType} onChange={(event) => setObjectType(event.target.value)} className="h-11 w-full rounded-xl border border-line bg-white px-3 text-sm outline-none focus:border-accent">
+                <span className="mb-1.5 block text-xs font-bold text-ink-soft">Тип объекта</span>
+                <select value={objectType} onChange={(event) => setObjectType(event.target.value)} className="h-11 w-full rounded-xl border border-line bg-paper px-3 text-sm outline-none focus:border-accent">
                   <option>Квартира</option>
                   <option>Дом</option>
                   <option>Коммерция</option>
                 </select>
               </label>
               <label className="block">
-                <span className="mb-1.5 block text-[11px] font-bold text-ink-soft">Площадь, м²</span>
-                <input inputMode="decimal" value={area} onChange={(event) => setArea(event.target.value)} className="h-11 w-full rounded-xl border border-line bg-white px-3 text-sm outline-none focus:border-accent" />
+                <span className="mb-1.5 block text-xs font-bold text-ink-soft">Площадь, м²</span>
+                <input inputMode="decimal" value={area} onChange={(event) => setArea(event.target.value)} className="h-11 w-full rounded-xl border border-line bg-paper px-3 text-sm outline-none focus:border-accent" />
               </label>
             </div>
           </section>
@@ -190,7 +190,7 @@ export function ProjectOrderDrawer({ onClose, projectTitle, projectLocation, pro
                   key={option.label}
                   onClick={() => setBudget(option.label)}
                   className={`flex items-center justify-between rounded-2xl border px-4 py-3 text-sm font-bold transition ${
-                    budget === option.label ? "border-accent bg-[#fffbe2] text-ink" : "border-line text-ink-soft hover:border-accent"
+                    budget === option.label ? "border-accent bg-accent-soft text-ink" : "border-line text-ink-soft hover:border-accent"
                   }`}
                 >
                   {option.label}
@@ -200,22 +200,22 @@ export function ProjectOrderDrawer({ onClose, projectTitle, projectLocation, pro
             </div>
           </section>
 
-          <div className="mt-6 rounded-2xl bg-[#111419] p-4 text-white">
-            <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-accent">Из проекта автоматически</p>
+          <div className="mt-6 rounded-2xl bg-night p-4 text-white">
+            <p className="text-xs font-bold uppercase tracking-[0.12em] text-accent">Из проекта автоматически</p>
             <div className="mt-3 grid grid-cols-3 gap-2 text-center">
-              <div className="rounded-xl bg-white/5 p-2.5"><p className="text-lg font-extrabold">18</p><p className="text-[10px] text-white/60">фото</p></div>
-              <div className="rounded-xl bg-white/5 p-2.5"><p className="text-lg font-extrabold">3</p><p className="text-[10px] text-white/60">специалиста</p></div>
-              <div className="rounded-xl bg-white/5 p-2.5"><p className="text-lg font-extrabold">24</p><p className="text-[10px] text-white/60">материала</p></div>
+              <div className="rounded-xl bg-paper/5 p-2.5"><p className="text-lg font-extrabold">18</p><p className="text-xs text-white/60">фото</p></div>
+              <div className="rounded-xl bg-paper/5 p-2.5"><p className="text-lg font-extrabold">3</p><p className="text-xs text-white/60">специалиста</p></div>
+              <div className="rounded-xl bg-paper/5 p-2.5"><p className="text-lg font-extrabold">24</p><p className="text-xs text-white/60">материала</p></div>
             </div>
           </div>
         </div>
 
-        <footer className="border-t border-line bg-white px-5 py-4 sm:px-7">
+        <footer className="border-t border-line bg-paper px-5 py-4 sm:px-7">
           <button onClick={submit} disabled={submitting} className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-accent text-sm font-extrabold text-ink transition hover:bg-accent-dark disabled:opacity-60">
             {submitting ? "Создаём заказ…" : "Создать заказ"}
             {!submitting && <ArrowRight size={17} />}
           </button>
-          <p className="mt-2 text-center text-[10px] text-ink-faint">После создания заказ появится в разделе «Мои заказы».</p>
+          <p className="mt-2 text-center text-xs text-ink-faint">После создания заказ появится в разделе «Мои заказы».</p>
         </footer>
       </aside>
     </div>

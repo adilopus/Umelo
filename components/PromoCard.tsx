@@ -33,7 +33,7 @@ export function PromoCard({
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={article.coverUrl} alt="" className="absolute inset-0 h-full w-full object-cover" />
       <div className="absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/20 to-transparent" />
-      <span className="absolute left-3 top-3 rounded-full bg-white/90 px-2 py-0.5 text-[10px] font-semibold text-ink">
+      <span className="absolute left-3 top-3 rounded-full bg-paper/90 px-2 py-0.5 text-xs font-semibold text-ink">
         Реклама
       </span>
       <button
@@ -47,7 +47,7 @@ export function PromoCard({
       >
         <Heart
           size={12}
-          className={isFavorite ? "text-accent" : "text-white"}
+          className={isFavorite ? "text-accent-ink" : "text-white"}
           fill={isFavorite ? "currentColor" : "none"}
         />
       </button>
@@ -55,7 +55,7 @@ export function PromoCard({
         <p className="line-clamp-2 font-display text-sm font-bold leading-tight text-white">
           {article.title}
         </p>
-        <p className="text-[11px] text-white/75">{article.authorName}</p>
+        <p className="text-xs text-white/75">{article.authorName}</p>
       </div>
     </Link>
   );

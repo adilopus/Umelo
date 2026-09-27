@@ -36,7 +36,7 @@ export default function ArticleDetailPage() {
     return (
       <div className="flex flex-1 flex-col items-center justify-center gap-3 p-6 text-center">
         <p className="text-sm text-ink-soft">Материал не найден или уже удалён.</p>
-        <button onClick={() => router.push("/feed")} className="text-sm font-semibold text-accent">
+        <button onClick={() => router.push("/feed")} className="text-sm font-semibold text-accent-ink">
           Вернуться в ленту
         </button>
       </div>
@@ -54,7 +54,7 @@ export default function ArticleDetailPage() {
 
   return (
     <div className="flex flex-1 flex-col">
-      <header className="sticky top-0 z-10 flex items-center gap-3 border-b border-line bg-paper/95 px-4 py-3 backdrop-blur lg:mx-auto lg:w-full lg:max-w-3xl">
+      <header className="sticky top-0 z-10 flex items-center gap-3 border-b border-line bg-paper/95 px-4 py-3 backdrop-blur lg:mx-auto lg:w-full lg:max-w-content">
         <button
           onClick={() => router.back()}
           className="rounded-full p-1 text-ink-soft active:bg-surface"
@@ -65,7 +65,7 @@ export default function ArticleDetailPage() {
         <p className="truncate font-display text-sm font-bold">{article.title}</p>
       </header>
 
-      <main className="flex-1 overflow-y-auto pb-12 lg:mx-auto lg:w-full lg:max-w-3xl">
+      <main className="flex-1 overflow-y-auto pb-12 lg:mx-auto lg:w-full lg:max-w-content">
         <div className="relative aspect-[16/9] w-full bg-ink">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={article.coverUrl} alt="" className="h-full w-full object-cover" />
@@ -81,7 +81,7 @@ export default function ArticleDetailPage() {
 
         <div className="space-y-4 p-4">
           <div>
-            <p className="text-[11px] font-medium uppercase tracking-wide text-sage">
+            <p className="text-xs font-medium uppercase tracking-wide text-ok">
               {topicLabel(article.topic)}
             </p>
             <h1 className="mt-1 font-display text-xl font-extrabold text-ink">
@@ -104,7 +104,7 @@ export default function ArticleDetailPage() {
             <button
               onClick={() => toggleLike(id)}
               className={`ml-auto flex items-center gap-1 rounded-full border px-2 py-1 transition ${
-                isLiked ? "border-accent text-accent" : "border-line text-ink-soft"
+                isLiked ? "border-accent text-accent-ink" : "border-line text-ink-soft"
               }`}
             >
               <Heart size={13} fill={isLiked ? "currentColor" : "none"} />
@@ -113,7 +113,7 @@ export default function ArticleDetailPage() {
             <button
               onClick={() => toggleFavorite(id)}
               className={`flex items-center gap-1 rounded-full border px-2 py-1 transition ${
-                isFavorite ? "border-accent text-accent" : "border-line text-ink-soft"
+                isFavorite ? "border-accent text-accent-ink" : "border-line text-ink-soft"
               }`}
             >
               <Bookmark size={13} fill={isFavorite ? "currentColor" : "none"} />
@@ -125,7 +125,7 @@ export default function ArticleDetailPage() {
           {article.kind === "promo" && article.linkUrl && (
             <button
               onClick={handleLinkClick}
-              className="flex w-full items-center justify-center gap-2 rounded-xl bg-accent py-3 font-semibold text-white"
+              className="flex w-full items-center justify-center gap-2 rounded-xl bg-accent py-3 font-semibold text-night"
             >
               <ExternalLink size={16} /> Перейти по ссылке
             </button>
@@ -134,7 +134,7 @@ export default function ArticleDetailPage() {
           {article.kind === "video" && article.linkUrl && (
             <button
               onClick={handleLinkClick}
-              className="flex w-full items-center justify-center gap-2 rounded-xl bg-accent py-3 font-semibold text-white"
+              className="flex w-full items-center justify-center gap-2 rounded-xl bg-accent py-3 font-semibold text-night"
             >
               <PlayCircle size={16} /> Смотреть видео
             </button>

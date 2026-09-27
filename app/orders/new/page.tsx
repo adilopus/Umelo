@@ -199,7 +199,7 @@ export default function NewOrderPage() {
   }
 
   return (
-    <div className="flex flex-1 flex-col lg:mx-auto lg:w-full lg:max-w-5xl lg:flex-row lg:gap-8 lg:px-6 lg:py-8">
+    <div className="flex flex-1 flex-col lg:mx-auto lg:w-full lg:max-w-page lg:flex-row lg:gap-8 lg:px-6 lg:py-8">
       <header className="flex items-center gap-3 border-b border-line px-4 py-3 lg:hidden">
         <button
           onClick={() => (step === 0 ? router.push("/feed") : setStep(step - 1))}
@@ -243,19 +243,19 @@ export default function NewOrderPage() {
                 disabled={!clickable}
                 className={`flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-left text-sm transition ${
                   status === "current"
-                    ? "bg-accent-soft font-semibold text-accent"
+                    ? "bg-accent-soft font-semibold text-accent-ink"
                     : status === "done"
                       ? "text-ink hover:bg-surface"
                       : "cursor-default text-ink-faint"
                 }`}
               >
                 <span
-                  className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[11px] font-bold ${
+                  className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
                     status === "current"
-                      ? "bg-accent text-white"
+                      ? "bg-accent text-night"
                       : status === "done"
                         ? "bg-ok text-white"
-                        : "bg-line text-ink-faint"
+                        : "bg-line text-ink-soft"
                   }`}
                 >
                   {status === "done" ? "✓" : i + 1}
@@ -267,7 +267,7 @@ export default function NewOrderPage() {
         </div>
       </aside>
 
-      <div className="flex flex-1 flex-col lg:rounded-2xl lg:border lg:border-line lg:bg-white lg:shadow-sm">
+      <div className="flex flex-1 flex-col lg:rounded-2xl lg:border lg:border-line lg:bg-paper lg:shadow-card">
       <main className="flex-1 overflow-y-auto px-4 py-5 lg:px-8 lg:py-8">
         {/* Шаг 0: категория */}
         {step === 0 && (
@@ -285,10 +285,10 @@ export default function NewOrderPage() {
                     setStep(1);
                   }}
                   className={`flex flex-col items-center gap-2 rounded-2xl border p-3.5 text-center transition ${
-                    active ? "border-accent bg-accent-soft" : "border-line bg-white active:bg-surface"
+                    active ? "border-accent bg-accent-soft" : "border-line bg-paper active:bg-surface"
                   }`}
                 >
-                  <Icon size={24} strokeWidth={1.8} className={active ? "text-accent" : "text-ink"} />
+                  <Icon size={24} strokeWidth={1.8} className={active ? "text-accent-ink" : "text-ink"} />
                   <span className="text-xs font-medium leading-tight">{cat.name}</span>
                 </button>
               );
@@ -310,7 +310,7 @@ export default function NewOrderPage() {
                 }}
                 className={`rounded-xl border px-4 py-3 text-left text-sm font-medium ${
                   subcategory === sub
-                    ? "border-accent bg-accent-soft text-accent"
+                    ? "border-accent bg-accent-soft text-accent-ink"
                     : "border-line text-ink"
                 }`}
               >
@@ -340,7 +340,7 @@ export default function NewOrderPage() {
                 }`}
               >
                 <p className="text-sm font-semibold text-ink">{entry.service_name}</p>
-                <p className="mt-1 text-[11px] text-ink-faint">
+                <p className="mt-1 text-xs text-ink-faint">
                   {entry.work_type} · {entry.object_type}
                 </p>
               </button>
@@ -353,7 +353,7 @@ export default function NewOrderPage() {
           <div className="space-y-6">
             <div>
               <label className="mb-2 block text-sm font-semibold">
-                Адрес объекта <span className="text-accent">*</span>
+                Адрес объекта <span className="text-accent-ink">*</span>
               </label>
               <input
                 type="text"
@@ -371,7 +371,7 @@ export default function NewOrderPage() {
             <div>
               <label className="mb-2 flex items-center justify-between text-sm font-semibold">
                 <span>Площадь объекта</span>
-                <span className="text-accent">
+                <span className="text-accent-ink">
                   {areaOver1000 ? "более 1000 м²" : `${areaSqm} м²`}
                 </span>
               </label>
@@ -404,7 +404,7 @@ export default function NewOrderPage() {
                     onClick={() => setPremise(opt.id)}
                     className={`rounded-xl border py-2.5 text-xs font-medium ${
                       premise === opt.id
-                        ? "border-accent bg-accent-soft text-accent"
+                        ? "border-accent bg-accent-soft text-accent-ink"
                         : "border-line text-ink-soft"
                     }`}
                   >
@@ -426,7 +426,7 @@ export default function NewOrderPage() {
                     onClick={() => setCondition(opt.id as ConditionType)}
                     className={`rounded-xl border py-2.5 text-xs font-medium ${
                       condition === opt.id
-                        ? "border-accent bg-accent-soft text-accent"
+                        ? "border-accent bg-accent-soft text-accent-ink"
                         : "border-line text-ink-soft"
                     }`}
                   >
@@ -444,7 +444,7 @@ export default function NewOrderPage() {
             <div>
               <label className="mb-2 block text-sm font-semibold">
                 Бюджет за работу:{" "}
-                <span className="text-accent">
+                <span className="text-accent-ink">
                   {budgetMin.toLocaleString("ru-RU")} – {budgetMax.toLocaleString("ru-RU")} ₽
                 </span>
               </label>
@@ -490,7 +490,7 @@ export default function NewOrderPage() {
                 <div className="mt-3 space-y-3">
                   <p className="text-xs text-ink-soft">
                     Вилка за м²:{" "}
-                    <span className="font-semibold text-accent">
+                    <span className="font-semibold text-accent-ink">
                       {budgetPerSqmMin.toLocaleString("ru-RU")} – {budgetPerSqmMax.toLocaleString("ru-RU")} ₽/м²
                     </span>
                   </p>
@@ -538,7 +538,7 @@ export default function NewOrderPage() {
                     onClick={() => setDeadlineDays(d)}
                     className={`rounded-full border px-3 py-1.5 text-xs font-medium ${
                       deadlineDays === d
-                        ? "border-accent bg-accent-soft text-accent"
+                        ? "border-accent bg-accent-soft text-accent-ink"
                         : "border-line text-ink-soft"
                     }`}
                   >
@@ -555,7 +555,7 @@ export default function NewOrderPage() {
           <div className="space-y-5">
             <div>
               <label className="mb-2 block text-sm font-semibold">
-                Описание задачи <span className="text-accent">*</span>
+                Описание задачи <span className="text-accent-ink">*</span>
               </label>
               <textarea
                 value={description}
@@ -580,7 +580,7 @@ export default function NewOrderPage() {
                       <X size={12} />
                     </button>
                     {m.isCover && (
-                      <span className="absolute bottom-1 left-1 rounded bg-accent px-1.5 py-0.5 text-[9px] font-bold text-white">
+                      <span className="absolute bottom-1 left-1 rounded bg-accent px-1.5 py-0.5 text-xs font-bold text-night">
                         Главное
                       </span>
                     )}
@@ -589,7 +589,7 @@ export default function NewOrderPage() {
                 {media.length < 5 && (
                   <label className="flex aspect-square cursor-pointer flex-col items-center justify-center gap-1 rounded-xl border border-dashed border-line text-ink-faint">
                     <Camera size={22} />
-                    <span className="text-[10px]">Добавить</span>
+                    <span className="text-xs">Добавить</span>
                     <input
                       type="file"
                       accept="image/*,video/*"
@@ -613,7 +613,7 @@ export default function NewOrderPage() {
                     <FileText size={18} className="shrink-0 text-ink-soft" />
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-xs font-medium text-ink">{doc.name}</p>
-                      <p className="text-[10px] text-ink-faint">{doc.sizeKb} КБ</p>
+                      <p className="text-xs text-ink-faint">{doc.sizeKb} КБ</p>
                     </div>
                     <button
                       onClick={() => setDocuments((prev) => prev.filter((d) => d.id !== doc.id))}
@@ -640,7 +640,7 @@ export default function NewOrderPage() {
             </div>
 
             {uploadWarning && (
-              <p className="rounded-lg bg-red-50 px-3 py-2 text-xs text-red-500">
+              <p className="rounded-lg bg-danger-soft px-3 py-2 text-xs text-danger">
                 {uploadWarning}
               </p>
             )}
@@ -656,7 +656,7 @@ export default function NewOrderPage() {
                 <img src={media[0].dataUrl} alt="" className="aspect-[4/3] w-full object-cover" />
               )}
               <div className="space-y-1.5 p-3">
-                <p className="text-[11px] text-sage">
+                <p className="text-xs text-ok">
                   {category} · {subcategory}
                 </p>
                 <p className="font-display text-base font-bold">{serviceName}</p>
@@ -666,14 +666,14 @@ export default function NewOrderPage() {
                   {PREMISE_OPTIONS.find((p) => p.id === premise)?.label} ·{" "}
                   {condition === "rough" ? "Черновая" : "Чистовая"}
                 </p>
-                <p className="text-sm font-semibold text-accent">
+                <p className="text-sm font-semibold text-accent-ink">
                   {budgetMin.toLocaleString("ru-RU")} – {budgetMax.toLocaleString("ru-RU")} ₽
                   {perSqmEnabled &&
                     ` (${budgetPerSqmMin.toLocaleString("ru-RU")}–${budgetPerSqmMax.toLocaleString("ru-RU")} ₽/м²)`}
                 </p>
                 <p className="text-xs text-ink-soft">Срок: {deadlineDays} дн.</p>
                 <p className="whitespace-pre-wrap text-xs text-ink-soft">{description}</p>
-                <div className="flex items-center gap-3 pt-1 text-[11px] text-ink-faint">
+                <div className="flex items-center gap-3 pt-1 text-xs text-ink-faint">
                   <span>📷 {media.length} фото/видео</span>
                   {documents.length > 0 && <span>📎 {documents.length} файлов</span>}
                 </div>
@@ -689,7 +689,7 @@ export default function NewOrderPage() {
 
       <footer className="border-t border-line px-4 py-3 lg:px-8 lg:py-5">
         {publishError && (
-          <p className="mb-2 rounded-lg bg-red-50 px-3 py-2 text-xs text-red-500">
+          <p className="mb-2 rounded-lg bg-danger-soft px-3 py-2 text-xs text-danger">
             {publishError}
           </p>
         )}
@@ -697,14 +697,14 @@ export default function NewOrderPage() {
           <button
             disabled={!canNext}
             onClick={() => setStep(step + 1)}
-            className="w-full rounded-xl bg-accent py-3 text-center font-semibold text-white transition disabled:opacity-40 lg:w-auto lg:px-10"
+            className="w-full rounded-xl bg-accent py-3 text-center font-semibold text-night transition disabled:opacity-40 lg:w-auto lg:px-10"
           >
             Далее
           </button>
         ) : (
           <button
             onClick={publish}
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-accent py-3 text-center font-semibold text-white lg:w-auto lg:px-10"
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-accent py-3 text-center font-semibold text-night lg:w-auto lg:px-10"
           >
             <Check size={18} /> Опубликовать
           </button>

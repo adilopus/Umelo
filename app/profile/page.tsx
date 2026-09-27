@@ -45,11 +45,11 @@ export default function ProfilePage() {
 
   return (
     <div className="flex flex-1 flex-col">
-      <header className="border-b border-line px-4 py-3 lg:mx-auto lg:w-full lg:max-w-3xl lg:border-0 lg:px-0 lg:pb-4 lg:pt-8">
+      <header className="border-b border-line px-4 py-3 lg:mx-auto lg:w-full lg:max-w-content lg:border-0 lg:px-0 lg:pb-4 lg:pt-8">
         <p className="font-display text-lg font-extrabold">Профиль</p>
       </header>
 
-      <main className="flex-1 space-y-5 px-4 py-4 pb-24 lg:mx-auto lg:w-full lg:max-w-3xl lg:pb-12">
+      <main className="flex-1 space-y-5 px-4 py-4 pb-24 lg:mx-auto lg:w-full lg:max-w-content lg:pb-12">
         {isAuthenticated ? (
           <div className="flex items-center gap-3 rounded-2xl border border-line p-4">
             <div className="flex h-14 w-14 items-center justify-center rounded-full bg-surface">
@@ -72,7 +72,7 @@ export default function ProfilePage() {
               <button
                 onClick={() => setMode("login")}
                 className={`rounded-lg py-2 text-sm font-semibold ${
-                  mode === "login" ? "bg-accent-soft text-accent" : "text-ink-soft"
+                  mode === "login" ? "bg-accent-soft text-accent-ink" : "text-ink-soft"
                 }`}
               >
                 Войти
@@ -80,7 +80,7 @@ export default function ProfilePage() {
               <button
                 onClick={() => setMode("register")}
                 className={`rounded-lg py-2 text-sm font-semibold ${
-                  mode === "register" ? "bg-accent-soft text-accent" : "text-ink-soft"
+                  mode === "register" ? "bg-accent-soft text-accent-ink" : "text-ink-soft"
                 }`}
               >
                 Зарегистрироваться
@@ -111,11 +111,11 @@ export default function ProfilePage() {
             <button
               onClick={handleSubmit}
               disabled={!email.trim() || !password.trim()}
-              className="w-full rounded-xl bg-accent py-2.5 text-sm font-semibold text-white disabled:opacity-40"
+              className="w-full rounded-xl bg-accent py-2.5 text-sm font-semibold text-night disabled:opacity-40"
             >
               {mode === "login" ? "Войти" : "Создать аккаунт"}
             </button>
-            <p className="text-center text-[11px] text-ink-faint">
+            <p className="text-center text-xs text-ink-faint">
               Демо-режим: настоящей проверки пароля нет, вход выполняется по
               любому email — данные хранятся только в этом браузере.
             </p>
@@ -131,7 +131,7 @@ export default function ProfilePage() {
                 onClick={() => setRole(opt.id)}
                 className={`rounded-xl border py-2.5 text-sm font-medium ${
                   role === opt.id
-                    ? "border-accent bg-accent-soft text-accent"
+                    ? "border-accent bg-accent-soft text-accent-ink"
                     : "border-line text-ink-soft"
                 }`}
               >
@@ -143,7 +143,7 @@ export default function ProfilePage() {
                 onClick={() => setRole("admin")}
                 className={`flex items-center justify-center gap-1.5 rounded-xl border py-2.5 text-sm font-medium ${
                   role === "admin"
-                    ? "border-accent bg-accent-soft text-accent"
+                    ? "border-accent bg-accent-soft text-accent-ink"
                     : "border-line text-ink-soft"
                 }`}
               >
@@ -156,14 +156,14 @@ export default function ProfilePage() {
         {role === "admin" ? (
           <div className="space-y-2 rounded-2xl border border-line p-4">
             <p className="flex items-center gap-1.5 font-display text-sm font-bold">
-              <Crown size={16} className="text-accent" /> Администратор
+              <Crown size={16} className="text-accent-ink" /> Администратор
             </p>
             <p className="text-xs text-ink-soft">
               Полный доступ к управлению заказами, статьями и пользователями.
             </p>
             <Link
               href="/admin"
-              className="block w-full rounded-xl bg-accent py-2.5 text-center text-sm font-semibold text-white"
+              className="block w-full rounded-xl bg-accent py-2.5 text-center text-sm font-semibold text-night"
             >
               Открыть панель администратора
             </Link>
@@ -171,7 +171,7 @@ export default function ProfilePage() {
         ) : (
           <div className="space-y-2 rounded-2xl border border-line p-4">
             <p className="flex items-center gap-1.5 font-display text-sm font-bold">
-              <LayoutGrid size={16} className="text-accent" /> Личный кабинет
+              <LayoutGrid size={16} className="text-accent-ink" /> Личный кабинет
             </p>
             <p className="text-xs text-ink-soft">
               Статистика, избранное и подписка — а для исполнителя, блогера и
@@ -179,7 +179,7 @@ export default function ProfilePage() {
             </p>
             <Link
               href="/cabinet"
-              className="block w-full rounded-xl bg-accent py-2.5 text-center text-sm font-semibold text-white"
+              className="block w-full rounded-xl bg-accent py-2.5 text-center text-sm font-semibold text-night"
             >
               Открыть личный кабинет
             </Link>

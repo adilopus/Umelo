@@ -19,8 +19,7 @@ import { StatsPanel } from "@/components/StatsPanel";
 import { FavoritesPanel } from "@/components/FavoritesPanel";
 import { SubscriptionPanel } from "@/components/SubscriptionPanel";
 import { MasterProfilePanel } from "@/components/MasterProfilePanel";
-import { BloggerDashboard } from "@/components/BloggerDashboard";
-import { SellerDashboard } from "@/components/SellerDashboard";
+import { ContentDashboard } from "@/components/ContentDashboard";
 import { PersonalDataPanel } from "@/components/PersonalDataPanel";
 
 type TabId = "personal" | "stats" | "extra" | "favorites" | "subscription";
@@ -67,11 +66,11 @@ export default function CabinetPage() {
 
   return (
     <div className="flex flex-1 flex-col">
-      <header className="border-b border-line px-4 py-3 lg:mx-auto lg:w-full lg:max-w-3xl lg:border-0 lg:px-0 lg:pb-4 lg:pt-8">
+      <header className="border-b border-line px-4 py-3 lg:mx-auto lg:w-full lg:max-w-content lg:border-0 lg:px-0 lg:pb-4 lg:pt-8">
         <p className="font-display text-lg font-extrabold">Личный кабинет</p>
       </header>
 
-      <div className="flex gap-1 overflow-x-auto border-b border-line px-4 no-scrollbar lg:mx-auto lg:w-full lg:max-w-3xl lg:border-0 lg:px-0">
+      <div className="flex gap-1 overflow-x-auto border-b border-line px-4 no-scrollbar lg:mx-auto lg:w-full lg:max-w-content lg:border-0 lg:px-0">
         {tabs.map((t) => {
           const Icon = t.icon;
           const active = tab === t.id;
@@ -80,7 +79,7 @@ export default function CabinetPage() {
               key={t.id}
               onClick={() => setTab(t.id)}
               className={`flex shrink-0 items-center gap-1.5 border-b-2 px-3 py-2.5 text-xs font-semibold transition ${
-                active ? "border-accent text-accent" : "border-transparent text-ink-faint"
+                active ? "border-accent text-accent-ink" : "border-transparent text-ink-faint"
               }`}
             >
               <Icon size={14} /> {t.label}
@@ -89,11 +88,11 @@ export default function CabinetPage() {
         })}
       </div>
 
-      <main className="flex-1 overflow-y-auto px-4 py-4 pb-24 lg:mx-auto lg:w-full lg:max-w-3xl lg:pb-12">
+      <main className="flex-1 overflow-y-auto px-4 py-4 pb-24 lg:mx-auto lg:w-full lg:max-w-content lg:pb-12">
         {isAdmin && (
           <div className="mb-4 space-y-2 rounded-2xl border border-line p-4">
             <p className="flex items-center gap-1.5 font-display text-sm font-bold">
-              <Crown size={16} className="text-accent" /> Администратор
+              <Crown size={16} className="text-accent-ink" /> Администратор
             </p>
             <p className="text-xs text-ink-soft">
               Полный доступ к управлению заказами, статьями и пользователями —
@@ -101,7 +100,7 @@ export default function CabinetPage() {
             </p>
             <Link
               href="/admin"
-              className="block w-full rounded-xl bg-accent py-2.5 text-center text-sm font-semibold text-white"
+              className="block w-full rounded-xl bg-accent py-2.5 text-center text-sm font-semibold text-night"
             >
               Открыть панель администратора
             </Link>
@@ -111,8 +110,9 @@ export default function CabinetPage() {
         {tab === "personal" && <PersonalDataPanel />}
         {tab === "stats" && <StatsPanel />}
         {tab === "extra" && role === "master" && <MasterProfilePanel />}
-        {tab === "extra" && role === "blogger" && <BloggerDashboard />}
-        {tab === "extra" && role === "seller" && <SellerDashboard />}
+        {tab === "extra" && (role === "blogger" || role === "seller") && (
+          <ContentDashboard role={role} />
+        )}
         {tab === "favorites" && <FavoritesPanel />}
         {tab === "subscription" && <SubscriptionPanel />}
       </main>

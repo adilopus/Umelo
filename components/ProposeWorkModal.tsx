@@ -45,10 +45,10 @@ export function ProposeWorkModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={onClose}>
-      <div className="w-full max-w-lg rounded-3xl bg-white p-5 shadow-2xl" onClick={(e) => e.stopPropagation()}>
+      <div className="w-full max-w-lg rounded-3xl bg-paper p-5 shadow-pop" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between gap-3">
           <div>
-            <p className="text-xs font-bold uppercase tracking-wider text-accent">Предложение работы</p>
+            <p className="text-xs font-bold uppercase tracking-wider text-accent-ink">Предложение работы</p>
             <h2 className="mt-1 font-display text-xl font-extrabold">{specialistName}</h2>
           </div>
           <button onClick={onClose} className="rounded-full p-2 text-ink-soft hover:bg-surface" aria-label="Закрыть">
@@ -58,14 +58,14 @@ export function ProposeWorkModal({
 
         {sent ? (
           <div className="mt-5 rounded-2xl border border-accent/30 bg-accent-soft p-5 text-center">
-            <span className="mx-auto flex h-11 w-11 items-center justify-center rounded-full bg-accent text-white">
+            <span className="mx-auto flex h-11 w-11 items-center justify-center rounded-full bg-accent text-night">
               <Check size={22} />
             </span>
             <p className="mt-3 font-display text-base font-extrabold text-ink">Предложение отправлено</p>
             <p className="mt-1 text-sm text-ink-soft">
               Мастер увидит его в разделе «Предложения» и сможет принять, отложить или отклонить.
             </p>
-            <button onClick={onClose} className="mt-4 rounded-xl bg-accent px-5 py-2.5 text-sm font-bold text-white">
+            <button onClick={onClose} className="mt-4 rounded-xl bg-accent px-5 py-2.5 text-sm font-bold text-night">
               Готово
             </button>
           </div>
@@ -90,7 +90,7 @@ export function ProposeWorkModal({
                   <p className="mt-1 text-xs text-ink-soft">
                     № {order.code} · {order.address || "адрес не указан"}
                   </p>
-                  <p className="mt-2 flex items-center gap-2 text-xs font-semibold text-accent">
+                  <p className="mt-2 flex items-center gap-2 text-xs font-semibold text-accent-ink">
                     <Send size={13} /> Выбрать этот заказ
                   </p>
                 </button>

@@ -67,7 +67,7 @@ export default function OrderDetailPage() {
     return (
       <div className="flex flex-1 flex-col items-center justify-center gap-3 p-6 text-center">
         <p className="text-sm text-ink-soft">Заказ не найден или уже удалён.</p>
-        <button onClick={() => router.push("/feed")} className="text-sm font-semibold text-accent">
+        <button onClick={() => router.push("/feed")} className="text-sm font-semibold text-accent-ink">
           Вернуться в ленту
         </button>
       </div>
@@ -117,7 +117,7 @@ export default function OrderDetailPage() {
 
   return (
     <div className="flex flex-1 flex-col">
-      <header className="sticky top-0 z-10 flex items-center gap-3 border-b border-line bg-paper/95 px-4 py-3 backdrop-blur lg:mx-auto lg:w-full lg:max-w-3xl">
+      <header className="sticky top-0 z-10 flex items-center gap-3 border-b border-line bg-paper/95 px-4 py-3 backdrop-blur lg:mx-auto lg:w-full lg:max-w-content">
         <button
           onClick={() => router.back()}
           className="rounded-full p-1 text-ink-soft active:bg-surface"
@@ -128,7 +128,7 @@ export default function OrderDetailPage() {
         <p className="truncate font-display text-sm font-bold">{order.serviceName}</p>
       </header>
 
-      <main className="flex-1 overflow-y-auto pb-28 lg:mx-auto lg:w-full lg:max-w-3xl">
+      <main className="flex-1 overflow-y-auto pb-28 lg:mx-auto lg:w-full lg:max-w-content">
         {order.media.length > 0 && (
           <div className="relative aspect-[4/3] w-full bg-ink">
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -144,7 +144,7 @@ export default function OrderDetailPage() {
                     key={i}
                     onClick={() => setActiveMedia(i)}
                     className={`h-1.5 rounded-full transition-all ${
-                      i === activeMedia ? "w-5 bg-accent" : "w-1.5 bg-white/60"
+                      i === activeMedia ? "w-5 bg-accent" : "w-1.5 bg-paper/60"
                     }`}
                   />
                 ))}
@@ -157,31 +157,31 @@ export default function OrderDetailPage() {
           <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={copyCode}
-              className="flex items-center gap-1.5 rounded-full border border-line px-2.5 py-1 text-[11px] font-medium text-ink-soft active:bg-surface"
+              className="flex items-center gap-1.5 rounded-full border border-line px-2.5 py-1 text-xs font-medium text-ink-soft active:bg-surface"
             >
               <Copy size={12} /> № {order.code}
               {copied && <span className="text-ok">скопировано</span>}
             </button>
-            <span className="flex items-center gap-1 text-[11px] text-ink-faint">
+            <span className="flex items-center gap-1 text-xs text-ink-faint">
               <CalendarDays size={12} /> {formatOrderDate(order.createdAt)}
             </span>
-            <span className="flex items-center gap-1 text-[11px] text-ink-faint">
+            <span className="flex items-center gap-1 text-xs text-ink-faint">
               <Eye size={12} />{" "}
               {Number.isFinite(order.views) && order.views > 0
                 ? order.views
                 : "нет просмотров"}
             </span>
-            <span className="flex items-center gap-1 text-[11px] text-ink-faint">
+            <span className="flex items-center gap-1 text-xs text-ink-faint">
               <Send size={12} />
               {responses.length} {pluralize(responses.length, "отклик", "отклика", "откликов")}
             </span>
           </div>
 
           <div>
-            <p className="text-[11px] font-medium uppercase tracking-wide text-sage">
+            <p className="text-xs font-medium uppercase tracking-wide text-ok">
               {order.category} · {order.subcategory}
             </p>
-            <p className="mt-2 price-tag inline-block bg-accent px-3 py-1.5 font-display text-lg font-extrabold text-white">
+            <p className="mt-2 price-tag inline-block bg-accent px-3 py-1.5 font-display text-lg font-extrabold text-night">
               {order.budgetMin.toLocaleString("ru-RU")} – {order.budgetMax.toLocaleString("ru-RU")} ₽
             </p>
             {order.budgetPerSqmMin !== undefined && order.budgetPerSqmMax !== undefined && (
@@ -245,7 +245,7 @@ export default function OrderDetailPage() {
                   <FileText size={18} className="shrink-0 text-ink-soft" />
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-xs font-medium text-ink">{doc.name}</p>
-                    <p className="text-[10px] text-ink-faint">{doc.sizeKb} КБ</p>
+                    <p className="text-xs text-ink-faint">{doc.sizeKb} КБ</p>
                   </div>
                 </a>
               ))}
@@ -259,7 +259,7 @@ export default function OrderDetailPage() {
           )}
 
           {order.status === "cancelled" && (
-            <div className="rounded-xl bg-red-50 p-3 text-sm font-medium text-red-500">
+            <div className="rounded-xl bg-danger-soft p-3 text-sm font-medium text-danger">
               Заказ отменён заказчиком и больше не виден в общей ленте.
             </div>
           )}
@@ -291,22 +291,22 @@ export default function OrderDetailPage() {
                   placeholder="Опишите опыт в этом виде работ, сроки, что входит в цену…"
                   className="w-full resize-none rounded-lg border border-line px-3 py-2 text-sm"
                 />
-                <p className="mt-1 text-right text-[11px] text-ink-faint">
+                <p className="mt-1 text-right text-xs text-ink-faint">
                   {message.length}/500
                 </p>
               </div>
               {responseNotice && (
-                <p className="rounded-lg bg-red-50 px-3 py-2 text-xs text-red-500">
+                <p className="rounded-lg bg-danger-soft px-3 py-2 text-xs text-danger">
                   {responseNotice}
                 </p>
               )}
               <button
                 onClick={submitResponse}
-                className="flex w-full items-center justify-center gap-2 rounded-xl bg-accent py-2.5 font-semibold text-white"
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-accent py-2.5 font-semibold text-night"
               >
                 <Send size={16} /> Отправить отклик
               </button>
-              <p className="flex items-center justify-center gap-1 text-[11px] text-ink-faint">
+              <p className="flex items-center justify-center gap-1 text-xs text-ink-faint">
                 <Ticket size={12} />
                 {subscriptionActive
                   ? "У вас активна подписка — отклики без ограничений"
@@ -327,7 +327,7 @@ export default function OrderDetailPage() {
           {role === "customer" && order.status === "open" && (
             <Link
               href={`/specialists?orderId=${encodeURIComponent(order.id)}`}
-              className="flex w-full items-center justify-center gap-2 rounded-xl bg-accent py-3 text-sm font-bold text-white"
+              className="flex w-full items-center justify-center gap-2 rounded-xl bg-accent py-3 text-sm font-bold text-night"
             >
               Найти специалиста и предложить этот заказ
             </Link>
@@ -346,7 +346,7 @@ export default function OrderDetailPage() {
                     </p>
                   </div>
                   {(offer.status === "pending" || offer.status === "snoozed") && (
-                    <button onClick={() => updateOfferStatus(offer.id, "cancelled")} className="rounded-lg px-2.5 py-1.5 text-xs font-semibold text-ink-soft hover:bg-white">Отменить</button>
+                    <button onClick={() => updateOfferStatus(offer.id, "cancelled")} className="rounded-lg px-2.5 py-1.5 text-xs font-semibold text-ink-soft hover:bg-paper">Отменить</button>
                   )}
                 </div>
               ))}
@@ -366,22 +366,22 @@ export default function OrderDetailPage() {
               )}
               {responses.map((r) => (
                 <div key={r.id} className="space-y-2 rounded-xl border border-line p-3">
-                  <p className="font-semibold text-accent">{r.price.toLocaleString("ru-RU")} ₽</p>
+                  <p className="font-semibold text-accent-ink">{r.price.toLocaleString("ru-RU")} ₽</p>
                   {r.message && <p className="text-sm text-ink-soft">{r.message}</p>}
                   <button
                     onClick={hireResponder}
-                    className="flex w-full items-center justify-center gap-2 rounded-xl bg-accent py-2 text-sm font-semibold text-white"
+                    className="flex w-full items-center justify-center gap-2 rounded-xl bg-accent py-2 text-sm font-semibold text-night"
                   >
                     <Check size={15} /> Предложить работу (1 билет)
                   </button>
                 </div>
               ))}
               {inviteError && (
-                <p className="rounded-lg bg-red-50 px-3 py-2 text-xs text-red-500">
+                <p className="rounded-lg bg-danger-soft px-3 py-2 text-xs text-danger">
                   {inviteError}
                 </p>
               )}
-              <p className="flex items-center justify-center gap-1 text-[11px] text-ink-faint">
+              <p className="flex items-center justify-center gap-1 text-xs text-ink-faint">
                 <Ticket size={12} />
                 {subscriptionActive
                   ? "У вас активна подписка — приглашения без ограничений"

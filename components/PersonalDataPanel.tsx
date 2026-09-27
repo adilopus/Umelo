@@ -198,7 +198,7 @@ export function PersonalDataPanel() {
 
       <button
         onClick={handleSave}
-        className="flex w-full items-center justify-center gap-2 rounded-xl bg-accent py-2.5 text-sm font-semibold text-white"
+        className="flex w-full items-center justify-center gap-2 rounded-xl bg-accent py-2.5 text-sm font-semibold text-night"
       >
         {saved ? (
           <>
@@ -208,7 +208,7 @@ export function PersonalDataPanel() {
           "Сохранить"
         )}
       </button>
-      <p className="text-center text-[11px] text-ink-faint">
+      <p className="text-center text-xs text-ink-faint">
         Данные хранятся только в этом браузере (демо-режим без бэкенда).
       </p>
     </div>

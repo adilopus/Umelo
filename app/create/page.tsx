@@ -31,15 +31,15 @@ export default function CreatePage() {
   const options = OPTIONS[role];
 
   return (
-    <main className="min-h-[calc(100vh-64px)] bg-[#f7f8f7] px-4 py-8 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-3xl">
-        <p className="text-xs font-bold uppercase tracking-[0.14em] text-accent">UMELO</p>
+    <main className="min-h-[calc(100vh-64px)] bg-surface px-4 py-8 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-content">
+        <p className="text-xs font-bold uppercase tracking-[0.14em] text-accent-ink">UMELO</p>
         <h1 className="mt-1 font-display text-3xl font-extrabold text-ink">Создать</h1>
         <p className="mt-2 text-sm text-ink-soft">Выберите действие в соответствии с вашей ролью.</p>
 
         <div className="mt-7 grid gap-3 sm:grid-cols-2">
           {options.map(({ title, text, href, icon: Icon }) => (
-            <Link key={href} href={href} className="group rounded-2xl border border-line bg-white p-5 transition hover:-translate-y-0.5 hover:border-accent hover:shadow-md">
+            <Link key={href} href={href} className="group rounded-2xl border border-line bg-paper p-5 transition hover:-translate-y-0.5 hover:border-accent hover:shadow-card-hover">
               <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-accent-soft text-ink">
                 <Icon size={21} />
               </div>
@@ -48,14 +48,14 @@ export default function CreatePage() {
                   <h2 className="font-display text-base font-extrabold text-ink">{title}</h2>
                   <p className="mt-1 text-xs leading-5 text-ink-soft">{text}</p>
                 </div>
-                <ArrowRight size={18} className="shrink-0 text-ink-faint transition group-hover:text-accent" />
+                <ArrowRight size={18} className="shrink-0 text-ink-faint transition group-hover:text-accent-ink" />
               </div>
             </Link>
           ))}
         </div>
 
-        <div className="mt-6 rounded-2xl bg-[#111419] p-5 text-white">
-          <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-accent">Важно</p>
+        <div className="mt-6 rounded-2xl bg-night p-5 text-white">
+          <p className="text-xs font-bold uppercase tracking-[0.14em] text-accent">Важно</p>
           <p className="mt-2 font-display text-base font-extrabold">«Предложить работу» не создаёт новый заказ.</p>
           <p className="mt-1 text-xs leading-5 text-white/60">Для существующего заказа специалист выбирается отдельно — через раздел «Специалисты» или страницу самого заказа.</p>
         </div>

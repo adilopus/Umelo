@@ -56,3 +56,26 @@ export function formatDate(timestamp: number): string {
 
 /** @deprecated используйте formatDate — оставлено для обратной совместимости */
 export const formatOrderDate = formatDate;
+
+/**
+ * Бюджет заказа. Раньше один и тот же вывод существовал в трёх вариантах:
+ * `OrderCard.formatBudget`, `orders.formatBudgetValue` и 13 инлайновых
+ * `toLocaleString("ru-RU")` в вёрстке — с разными пробелами и разной
+ * склейкой диапазона.
+ */
+export function formatBudget(min: number, max: number): string {
+  if (min === max) return `${min.toLocaleString("ru-RU")} ₽`;
+  return `${min.toLocaleString("ru-RU")}–${max.toLocaleString("ru-RU")} ₽`;
+}
+
+/** Число с неразрывным пробелом — для площадей, счётчиков, бюджета за м². */
+export function formatNumber(n: number): string {
+  return n.toLocaleString("ru-RU");
+}
+
+/** Срок в днях в компактном виде: «5 дн.» / «~3 мес.». */
+export function formatDeadline(days: number): string {
+  if (days <= 30) return `${days} дн.`;
+  const months = Math.round(days / 30);
+  return `~${months} мес.`;
+}

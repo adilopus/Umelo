@@ -52,8 +52,8 @@ export function DesktopTopNav() {
   }
 
   return (
-    <header className="sticky top-0 z-30 hidden border-b border-[#25292e] bg-[#111419] text-white shadow-sm lg:block">
-      <div className="mx-auto max-w-[1440px] px-6">
+    <header className="sticky top-0 z-30 hidden border-b border-night-line bg-night text-white shadow-nav lg:block">
+      <div className="mx-auto max-w-shell px-6">
         <div className="flex h-14 items-center gap-4">
           <Link href="/feed" className="flex shrink-0 items-center gap-2" aria-label="UMELO">
             <img src="/icons/logo-mark.png" alt="" className="h-8 w-8 object-contain" />
@@ -74,26 +74,26 @@ export function DesktopTopNav() {
               }}
               onKeyDown={(e) => e.key === "Enter" && handleSearch()}
               placeholder="Поиск по номеру заказа"
-              className={`h-9 w-full rounded-full border bg-white/10 pl-9 pr-3 text-xs text-white outline-none placeholder:text-white/35 focus:bg-white/15 ${
-                searchError ? "border-red-400" : "border-white/10"
+              className={`h-9 w-full rounded-full border bg-paper/10 pl-9 pr-3 text-xs text-white outline-none placeholder:text-white/35 focus:bg-paper/15 ${
+                searchError ? "border-danger" : "border-paper/15"
               }`}
               aria-label="Поиск в UMELO"
             />
           </div>
 
           <div className="ml-auto flex shrink-0 items-center gap-2">
-            <button className="relative flex h-9 w-9 items-center justify-center rounded-full text-white/70 hover:bg-white/10 hover:text-white" aria-label="Уведомления">
+            <button className="relative flex h-9 w-9 items-center justify-center rounded-full text-white/70 hover:bg-paper/10 hover:text-white" aria-label="Уведомления">
               <Bell size={17} />
               <span className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-accent" />
             </button>
-            <Link href="/chats" className="flex h-9 w-9 items-center justify-center rounded-full text-white/70 hover:bg-white/10 hover:text-white" aria-label="Чаты">
+            <Link href="/chats" className="flex h-9 w-9 items-center justify-center rounded-full text-white/70 hover:bg-paper/10 hover:text-white" aria-label="Чаты">
               <MessageCircle size={17} />
             </Link>
-            <Link href="/create" className="flex items-center gap-1.5 rounded-full bg-accent px-3.5 py-2 text-xs font-extrabold text-white transition hover:bg-accent-dark">
+            <Link href="/create" className="flex items-center gap-1.5 rounded-full bg-accent px-4 py-2 text-sm font-bold text-night transition hover:bg-accent-dark">
               <Plus size={15} strokeWidth={2.7} /> Создать
             </Link>
-            <Link href="/profile" className="flex items-center gap-2 rounded-full pl-1.5 pr-1.5 py-0.5 hover:bg-white/5">
-              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#343a40] text-[11px] font-bold text-white">
+            <Link href="/profile" className="flex items-center gap-2 rounded-full py-1 pl-1.5 pr-1.5 transition hover:bg-paper/5">
+              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-night-soft text-xs font-bold text-white">
                 {(authName || "АП").slice(0, 2).toUpperCase()}
               </span>
               <span className="max-w-24 truncate text-xs text-white/80">{authName || "Профиль"}</span>
@@ -109,8 +109,8 @@ export function DesktopTopNav() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`relative shrink-0 whitespace-nowrap px-3 pb-2.5 pt-1 text-[13px] font-semibold transition ${
-                  active ? "text-white" : "text-white/65 hover:bg-white/5 hover:text-white"
+                className={`relative shrink-0 whitespace-nowrap px-3 pb-2.5 pt-1 text-sm font-semibold transition ${
+                  active ? "text-white" : "text-white/65 hover:bg-paper/5 hover:text-white"
                 }`}
               >
                 {link.label}

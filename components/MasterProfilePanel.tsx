@@ -36,7 +36,7 @@ function TagEditor({
       <label className="mb-1 block text-xs font-medium text-ink-soft">{label}</label>
       <div className="flex flex-wrap gap-1.5">
         {values.map((value) => (
-          <span key={value} className="flex items-center gap-1 rounded-full bg-surface px-2.5 py-1 text-[11px] font-bold text-ink-soft">
+          <span key={value} className="flex items-center gap-1 rounded-full bg-surface px-2.5 py-1 text-xs font-bold text-ink-soft">
             {value}
             <button onClick={() => onChange(values.filter((v) => v !== value))} aria-label={`Убрать ${value}`}>
               <X size={12} />
@@ -91,7 +91,7 @@ export function MasterProfilePanel() {
   return (
     <div className="space-y-5">
       <div className="flex items-center gap-3 rounded-2xl border border-line p-4">
-        <span className="flex h-11 w-11 items-center justify-center rounded-full bg-accent-soft text-accent">
+        <span className="flex h-11 w-11 items-center justify-center rounded-full bg-accent-soft text-accent-ink">
           <Wrench size={20} />
         </span>
         <div>
@@ -147,7 +147,7 @@ export function MasterProfilePanel() {
         <button
           onClick={() => set("verified", !draft.verified)}
           className={`flex w-full items-center gap-2 rounded-lg border px-3 py-2.5 text-left text-sm transition ${
-            draft.verified ? "border-sage bg-sage-soft text-sage" : "border-line text-ink-soft"
+            draft.verified ? "border-ok bg-ok-soft text-ok" : "border-line text-ink-soft"
           }`}
         >
           <ShieldCheck size={16} />
@@ -158,7 +158,7 @@ export function MasterProfilePanel() {
 
       <button
         onClick={handleSave}
-        className="flex w-full items-center justify-center gap-2 rounded-xl bg-accent py-2.5 text-sm font-semibold text-white"
+        className="flex w-full items-center justify-center gap-2 rounded-xl bg-accent py-2.5 text-sm font-semibold text-night"
       >
         {saved ? (
           <>
@@ -181,7 +181,7 @@ export function MasterProfilePanel() {
           </div>
           <Link
             href="/portfolio"
-            className="flex items-center gap-1.5 rounded-xl bg-accent px-3.5 py-2 text-xs font-bold text-white"
+            className="flex items-center gap-1.5 rounded-xl bg-accent px-3.5 py-2 text-xs font-bold text-night"
           >
             <Plus size={14} /> Добавить
           </Link>
@@ -195,8 +195,8 @@ export function MasterProfilePanel() {
             </div>
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-bold text-ink">{item.title}</p>
-              <p className="text-[11px] text-ink-soft">{item.category}</p>
-              <div className="mt-1 flex items-center gap-3 text-[11px] text-ink-faint">
+              <p className="text-xs text-ink-soft">{item.category}</p>
+              <div className="mt-1 flex items-center gap-3 text-xs text-ink-faint">
                 <span className="flex items-center gap-1">
                   <Star size={11} /> {item.likes}
                 </span>
@@ -214,7 +214,7 @@ export function MasterProfilePanel() {
         </Link>
       </div>
 
-      <p className="flex items-center justify-center gap-1.5 text-center text-[11px] text-ink-faint">
+      <p className="flex items-center justify-center gap-1.5 text-center text-xs text-ink-faint">
         <BadgeCheck size={12} /> Профиль и работы видны в каталоге специалистов.
       </p>
     </div>

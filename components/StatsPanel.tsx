@@ -1,64 +1,49 @@
 "use client";
 
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from "recharts";
-import { Eye, MessageCircle, ThumbsUp } from "lucide-react";
+import { ThumbsUp } from "lucide-react";
 import { useAppStore } from "@/lib/store";
 import { Order } from "@/lib/types";
 import { buildAuthorRanking, authorRankLabel } from "@/lib/ranking";
+import { STATUS_META } from "@/lib/status";
+import { CONTENT_ROLES, contentAuthorName, type ContentRole } from "@/lib/contentRoles";
+import { Stat } from "@/components/ui/Stat";
 
-const STATUS_LABELS: Record<Order["status"], string> = {
-  open: "Ищем мастера",
-  matched: "В работе",
-  cancelled: "Отменён",
-  closed: "Завершён",
-};
+const STATUS_ORDER: Order["status"][] = ["open", "matched", "cancelled", "closed"];
+
+/** Цвета диаграммы берём из палитры — раньше здесь жил оранжевый #FF6B1A. */
 const STATUS_COLORS: Record<Order["status"], string> = {
-  open: "#FF6B1A",
+  open: "#F5C400",
   matched: "#1F8A55",
-  cancelled: "#DC2626",
+  cancelled: "#C93B3B",
   closed: "#A6A9B0",
 };
 
-function StatCard({ label, value }: { label: string; value: string | number }) {
-  return (
-    <div className="rounded-xl border border-line p-3 text-center">
-      <p className="font-display text-xl font-extrabold text-ink">{value}</p>
-      <p className="text-[11px] text-ink-soft">{label}</p>
-    </div>
-  );
-}
-
-/** Статистика для Заказчика: свои заказы по статусам + просмотры + чаты. */
-function CustomerStats() {
-  const orders = useAppStore((s) => s.orders);
-  const byStatus = (["open", "matched", "cancelled", "closed"] as Order["status"][]).map(
-    (status) => ({
-      status,
-      label: STATUS_LABELS[status],
-      count: orders.filter((o) => o.status === status).length,
-      color: STATUS_COLORS[status],
-    })
-  );
-  const totalViews = orders.reduce((s, o) => s + (Number.isFinite(o.views) ? o.views : 0), 0);
-  const chatsCount = orders.filter((o) => o.status === "matched").length;
+function StatusChart({
+  title,
+  counts,
+}: {
+  title: string;
+  counts: Record<Order["status"], number>;
+}) {
+  const data = STATUS_ORDER.map((status) => ({
+    status,
+    label: STATUS_META[status].label,    count: counts[status],
+    color: STATUS_COLORS[status],
+  }));
 
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-3 gap-2">
-        <StatCard label="Всего заказов" value={orders.length} />
-        <StatCard label="Просмотров" value={totalViews} />
-        <StatCard label="Активных чатов" value={chatsCount} />
-      </div>
+    <>
       <div>
-        <p className="mb-2 text-xs font-semibold text-ink-soft">Заказы по статусам</p>
+        <p className="mb-2 text-xs font-semibold text-ink-soft">{title}</p>
         <div className="h-48 rounded-xl border border-line p-2">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={byStatus}>
+            <BarChart data={data}>
               <XAxis dataKey="label" tick={{ fontSize: 11 }} interval={0} />
               <YAxis allowDecimals={false} tick={{ fontSize: 11 }} width={24} />
               <Tooltip />
               <Bar dataKey="count" radius={[6, 6, 0, 0]}>
-                {byStatus.map((d) => (
+                {data.map((d) => (
                   <Cell key={d.status} fill={d.color} />
                 ))}
               </Bar>
@@ -67,161 +52,135 @@ function CustomerStats() {
         </div>
       </div>
       <div className="space-y-1.5">
-        {byStatus.map((d) => (
+        {data.map((d) => (
           <div key={d.status} className="flex items-center justify-between text-sm">
             <span className="flex items-center gap-2 text-ink-soft">
-              <span
-                className="h-2.5 w-2.5 rounded-full"
-                style={{ backgroundColor: d.color }}
-              />
+              <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: d.color }} />
               {d.label}
             </span>
             <span className="font-semibold text-ink">{d.count}</span>
           </div>
         ))}
       </div>
-    </div>
+    </>
   );
 }
 
-/** Статистика для Исполнителя: заказы, на которые откликнулся, по статусам. */
-function MasterStats() {
+function countByStatus(orders: Order[]) {
+  return STATUS_ORDER.reduce(
+    (acc, status) => {
+      acc[status] = orders.filter((o) => o.status === status).length;
+      return acc;
+    },
+    {} as Record<Order["status"], number>
+  );
+}
+
+/** Статистика заказов. Заказчик и Исполнитель отличались только подписями
+ * трёх плиток и заголовком графика — оба собраны из одного компонента. */
+function OrderStats({ master }: { master: boolean }) {
   const orders = useAppStore((s) => s.orders);
   const responses = useAppStore((s) => s.responses);
-  const respondedIds = new Set(responses.map((r) => r.orderId));
-  const myOrders = orders.filter((o) => respondedIds.has(o.id));
 
-  const byStatus = (["open", "matched", "cancelled", "closed"] as Order["status"][]).map(
-    (status) => ({
-      status,
-      label: STATUS_LABELS[status],
-      count: myOrders.filter((o) => o.status === status).length,
-      color: STATUS_COLORS[status],
-    })
-  );
-  const totalViews = myOrders.reduce((s, o) => s + (Number.isFinite(o.views) ? o.views : 0), 0);
-  const chatsCount = myOrders.filter((o) => o.status === "matched").length;
+  const mine = master
+    ? orders.filter((o) => responses.some((r) => r.orderId === o.id))
+    : orders;
+
+  const totalViews = mine.reduce((s, o) => s + (Number.isFinite(o.views) ? o.views : 0), 0);
+  const chatsCount = mine.filter((o) => o.status === "matched").length;
 
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-3 gap-2">
-        <StatCard label="Откликов подано" value={responses.length} />
-        <StatCard label="Просмотров заказов" value={totalViews} />
-        <StatCard label="Активных чатов" value={chatsCount} />
+        {master ? (
+          <>
+            <Stat label="Откликов подано" value={responses.length} />
+            <Stat label="Просмотров" value={totalViews} />
+            <Stat label="Активных чатов" value={chatsCount} />
+          </>
+        ) : (
+          <>
+            <Stat label="Всего заказов" value={orders.length} />
+            <Stat label="Просмотров" value={totalViews} />
+            <Stat label="Активных чатов" value={chatsCount} />
+          </>
+        )}
       </div>
-      <div>
-        <p className="mb-2 text-xs font-semibold text-ink-soft">Мои заказы по статусам</p>
-        <div className="h-48 rounded-xl border border-line p-2">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={byStatus}>
-              <XAxis dataKey="label" tick={{ fontSize: 11 }} interval={0} />
-              <YAxis allowDecimals={false} tick={{ fontSize: 11 }} width={24} />
-              <Tooltip />
-              <Bar dataKey="count" radius={[6, 6, 0, 0]}>
-                {byStatus.map((d) => (
-                  <Cell key={d.status} fill={d.color} />
-                ))}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
+      <StatusChart
+        title={master ? "Мои заказы по статусам" : "Заказы по статусам"}
+        counts={countByStatus(mine)}
+      />
     </div>
   );
 }
 
-const BLOGGER_NAME = "Вы (блогер)";
+const CHART_AXIS = { tick: { fontSize: 11 }, width: 24 } as const;
+const CHART_TILTED = { tick: { fontSize: 10 }, interval: 0 as const, angle: -20, textAnchor: "end" as const, height: 50 };
 
-/** Статистика для Блогера: контент, просмотры, рейтинг среди авторов. */
-function BloggerStats() {
+/** Статистика публикаций. Блогер и продавец отличались только набором
+ * метрик и подписью — раньше это были два почти одинаковых компонента. */
+function ContentStats({ role }: { role: ContentRole }) {
+  const cfg = CONTENT_ROLES[role];
   const articles = useAppStore((s) => s.articles);
-  const myContent = articles.filter((a) => a.authorName === BLOGGER_NAME);
-  const totalViews = myContent.reduce((s, a) => s + (Number.isFinite(a.views) ? a.views : 0), 0);
-  const totalLikes = myContent.reduce((s, a) => s + (Number.isFinite(a.likes) ? a.likes : 0), 0);
+
+  const mine = articles.filter((a) => a.authorName === contentAuthorName(role));
+  const totalViews = mine.reduce((s, a) => s + (Number.isFinite(a.views) ? a.views : 0), 0);
+  const secondary = mine.reduce(
+    (s, a) => s + (Number.isFinite(cfg.trackClicks ? a.clicks : a.likes) ? (cfg.trackClicks ? a.clicks : a.likes) : 0),
+    0
+  );
 
   const ranking = buildAuthorRanking(articles);
-  const myRank = ranking.find((r) => r.authorName === BLOGGER_NAME)?.rank;
+  const myRank = ranking.find((r) => r.authorName === contentAuthorName(role))?.rank;
 
-  const byItem = myContent
-    .slice()
-    .sort((a, b) => b.views - a.views)
-    .slice(0, 6)
-    .map((a) => ({ name: a.title.slice(0, 14) + (a.title.length > 14 ? "…" : ""), views: a.views }));
-
-  return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-3 gap-2">
-        <StatCard label="Материалов" value={myContent.length} />
-        <StatCard label="Просмотров" value={totalViews} />
-        <StatCard label="Лайков" value={totalLikes} />
-      </div>
-      <div className="rounded-xl border border-line p-3">
-        <p className="flex items-center gap-1.5 text-xs font-semibold text-ink-soft">
-          <ThumbsUp size={13} /> Рейтинг среди авторов
-        </p>
-        <p className="mt-1 font-display text-lg font-extrabold text-accent">
-          {authorRankLabel(myRank)}
-        </p>
-        <p className="text-[11px] text-ink-faint">
-          Считается по сумме лайков и просмотров всех ваших материалов.
-        </p>
-      </div>
-      {byItem.length > 0 && (
-        <div>
-          <p className="mb-2 text-xs font-semibold text-ink-soft">Просмотры по материалам</p>
-          <div className="h-48 rounded-xl border border-line p-2">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={byItem}>
-                <XAxis dataKey="name" tick={{ fontSize: 10 }} interval={0} angle={-20} textAnchor="end" height={50} />
-                <YAxis allowDecimals={false} tick={{ fontSize: 11 }} width={24} />
-                <Tooltip />
-                <Bar dataKey="views" fill="#FF6B1A" radius={[6, 6, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-const SELLER_NAME = "Вы (продавец)";
-
-/** Статистика для Продавца: анонсы, просмотры, переходы по ссылкам. */
-function SellerStats() {
-  const articles = useAppStore((s) => s.articles);
-  const myAds = articles.filter((a) => a.authorName === SELLER_NAME);
-  const totalViews = myAds.reduce((s, a) => s + (Number.isFinite(a.views) ? a.views : 0), 0);
-  const totalClicks = myAds.reduce((s, a) => s + (Number.isFinite(a.clicks) ? a.clicks : 0), 0);
-
-  const byItem = myAds
+  const byItem = mine
     .slice()
     .sort((a, b) => b.views - a.views)
     .slice(0, 6)
     .map((a) => ({
       name: a.title.slice(0, 14) + (a.title.length > 14 ? "…" : ""),
       views: a.views,
-      clicks: a.clicks,
+      ...(cfg.trackClicks ? { clicks: a.clicks } : {}),
     }));
 
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-3 gap-2">
-        <StatCard label="Анонсов" value={myAds.length} />
-        <StatCard label="Просмотров" value={totalViews} />
-        <StatCard label="Переходов" value={totalClicks} />
+        <Stat label={cfg.trackClicks ? "Анонсов" : "Публикаций"} value={mine.length} />
+        <Stat label="Просмотров" value={totalViews} />
+        <Stat label={cfg.trackClicks ? "Переходов" : "Лайков"} value={secondary} />
       </div>
+
+      {!cfg.trackClicks && (
+        <div className="rounded-xl border border-line p-3">
+          <p className="flex items-center gap-1.5 text-xs font-semibold text-ink-soft">
+            <ThumbsUp size={13} /> Место среди авторов
+          </p>
+          <p className="mt-1 font-display text-lg font-extrabold text-accent-ink">
+            {authorRankLabel(myRank)}
+          </p>
+          <p className="mt-0.5 text-xs leading-relaxed text-ink-faint">
+            Рейтинг строится по просмотрам и лайкам: больше внимания авторам
+            с вовлечённой аудиторией.
+          </p>
+        </div>
+      )}
+
       {byItem.length > 0 && (
         <div>
-          <p className="mb-2 text-xs font-semibold text-ink-soft">Просмотры и переходы по анонсам</p>
+          <p className="mb-2 text-xs font-semibold text-ink-soft">
+            {cfg.trackClicks ? "Просмотры и переходы по анонсам" : "Просмотры по публикациям"}
+          </p>
           <div className="h-48 rounded-xl border border-line p-2">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={byItem}>
-                <XAxis dataKey="name" tick={{ fontSize: 10 }} interval={0} angle={-20} textAnchor="end" height={50} />
-                <YAxis allowDecimals={false} tick={{ fontSize: 11 }} width={24} />
+                <XAxis dataKey="name" {...CHART_TILTED} />
+                <YAxis allowDecimals={false} {...CHART_AXIS} />
                 <Tooltip />
-                <Bar dataKey="views" fill="#1F8A55" radius={[6, 6, 0, 0]} name="Просмотры" />
-                <Bar dataKey="clicks" fill="#FF6B1A" radius={[6, 6, 0, 0]} name="Переходы" />
+                <Bar dataKey="views" fill="#F5C400" radius={[6, 6, 0, 0]} name="Просмотры" />
+                {cfg.trackClicks && (
+                  <Bar dataKey="clicks" fill="#1F8A55" radius={[6, 6, 0, 0]} name="Переходы" />
+                )}
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -233,8 +192,8 @@ function SellerStats() {
 
 export function StatsPanel() {
   const role = useAppStore((s) => s.role);
-  if (role === "master") return <MasterStats />;
-  if (role === "blogger") return <BloggerStats />;
-  if (role === "seller") return <SellerStats />;
-  return <CustomerStats />;
+  if (role === "master") return <OrderStats master />;
+  if (role === "blogger") return <ContentStats role="blogger" />;
+  if (role === "seller") return <ContentStats role="seller" />;
+  return <OrderStats master={false} />;
 }
