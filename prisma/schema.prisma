@@ -1,0 +1,369 @@
+// ─────────────────────────────────────────────────────────────────────────
+// UMELO — схема базы данных (PostgreSQL + Prisma)
+//
+// Переносит текущую модель данных из lib/types.ts (localStorage/zustand) в
+// настоящую реляционную БД. Рассчитано на бюджетный self-hosted вариант на
+// российском VPS — см. docker-compose.yml и README-DATABASE.md рядом.
+// ─────────────────────────────────────────────────────────────────────────
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ── Пользователи и роли ────────────────────────────────────────────────
+
+enum Role {
+  CUSTOMER
+  MASTER
+  BLOGGER
+  SELLER
+  ADMIN
+}
+
+enum UserStatus {
+  ACTIVE
+  BANNED
+}
+
+model User {
+  id           String     @id @default(cuid())
+  role         Role       @default(CUSTOMER)
+  status       UserStatus @default(ACTIVE)
+
+  // Авторизация — email и/или телефон, оба уникальны и опциональны
+  // (для российского рынка вход по номеру телефона + SMS-код часто основной)
+  email        String?    @unique
+  phone        String?    @unique
+  passwordHash String? // bcrypt/argon2-хэш, никогда не хранить пароль в открытом виде
+
+  // "Мои данные" — общий раздел кабинета для всех ролей (перенесено из
+  // lib/types.ts PersonalData 1-в-1, просто теперь это колонки, а не JSON)
+  nickname   String?
+  fullName   String?
+  avatarUrl  String? // ссылка на объектное хранилище, не base64
+  birthDate  DateTime? @db.Date
+  city       String?
+  vk         String?
+  telegram   String?
+  whatsapp   String?
+  bio        String?   @db.Text
+
+  // Экономика билетов/подписки
+  ticketsBalance     Int      @default(5)
+  subscriptionActive Boolean  @default(false)
+  subscriptionUntil  DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Связи
+  orders            Order[]             @relation("CustomerOrders")
+  responses         Response[]
+  chatMessages      ChatMessage[]
+  articles          Article[]
+  favorites         Favorite[]
+  likes             Like[]
+  ticketTx          TicketTransaction[]
+  masterAnketa      MasterAnketa?
+  freeResponseUsage FreeResponseUsage[]
+  specialistOffers  WorkOffer[]        @relation("SpecialistOffers")
+
+  @@index([role])
+}
+
+// Анкета мастера — вынесена отдельной таблицей (1-к-1 с User), а не
+// колонками в User: у остальных ролей эти поля просто не нужны
+model MasterAnketa {
+  id                 String  @id @default(cuid())
+  userId             String  @unique
+  user               User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ratingAvg          Float? // среднее за последние 6 месяцев — считается отдельным cron/job
+  insuranceConfirmed Boolean @default(false)
+  tools              String[] // Postgres умеет массивы нативно — не нужна отдельная таблица
+
+  portfolio PortfolioItem[]
+}
+
+model PortfolioItem {
+  id          String       @id @default(cuid())
+  anketaId    String
+  anketa      MasterAnketa @relation(fields: [anketaId], references: [id], onDelete: Cascade)
+  beforeUrl   String
+  afterUrl    String
+  description String?
+  createdAt   DateTime     @default(now())
+}
+
+// ── Справочник категорий/услуг (ваш job_category.json + добавленный
+//    "Клининг и вывоз мусора") — теперь таблица, а не статичный файл в бандле,
+//    можно редактировать из админки без деплоя ────────────────────────────
+model JobCategory {
+  id          String @id @default(cuid())
+  category    String
+  subcategory String
+  serviceName String
+  workType    String
+  objectType  String
+
+  @@index([category, subcategory])
+}
+
+// ── Заказы ──────────────────────────────────────────────────────────────
+
+enum PremiseType {
+  NEW
+  SECONDARY
+  COMMERCIAL
+  COUNTRY
+}
+
+enum ConditionType {
+  ROUGH
+  FINISHED
+}
+
+enum OrderStatus {
+  OPEN
+  MATCHED
+  CANCELLED
+  CLOSED
+}
+
+model Order {
+  id       String @id @default(cuid())
+  // Публичный номер заказа для поиска (XKPQ-48213) — отдельно от id
+  code     String @unique
+
+  customerId  String
+  customer    User   @relation("CustomerOrders", fields: [customerId], references: [id])
+
+  category    String
+  subcategory String
+  serviceName String
+
+  areaSqm      Int
+  areaOver1000 Boolean @default(false)
+  premise      PremiseType
+  condition    ConditionType
+  address      String
+
+  // Координаты — на будущее для PostGIS: сейчас в демо-версии distanceKm был
+  // захардкожен нулём, с полями ниже + расширением postgis считается по-настоящему
+  latitude  Float?
+  longitude Float?
+
+  budgetMin       Int
+  budgetMax       Int
+  budgetPerSqmMin Int?
+  budgetPerSqmMax Int?
+
+  deadlineDays Int
+  description  String @db.Text
+
+  views  Int         @default(0)
+  status OrderStatus @default(OPEN)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  media     OrderMedia[]
+  documents OrderDocument[]
+  responses Response[]
+  messages  ChatMessage[]
+  offers   WorkOffer[]
+
+  @@index([status])
+  @@index([category, subcategory])
+  @@index([customerId])
+}
+
+enum MediaKind {
+  IMAGE
+  VIDEO
+}
+
+model OrderMedia {
+  id      String    @id @default(cuid())
+  orderId String
+  order   Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  url     String // ссылка в объектном хранилище (S3-совместимом), не base64
+  kind    MediaKind @default(IMAGE)
+  isCover Boolean   @default(false)
+}
+
+model OrderDocument {
+  id      String @id @default(cuid())
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  name    String
+  url     String
+  sizeKb  Int
+}
+
+model Response {
+  id        String   @id @default(cuid())
+  orderId   String
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  masterId  String
+  master    User     @relation(fields: [masterId], references: [id])
+  message   String   @db.Text
+  price     Int
+  createdAt DateTime @default(now())
+
+  @@index([orderId])
+  @@index([masterId])
+}
+
+model ChatMessage {
+  id        String   @id @default(cuid())
+  orderId   String
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id])
+  text      String   @db.Text
+  createdAt DateTime @default(now())
+
+  @@index([orderId, createdAt])
+}
+
+// Дневной лимит бесплатных откликов мастера — раньше это было одно поле
+// freeResponses:{date,count} в сторе на клиенте (и обходилось через консоль
+// браузера за 10 секунд). Теперь считается на сервере по реальным строкам:
+// "сколько Response создал этот мастер сегодня", подделать нельзя.
+model FreeResponseUsage {
+  id     String   @id @default(cuid())
+  userId String
+  user   User     @relation(fields: [userId], references: [id])
+  date   DateTime @db.Date
+  count  Int      @default(0)
+
+  @@unique([userId, date])
+}
+
+// ── Предложения работы ─────────────────────────────────────────────────
+// Заказчик предлагает уже существующий заказ конкретному специалисту.
+// Это отдельная сущность и никогда не создаёт новый Order.
+
+enum WorkOfferStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  SNOOZED
+  CANCELLED
+}
+
+model WorkOffer {
+  id           String          @id @default(cuid())
+  orderId      String
+  order        Order           @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  specialistId String
+  specialist   User            @relation("SpecialistOffers", fields: [specialistId], references: [id])
+  status       WorkOfferStatus @default(PENDING)
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  @@index([orderId, status])
+  @@index([specialistId, status])
+  @@unique([orderId, specialistId])
+}
+
+// ── Статьи, новости, реклама, видео ─────────────────────────────────────
+
+enum ArticleKind {
+  ARTICLE
+  NEWS
+  PROMO
+  VIDEO
+}
+
+model Article {
+  id       String      @id @default(cuid())
+  kind     ArticleKind
+  topic    String
+  title    String
+  excerpt  String
+  content  String      @db.Text
+  coverUrl String
+
+  authorId String
+  author   User   @relation(fields: [authorId], references: [id])
+
+  promoted      Boolean   @default(false)
+  promotedUntil DateTime? // продвижение в топ теперь не бессрочное, а на срок
+
+  // Для видео блогера — ссылка на ролик; для рекламы продавца — ссылка,
+  // куда ведёт объявление (переход по клику)
+  linkUrl String?
+
+  views      Int @default(0)
+  clicks     Int @default(0)
+  likesCount Int @default(0) // денормализованный счётчик — синхронизируется триггером/транзакцией с таблицей Like, чтобы не считать COUNT(*) на каждый рендер ленты
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  favorites Favorite[]
+  likes     Like[]
+
+  @@index([kind, topic])
+  @@index([promoted])
+  @@index([authorId])
+}
+
+// Избранное — общее для всех ролей (составной первичный ключ вместо
+// отдельного id: одна и та же пара user+article не может быть добавлена дважды)
+model Favorite {
+  userId    String
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  articleId String
+  article   Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@id([userId, articleId])
+}
+
+model Like {
+  userId    String
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  articleId String
+  article   Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@id([userId, articleId])
+}
+
+// ── Билеты: не просто число, а бухгалтерская книга (ledger) ─────────────
+// Раньше ticketsBalance было одним числом, которое просто перезаписывалось.
+// Проблема: при сбое сети/двойном клике легко словить рассинхрон, и нет
+// истории — нельзя ответить на вопрос "куда делись билеты" в поддержке.
+// Правильный паттерн: баланс = SUM(amount) по всем транзакциям пользователя,
+// а не отдельное поле, которое можно случайно испортить конкурентной записью.
+enum TicketTxType {
+  TOPUP
+  SUBSCRIPTION_BONUS
+  SPEND_RESPONSE
+  SPEND_INVITE_MASTER
+  SPEND_PROMOTE_ARTICLE
+}
+
+model TicketTransaction {
+  id               String       @id @default(cuid())
+  userId           String
+  user             User         @relation(fields: [userId], references: [id])
+  amount           Int // положительное — пополнение, отрицательное — списание
+  type             TicketTxType
+  relatedOrderId   String?
+  relatedArticleId String?
+  createdAt        DateTime     @default(now())
+
+  @@index([userId, createdAt])
+}
+
+// ── Администрирование ──────────────────────────────────────────────────
+// Отдельная таблица AdminUser из демо-версии больше не нужна — админ теперь
+// просто User с role=ADMIN. Бан/удаление — это update/delete по User.status.

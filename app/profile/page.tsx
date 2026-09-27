@@ -1,0 +1,198 @@
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import {
+  User as UserIcon,
+  Crown,
+  LayoutGrid,
+  LogOut,
+  Mail,
+  Lock,
+} from "lucide-react";
+import { useAppStore } from "@/lib/store";
+import { BottomNav } from "@/components/BottomNav";
+import { Role } from "@/lib/types";
+
+const ROLE_OPTIONS: { id: Role; label: string }[] = [
+  { id: "customer", label: "Я заказчик" },
+  { id: "master", label: "Я исполнитель" },
+  { id: "blogger", label: "Я блогер" },
+  { id: "seller", label: "Я продавец" },
+];
+
+export default function ProfilePage() {
+  const role = useAppStore((s) => s.role);
+  const setRole = useAppStore((s) => s.setRole);
+  const adminUnlocked = useAppStore((s) => s.adminUnlocked);
+
+  const isAuthenticated = useAppStore((s) => s.isAuthenticated);
+  const authName = useAppStore((s) => s.authName);
+  const login = useAppStore((s) => s.login);
+  const logout = useAppStore((s) => s.logout);
+
+  const [mode, setMode] = useState<"login" | "register">("login");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  function handleSubmit() {
+    if (!email.trim() || !password.trim()) return;
+    // Демо-режим без бэкенда: настоящей проверки пароля нет, просто
+    // "входим" под введённым email — интерфейс формы настоящий,
+    // сама авторизация — заглушка.
+    login(email.trim());
+  }
+
+  return (
+    <div className="flex flex-1 flex-col">
+      <header className="border-b border-line px-4 py-3 lg:mx-auto lg:w-full lg:max-w-3xl lg:border-0 lg:px-0 lg:pb-4 lg:pt-8">
+        <p className="font-display text-lg font-extrabold">Профиль</p>
+      </header>
+
+      <main className="flex-1 space-y-5 px-4 py-4 pb-24 lg:mx-auto lg:w-full lg:max-w-3xl lg:pb-12">
+        {isAuthenticated ? (
+          <div className="flex items-center gap-3 rounded-2xl border border-line p-4">
+            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-surface">
+              <UserIcon size={26} className="text-ink-soft" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="truncate font-display text-base font-bold">{authName}</p>
+              <p className="text-xs text-ink-soft">Вы вошли · демо-режим</p>
+            </div>
+            <button
+              onClick={logout}
+              className="flex shrink-0 items-center gap-1 rounded-lg border border-line px-2.5 py-1.5 text-xs font-medium text-ink-soft active:bg-surface"
+            >
+              <LogOut size={13} /> Выйти
+            </button>
+          </div>
+        ) : (
+          <div className="space-y-3 rounded-2xl border border-line p-4">
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                onClick={() => setMode("login")}
+                className={`rounded-lg py-2 text-sm font-semibold ${
+                  mode === "login" ? "bg-accent-soft text-accent" : "text-ink-soft"
+                }`}
+              >
+                Войти
+              </button>
+              <button
+                onClick={() => setMode("register")}
+                className={`rounded-lg py-2 text-sm font-semibold ${
+                  mode === "register" ? "bg-accent-soft text-accent" : "text-ink-soft"
+                }`}
+              >
+                Зарегистрироваться
+              </button>
+            </div>
+
+            <div className="flex items-center gap-2 rounded-lg border border-line px-3 py-2">
+              <Mail size={15} className="shrink-0 text-ink-faint" />
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Email или телефон"
+                className="w-full bg-transparent text-sm outline-none placeholder:text-ink-faint"
+              />
+            </div>
+            <div className="flex items-center gap-2 rounded-lg border border-line px-3 py-2">
+              <Lock size={15} className="shrink-0 text-ink-faint" />
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Пароль"
+                className="w-full bg-transparent text-sm outline-none placeholder:text-ink-faint"
+              />
+            </div>
+
+            <button
+              onClick={handleSubmit}
+              disabled={!email.trim() || !password.trim()}
+              className="w-full rounded-xl bg-accent py-2.5 text-sm font-semibold text-white disabled:opacity-40"
+            >
+              {mode === "login" ? "Войти" : "Создать аккаунт"}
+            </button>
+            <p className="text-center text-[11px] text-ink-faint">
+              Демо-режим: настоящей проверки пароля нет, вход выполняется по
+              любому email — данные хранятся только в этом браузере.
+            </p>
+          </div>
+        )}
+
+        <div>
+          <p className="mb-2 text-sm font-semibold">Ваша роль</p>
+          <div className="flex flex-col gap-2">
+            {ROLE_OPTIONS.map((opt) => (
+              <button
+                key={opt.id}
+                onClick={() => setRole(opt.id)}
+                className={`rounded-xl border py-2.5 text-sm font-medium ${
+                  role === opt.id
+                    ? "border-accent bg-accent-soft text-accent"
+                    : "border-line text-ink-soft"
+                }`}
+              >
+                {opt.label}
+              </button>
+            ))}
+            {adminUnlocked && (
+              <button
+                onClick={() => setRole("admin")}
+                className={`flex items-center justify-center gap-1.5 rounded-xl border py-2.5 text-sm font-medium ${
+                  role === "admin"
+                    ? "border-accent bg-accent-soft text-accent"
+                    : "border-line text-ink-soft"
+                }`}
+              >
+                <Crown size={14} /> Администратор
+              </button>
+            )}
+          </div>
+        </div>
+
+        {role === "admin" ? (
+          <div className="space-y-2 rounded-2xl border border-line p-4">
+            <p className="flex items-center gap-1.5 font-display text-sm font-bold">
+              <Crown size={16} className="text-accent" /> Администратор
+            </p>
+            <p className="text-xs text-ink-soft">
+              Полный доступ к управлению заказами, статьями и пользователями.
+            </p>
+            <Link
+              href="/admin"
+              className="block w-full rounded-xl bg-accent py-2.5 text-center text-sm font-semibold text-white"
+            >
+              Открыть панель администратора
+            </Link>
+          </div>
+        ) : (
+          <div className="space-y-2 rounded-2xl border border-line p-4">
+            <p className="flex items-center gap-1.5 font-display text-sm font-bold">
+              <LayoutGrid size={16} className="text-accent" /> Личный кабинет
+            </p>
+            <p className="text-xs text-ink-soft">
+              Статистика, избранное и подписка — а для исполнителя, блогера и
+              продавца ещё и своя рабочая вкладка (анкета/контент/анонсы).
+            </p>
+            <Link
+              href="/cabinet"
+              className="block w-full rounded-xl bg-accent py-2.5 text-center text-sm font-semibold text-white"
+            >
+              Открыть личный кабинет
+            </Link>
+          </div>
+        )}
+
+        <div className="rounded-2xl border border-line p-4 text-xs text-ink-soft">
+          Верификация через Госуслуги/СБП пока не подключена в этой демо-версии — добавляется
+          на следующем этапе разработки.
+        </div>
+      </main>
+
+      <BottomNav />
+    </div>
+  );
+}

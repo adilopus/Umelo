@@ -1,0 +1,87 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+html,
+body {
+  background: #ffffff;
+  color: #22302b;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Фирменный элемент: жёлто-чёрная строительная полоса — используется точечно */
+.hazard-stripe {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    #ff6b1a,
+    #ff6b1a 6px,
+    #2b2d31 6px,
+    #2b2d31 12px
+  );
+}
+
+/* Бейдж бюджета в форме ценника: прямоугольник со "срезанным" уголком
+   и отверстием, как на бирке в строймаге */
+.price-tag {
+  position: relative;
+  clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 50%, calc(100% - 14px) 100%, 0 100%);
+  padding-right: 22px;
+}
+.price-tag::after {
+  content: "";
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: #ffffff;
+}
+
+/* Силуэт крыши — используем как декоративный "домик" отсылающий к лого,
+   в местах пустых состояний и на онбординге */
+.roof-shape {
+  clip-path: polygon(50% 0%, 100% 38%, 100% 100%, 0% 100%, 0% 38%);
+}
+
+/* Скрывает нативный скроллбар (в т.ч. кнопки-стрелки по краям в Windows/Chrome)
+   у горизонтально прокручиваемых рядов — сама прокрутка (колесо мыши/шифт,
+   свайп, трекпад) продолжает работать как обычно, просто без некрасивого трека. */
+.no-scrollbar {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* старый Edge/IE */
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, новый Edge */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* UMELO 1.0 — базовый визуальный ритм новой платформы */
+::selection {
+  background: #FFF4BF;
+  color: #2B2D31;
+}
+
+button,
+a,
+input {
+  -webkit-font-smoothing: antialiased;
+}
+
+.font-display { font-family: Arial, "Segoe UI", sans-serif; }
+.font-body { font-family: Arial, "Segoe UI", sans-serif; }

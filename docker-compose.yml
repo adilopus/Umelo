@@ -1,0 +1,57 @@
+# ─────────────────────────────────────────────────────────────────────────
+# Минимальный self-hosted стек для одного бюджетного VPS (2 CPU / 4 ГБ ОЗУ
+# хватает с запасом на старте). Managed-БД у российских облаков стоит
+# заметно дороже голого VPS — на этапе MVP дешевле поднять Postgres и Redis
+# в контейнерах рядом с самим приложением и снимать бэкапы по cron.
+#
+# Проверенные варианты недорогих VPS в РФ: Timeweb Cloud, Selectel, RUVDS,
+# VK Cloud. Для объектного хранилища (фото/видео/документы заказов) —
+# Yandex Object Storage или Selectel S3 (оба S3-совместимы "из коробки",
+# работают с тем же aws-sdk/S3-клиентом, что и обычный AWS S3).
+# ─────────────────────────────────────────────────────────────────────────
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: umelo
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?укажите пароль в .env}
+      POSTGRES_DB: umelo
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:5432:5432" # наружу не торчит — только localhost VPS
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U umelo"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:?укажите пароль в .env}
+    volumes:
+      - redisdata:/data
+    ports:
+      - "127.0.0.1:6379:6379"
+
+  app:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    environment:
+      DATABASE_URL: postgresql://umelo:${POSTGRES_PASSWORD}@postgres:5432/umelo
+      REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379
+      NODE_ENV: production
+    ports:
+      - "3000:3000"
+
+volumes:
+  pgdata:
+  redisdata:
