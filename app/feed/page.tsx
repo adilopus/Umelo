@@ -12,7 +12,6 @@ import { ProjectCard } from "@/components/ProjectCard";
 import { BottomNav } from "@/components/BottomNav";
 import { codesMatch } from "@/lib/orderCode";
 import { offersForFeed, topArticlesForFeed, topOrdersForFeed, topProjectsForFeed, type ArticleFeedMode } from "@/lib/feedRanking";
-import { SEED_PROJECTS } from "@/lib/mockProjects";
 
 const JOURNAL_TABS = [
   { id: "new", label: "Новые" },
@@ -62,6 +61,7 @@ export default function FeedPage() {
   const router = useRouter();
   const orders = useAppStore((s) => s.orders);
   const articles = useAppStore((s) => s.articles);
+  const projects = useAppStore((s) => s.projects);
   const [searchValue, setSearchValue] = useState("");
   const [searchError, setSearchError] = useState<string | null>(null);
   const [shuffleSeed, setShuffleSeed] = useState(0);
@@ -81,7 +81,7 @@ export default function FeedPage() {
     return shuffle(top);
   }, [orders, shuffleSeed]);
 
-  const feedProjects = useMemo(() => topProjectsForFeed(SEED_PROJECTS), []);
+  const feedProjects = useMemo(() => topProjectsForFeed(projects), [projects]);
   const journalArticles = useMemo(
     () => topArticlesForFeed(articles, journalTab as ArticleFeedMode),
     [articles, journalTab]

@@ -4,11 +4,8 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";
 import { ProjectOrderDrawer } from "@/components/ProjectOrderDrawer";
-import {
-  SEED_PROJECTS,
-  projectGallery,
-  type FeedProject,
-} from "@/lib/mockProjects";
+import { useAppStore } from "@/lib/store";
+import { projectGallery, type FeedProject } from "@/lib/mockProjects";
 import {
   ArrowLeft,
   ArrowRight,
@@ -43,10 +40,6 @@ const projectScope = [
   "Организация команды",
 ];
 
-function findProject(id: string): FeedProject | undefined {
-  return SEED_PROJECTS.find((p) => p.id === id);
-}
-
 function plural(n: number, one: string, few: string, many: string): string {
   const m100 = n % 100;
   const m10 = n % 10;
@@ -58,7 +51,7 @@ function plural(n: number, one: string, few: string, many: string): string {
 
 export default function ProjectDetailPage() {
   const params = useParams<{ id: string }>();
-  const project = findProject(String(params?.id ?? ""));
+  const project = useAppStore((s) => s.projects.find((p) => p.id === String(params?.id ?? "")));
 
   if (!project) return <ProjectNotFound id={String(params?.id ?? "")} />;
   return <ProjectView key={project.id} project={project} />;
@@ -90,10 +83,19 @@ function ProjectNotFound({ id }: { id: string }) {
 
 function ProjectView({ project }: { project: FeedProject }) {
   const [active, setActive] = useState(0);
-  const [saved, setSaved] = useState(false);
-  const [liked, setLiked] = useState(false);
   const [showAll, setShowAll] = useState(false);
   const [showOrderDrawer, setShowOrderDrawer] = useState(false);
+
+  // Сохранение и лайк — часть сущности проекта, а не локальное состояние
+  // страницы: тот же проект видно в ленте и в каталоге, и кнопки должны
+  // показывать одно и то же в любом из этих мест.
+  const saved = useAppStore((s) => s.savedProjectIds.includes(project.id));
+  const toggleSaved = useAppStore((s) => s.toggleSavedProject);
+  const liked = useAppStore((s) => s.likedProjectIds.includes(project.id));
+  const toggleLiked = useAppStore((s) => s.toggleProjectLike);
+  const projectCount = useAppStore(
+    (s) => s.projects.filter((p) => p.author === project.author).length
+  );
 
   const gallery = projectGallery(project);
   const next = () => setActive((v) => (v + 1) % gallery.length);
@@ -102,7 +104,6 @@ function ProjectView({ project }: { project: FeedProject }) {
   const year = new Date(project.createdAt).getFullYear();
   const place = `${project.location}, Nederland · ${year}`;
   const crew = team.slice(0, Math.max(1, Math.min(project.specialists, team.length)));
-  const likes = project.likes + (liked ? 1 : 0);
 
   const stats: [string, string][] = [
     ["Бюджет", `€${project.budget.toLocaleString("ru-RU")}`],
@@ -164,8 +165,8 @@ function ProjectView({ project }: { project: FeedProject }) {
                   <p className="mt-2 flex items-center gap-1.5 text-xs text-ink-soft"><MapPin size={14} /> {place}</p>
                 </div>
                 <div className="flex gap-2">
-                  <button type="button" onClick={() => setLiked(!liked)} aria-pressed={liked} aria-label={liked ? "Убрать лайк" : "Поставить лайк"} className={`flex h-10 items-center gap-2 rounded-full border px-3.5 text-xs font-bold ${liked ? "border-accent bg-accent-soft text-ink" : "border-line text-ink-soft"}`}><Heart size={16} fill={liked ? "currentColor" : "none"} /> {likes}</button>
-                  <button type="button" onClick={() => setSaved(!saved)} aria-pressed={saved} className={`flex h-10 items-center gap-2 rounded-full border px-3.5 text-xs font-bold ${saved ? "border-accent bg-accent-soft text-ink" : "border-line text-ink-soft"}`}><Bookmark size={16} fill={saved ? "currentColor" : "none"} /> {saved ? "Сохранено" : "Сохранить"}</button>
+                  <button type="button" onClick={() => toggleLiked(project.id)} aria-pressed={liked} aria-label={liked ? "Убрать лайк" : "Поставить лайк"} className={`flex h-10 items-center gap-2 rounded-full border px-3.5 text-xs font-bold ${liked ? "border-accent bg-accent-soft text-ink" : "border-line text-ink-soft"}`}><Heart size={16} fill={liked ? "currentColor" : "none"} /> {project.likes}</button>
+                  <button type="button" onClick={() => toggleSaved(project.id)} aria-pressed={saved} className={`flex h-10 items-center gap-2 rounded-full border px-3.5 text-xs font-bold ${saved ? "border-accent bg-accent-soft text-ink" : "border-line text-ink-soft"}`}><Bookmark size={16} fill={saved ? "currentColor" : "none"} /> {saved ? "Сохранено" : "Сохранить"}</button>
                   <button type="button" aria-label="Поделиться проектом" className="hidden h-10 w-10 items-center justify-center rounded-full border border-line text-ink-soft transition hover:border-ink-faint hover:text-ink sm:flex"><Share2 size={16} /></button>
                 </div>
               </div>
@@ -212,7 +213,7 @@ function ProjectView({ project }: { project: FeedProject }) {
           <aside className="lg:sticky lg:top-28 lg:self-start">
             <div className="rounded-[24px] border border-line bg-paper p-5 shadow-card">
               <div className="flex items-center gap-3"><img src={crew[0].image} alt="" className="h-12 w-12 rounded-full object-cover" /><div><p className="text-sm font-extrabold text-ink">{project.author}</p><p className="mt-0.5 text-xs text-ink-soft">{project.authorRole}</p><p className="mt-1 flex items-center gap-1 text-xs text-ink-faint"><Star size={10} fill="currentColor" className="text-accent-ink" /> {crew[0].rating} · {project.likes * 2} отзывов</p></div></div>
-              <div className="mt-5 grid grid-cols-2 gap-2"><div className="rounded-xl bg-surface p-3"><p className="text-xs text-ink-faint">Проектов</p><p className="mt-1 text-sm font-extrabold">{SEED_PROJECTS.filter((p) => p.author === project.author).length}</p></div><div className="rounded-xl bg-surface p-3"><p className="text-xs text-ink-faint">Темы</p><p className="mt-1 text-sm font-extrabold">{project.topics.length}</p></div></div>
+              <div className="mt-5 grid grid-cols-2 gap-2"><div className="rounded-xl bg-surface p-3"><p className="text-xs text-ink-faint">Проектов</p><p className="mt-1 text-sm font-extrabold">{projectCount}</p></div><div className="rounded-xl bg-surface p-3"><p className="text-xs text-ink-faint">Темы</p><p className="mt-1 text-sm font-extrabold">{project.topics.length}</p></div></div>
               <Link href="/chats" className="mt-4 flex h-11 items-center justify-center gap-2 rounded-full bg-accent text-xs font-extrabold text-ink transition hover:bg-accent-dark"><MessageCircle size={16} /> Написать автору</Link>
               <button onClick={() => setShowOrderDrawer(true)} className="mt-2 flex h-11 w-full items-center justify-center gap-2 rounded-full border border-line text-xs font-extrabold text-ink transition hover:border-accent hover:bg-accent-soft">Хочу такой проект <ArrowRight size={15} /></button>
             </div>

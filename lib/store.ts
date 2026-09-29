@@ -18,6 +18,7 @@ import {
   MasterProfile,
 } from "./types";
 import { SEED_ORDERS } from "./mockData";
+import { SEED_PROJECTS, type FeedProject } from "./mockProjects";
 import { SEED_ARTICLES } from "./mockArticles";
 import { SEED_USERS } from "./mockUsers";
 import {
@@ -77,6 +78,19 @@ interface AppState {
   // Лайки — отдельно от избранного: влияют на рейтинг автора у блогера.
   likedArticleIds: string[];
   toggleLike: (articleId: string) => void;
+
+  // Проекты как сущность, а не как статичный массив из модуля. Один и тот же
+  // проект показывается сразу в трёх местах — карусель ленты, каталог и
+  // своя страница, — поэтому «сохранить» и лайк обязаны быть общими: пока
+  // кнопка держала состояние в самом компоненте, сохранение из ленты не
+  // было видно в каталоге и пропадало при переходе. Заодно появляется
+  // место, где автор сможет править свою карточку.
+  projects: FeedProject[];
+  updateProject: (projectId: string, patch: Partial<FeedProject>) => void;
+  savedProjectIds: string[];
+  toggleSavedProject: (projectId: string) => void;
+  likedProjectIds: string[];
+  toggleProjectLike: (projectId: string) => void;
 
   // Экономика билетов/подписки
   ticketsBalance: number;
@@ -334,6 +348,39 @@ export const useAppStore = create<AppState>()(
           };
         }),
 
+      projects: SEED_PROJECTS,
+      updateProject: (projectId, patch) =>
+        set((state) => ({
+          projects: state.projects.map((p) =>
+            p.id === projectId ? { ...p, ...patch, id: p.id } : p
+          ),
+        })),
+      savedProjectIds: [],
+      toggleSavedProject: (projectId) =>
+        set((state) => ({
+          savedProjectIds: state.savedProjectIds.includes(projectId)
+            ? state.savedProjectIds.filter((id) => id !== projectId)
+            : [...state.savedProjectIds, projectId],
+        })),
+      likedProjectIds: [],
+      toggleProjectLike: (projectId) =>
+        set((state) => {
+          const already = state.likedProjectIds.includes(projectId);
+          return {
+            likedProjectIds: already
+              ? state.likedProjectIds.filter((id) => id !== projectId)
+              : [...state.likedProjectIds, projectId],
+            projects: state.projects.map((p) =>
+              p.id === projectId
+                ? {
+                    ...p,
+                    likes: (Number.isFinite(p.likes) ? p.likes : 0) + (already ? -1 : 1),
+                  }
+                : p
+            ),
+          };
+        }),
+
       ticketsBalance: 5,
       subscriptionActive: false,
       freeResponses: { date: "", count: 0 },
@@ -545,6 +592,17 @@ export const useAppStore = create<AppState>()(
           },
           favoriteArticleIds: old.favoriteArticleIds ?? [],
           likedArticleIds: old.likedArticleIds ?? [],
+          // Обратите внимание: у стора нет partialize, поэтому projects
+          // сохраняется целиком, и migrate его не пересеивает — он
+          // отрабатывает только при смене version. Право на запись у
+          // проектов тут то же, что у portfolio: правки автора переживают
+          // перезагрузку. Побочный эффект — createdAt замораживается на
+          // первом визите, и со временем «новые» и фильтр по периоду
+          // отстают от реальности; если понадобится свежая относительная
+          // сортировка, даты надо пересчитывать из смещения, а не хранить.
+          projects: old.projects?.length ? old.projects : SEED_PROJECTS,
+          savedProjectIds: old.savedProjectIds ?? [],
+          likedProjectIds: old.likedProjectIds ?? [],
           ticketsBalance: old.ticketsBalance ?? 5,
           subscriptionActive: old.subscriptionActive ?? false,
           freeResponses: old.freeResponses ?? { date: "", count: 0 },

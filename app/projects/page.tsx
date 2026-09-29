@@ -6,7 +6,7 @@ import { Plus } from "lucide-react";
 import { CarouselSection } from "@/components/CarouselSection";
 import { ProjectCard } from "@/components/ProjectCard";
 import { ProjectFiltersBar } from "@/components/ProjectFiltersBar";
-import { SEED_PROJECTS } from "@/lib/mockProjects";
+import { useAppStore } from "@/lib/store";
 import {
   EMPTY_PROJECT_FILTERS,
   filterProjects,
@@ -18,15 +18,16 @@ import {
 
 export default function ProjectsPage() {
   const [filters, setFilters] = useState<ProjectFilters>(EMPTY_PROJECT_FILTERS);
+  const projects = useAppStore((s) => s.projects);
 
-  const filtered = useMemo(() => filterProjects(SEED_PROJECTS, filters), [filters]);
+  const filtered = useMemo(() => filterProjects(projects, filters), [projects, filters]);
   const isFiltered = hasActiveProjectFilters(filters);
 
   // Рейтинги «Новые» и «Популярные» не зависят от фильтров: это витрины
   // каталога, а не результаты поиска. Иначе пустая выдача по запросу
   // прятала бы и рекомендации.
-  const newest = useMemo(() => topNewProjects(SEED_PROJECTS), []);
-  const popular = useMemo(() => topPopularProjects(SEED_PROJECTS), []);
+  const newest = useMemo(() => topNewProjects(projects), [projects]);
+  const popular = useMemo(() => topPopularProjects(projects), [projects]);
 
   return (
     <main className="min-h-[calc(100vh-64px)] px-4 pb-16 pt-6 sm:px-6 lg:px-8 lg:pt-8">
@@ -51,7 +52,7 @@ export default function ProjectsPage() {
           <ProjectFiltersBar
             filters={filters}
             onChange={setFilters}
-            projects={SEED_PROJECTS}
+            projects={projects}
             found={filtered.length}
           />
 

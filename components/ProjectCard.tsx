@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { Bookmark, Heart, MapPin } from "lucide-react";
+import { useAppStore } from "@/lib/store";
 import type { FeedProject } from "@/lib/mockProjects";
 
 function SafeImage({ src, alt, className }: { src: string; alt: string; className: string }) {
@@ -23,11 +23,14 @@ function SafeImage({ src, alt, className }: { src: string; alt: string; classNam
  * Карточка проекта для каруселей ленты и каталога. Фиксированная ширина —
  * элемент полосы, а не плитка сетки, поэтому ширину задаёт контейнер ScrollRow.
  *
- * Кнопка «сохранить» вынесена из <Link> в соседний элемент: вложенная в
- * ссылку кнопка ломает навигацию по тапу и попадает в карту кликов.
+ * «Сохранить» лежит в сторе, а не в useState карточки: проект показывается
+ * сразу в ленте, в каталоге и на своей странице, и локальное состояние
+ * каждый раз начиналось с нуля. Кнопка вынесена из <Link> в соседний
+ * элемент — вложенная в ссылку кнопка ломает навигацию по тапу.
  */
 export function ProjectCard({ project }: { project: FeedProject }) {
-  const [saved, setSaved] = useState(false);
+  const saved = useAppStore((s) => s.savedProjectIds.includes(project.id));
+  const toggleSaved = useAppStore((s) => s.toggleSavedProject);
 
   return (
     <div className="group relative w-72 shrink-0 snap-start overflow-hidden rounded-2xl border border-line bg-paper transition hover:shadow-card-hover">
@@ -69,7 +72,7 @@ export function ProjectCard({ project }: { project: FeedProject }) {
         type="button"
         aria-pressed={saved}
         aria-label={saved ? `Убрать «${project.title}» из сохранённых` : `Сохранить «${project.title}»`}
-        onClick={() => setSaved((v) => !v)}
+        onClick={() => toggleSaved(project.id)}
         className={`absolute right-3 top-3 flex h-10 w-10 items-center justify-center rounded-full backdrop-blur transition ${
           saved ? "bg-accent text-night" : "bg-paper/90 text-ink-soft hover:bg-paper"
         }`}
