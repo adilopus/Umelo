@@ -3,25 +3,35 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import {
-  ArrowRight, Bookmark, Heart, MapPin, MessageCircle, Search, Star, Users, Quote,
-} from "lucide-react";
+import { MessageCircle, Search, Star, Quote } from "lucide-react";
 import { useAppStore } from "@/lib/store";
 import { ArticleCard } from "@/components/ArticleCard";
 import { OrderCard } from "@/components/OrderCard";
+import { FeedCarousel } from "@/components/FeedCarousel";
+import { FeedProjectCard } from "@/components/FeedProjectCard";
 import { BottomNav } from "@/components/BottomNav";
-import { ARTICLE_TOPICS } from "@/lib/articleTopics";
 import { codesMatch } from "@/lib/orderCode";
+import { offersForFeed, topArticlesForFeed, topOrdersForFeed, topProjectsForFeed, type ArticleFeedMode } from "@/lib/feedRanking";
+import { SEED_PROJECTS } from "@/lib/mockProjects";
 
-const FEED_ORDERS_COUNT = 6;
+const JOURNAL_TABS = [
+  { id: "new", label: "Новые" },
+  { id: "popular", label: "Популярные" },
+];
+
+type JournalTab = (typeof JOURNAL_TABS)[number]["id"];
+
+/**
+ * Заказы, поднятые платным продвижением, должны встать выше свежих.
+ * Сейчас оплаты нет, поэтому список пуст — точка подключения готова.
+ */
+const PROMOTED_ORDER_IDS: string[] = [];
 
 const specialists = [
   { name: "Алексей Петров", role: "Сантехника", rating: "4.9", reviews: 127, distance: "8 км", image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=120&q=80" },
   { name: "Иван Кузнецов", role: "Электрика", rating: "4.8", reviews: 96, distance: "12 км", image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=120&q=80" },
   { name: "Мария Смирнова", role: "Дизайн интерьера", rating: "5.0", reviews: 66, distance: "15 км", image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=120&q=80" },
 ];
-
-const projectImage = "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1400&q=85";
 
 function shuffle<T>(list: T[]) {
   const arr = [...list];
@@ -44,41 +54,6 @@ function Avatar({ name, image, large = false }: { name: string; image?: string; 
   );
 }
 
-function ContentPill({ children, tone = "default" }: { children: React.ReactNode; tone?: "default" | "orange" | "green" }) {
-  return <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-extrabold uppercase tracking-[0.08em] ${tone === "orange" ? "bg-accent-soft text-accent-ink" : tone === "green" ? "bg-ok-soft text-ok" : "bg-paper/90 text-ink"}`}>{children}</span>;
-}
-
-function ProjectCard() {
-  const [saved, setSaved] = useState(false);
-  const [liked, setLiked] = useState(false);
-  return (
-    <article className="group overflow-hidden rounded-[24px] border border-line bg-paper shadow-card transition hover:shadow-card-hover">
-      <div className="relative aspect-[16/7.25] overflow-hidden bg-[#dfe5e1]">
-        <SafeImage src={projectImage} alt="Современный интерьер" className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.025]" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/5 to-transparent" />
-        <div className="absolute left-4 top-4"><ContentPill>✦ Проект</ContentPill></div>
-        <button onClick={() => setSaved((v) => !v)} className={`absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full backdrop-blur transition ${saved ? "bg-accent text-night" : "bg-paper/90 text-ink-soft hover:bg-paper"}`} aria-label="Сохранить"><Bookmark size={15} fill={saved ? "currentColor" : "none"} /></button>
-        <div className="absolute bottom-4 left-5 right-5 text-white">
-          <div className="flex items-center gap-2 text-xs font-semibold opacity-95"><Avatar name="Мария Смирнова" image={specialists[2].image} /><span>Мария Смирнова · Дизайнер интерьеров</span></div>
-          <h2 className="mt-2 font-display text-2xl font-extrabold leading-tight sm:text-3xl">Кухня в современном стиле</h2>
-        </div>
-      </div>
-      <div className="p-5 sm:p-6">
-        <div className="flex flex-wrap gap-2">{["Интерьер", "Кухня", "Минимализм"].map((tag) => <span key={tag} className="rounded-full bg-surface px-2.5 py-1.5 text-xs font-bold text-ink-soft">{tag}</span>)}</div>
-        <p className="mt-3 max-w-form text-sm leading-6 text-ink-soft">Тёплое дерево, натуральный камень и скрытая техника. Проект кухни для современной квартиры — с подбором материалов и специалистов.</p>
-        <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-ink-soft"><span className="flex items-center gap-1"><MapPin size={13} /> Rotterdam, Nederland</span><span>18 фото</span><span className="font-bold text-ink">€46 000</span><span>3 специалиста</span></div>
-        <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-line pt-4">
-          <div className="flex items-center gap-4 text-xs text-ink-soft"><button type="button" onClick={() => setLiked((v) => !v)} aria-pressed={liked} aria-label={liked ? "Убрать лайк" : "Поставить лайк"} className={`-my-1.5 flex items-center gap-1 py-1.5 transition ${liked ? "text-accent-ink" : "hover:text-ink"}`}><Heart size={14} fill={liked ? "currentColor" : "none"} /> {liked ? 129 : 128}</button><span className="flex items-center gap-1"><MessageCircle size={14} /> 24</span><button type="button" className="-my-1.5 flex items-center gap-1 py-1.5 hover:text-ink"><Users size={14} /> Команда</button></div>
-          <div className="flex items-center gap-4">
-            <Link href="/projects" className="-my-1.5 inline-flex items-center py-1.5 text-xs font-extrabold text-ink-soft hover:text-accent-ink">Все проекты</Link>
-            <Link href="/projects/modern-kitchen" className="-my-1.5 inline-flex items-center py-1.5 gap-1.5 text-xs font-extrabold text-accent-ink hover:text-accent-ink">Смотреть проект <ArrowRight size={14} /></Link>
-          </div>
-        </div>
-      </div>
-    </article>
-  );
-}
-
 function CommunityCard() {
   return <Link href="/community" className="group block min-w-0 w-full overflow-hidden rounded-2xl bg-night p-5 text-white transition hover:-translate-y-0.5"><div className="flex items-start justify-between gap-4"><div><p className="text-xs font-extrabold uppercase tracking-[0.16em] text-accent">Обсуждение</p><h3 className="mt-2 font-display text-lg font-extrabold leading-tight">Как лучше утеплить фасад частного дома?</h3></div><Quote size={24} className="shrink-0 text-white/25" /></div><div className="mt-5 flex items-center gap-3"><Avatar name="Иван Кузнецов" image={specialists[1].image} /><div><p className="text-xs font-bold">Иван Кузнецов</p><p className="text-xs text-white/50">Электрик · 4.8 ⭐</p></div></div><div className="mt-5 flex items-center justify-between text-xs text-white/50"><span>18 ответов · 42 сохранения</span><span className="font-bold text-accent group-hover:text-white">Обсудить →</span></div></Link>;
 }
@@ -87,20 +62,31 @@ export default function FeedPage() {
   const router = useRouter();
   const orders = useAppStore((s) => s.orders);
   const articles = useAppStore((s) => s.articles);
-  const [activeTopic, setActiveTopic] = useState<string | null>(null);
   const [searchValue, setSearchValue] = useState("");
   const [searchError, setSearchError] = useState<string | null>(null);
   const [shuffleSeed, setShuffleSeed] = useState(0);
-  const [randomOrders, setRandomOrders] = useState(orders.slice(0, FEED_ORDERS_COUNT));
+  const [journalTab, setJournalTab] = useState<JournalTab>("new");
   const logoTaps = useRef(0);
   const logoTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const unlockAdmin = useAppStore((s) => s.unlockAdmin);
   const adminUnlocked = useAppStore((s) => s.adminUnlocked);
-  const filteredArticles = useMemo(() => activeTopic ? articles.filter((a) => a.topic === activeTopic) : articles, [articles, activeTopic]);
-  const newsArticles = filteredArticles.filter((a) => a.kind !== "promo");
-  const promoArticles = filteredArticles.filter((a) => a.kind === "promo");
   const openOrders = useMemo(() => orders.filter((o) => o.status === "open"), [orders]);
-  useEffect(() => { setRandomOrders(shuffle(openOrders).slice(0, FEED_ORDERS_COUNT)); }, [openOrders, shuffleSeed]);
+
+  // shuffleSeed пересобирает выборку заказов по кнопке «Другие»: сортировка
+  // по дате сама по себе даёт один и тот же набор, а перемешивание позволяет
+  // посмотреть другие свежие задачи.
+  const feedOrders = useMemo(() => {
+    const top = topOrdersForFeed(orders, PROMOTED_ORDER_IDS);
+    if (shuffleSeed === 0) return top;
+    return shuffle(top);
+  }, [orders, shuffleSeed]);
+
+  const feedProjects = useMemo(() => topProjectsForFeed(SEED_PROJECTS), []);
+  const journalArticles = useMemo(
+    () => topArticlesForFeed(articles, journalTab as ArticleFeedMode),
+    [articles, journalTab]
+  );
+  const offerArticles = useMemo(() => offersForFeed(articles), [articles]);
 
   function handleSearch() {
     if (!searchValue.trim()) return;
@@ -131,72 +117,57 @@ export default function FeedPage() {
         </div>
 
         <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_300px]">
-          <section className="min-w-0 space-y-7">
-            <div>
-              <div className="mb-3 flex items-end justify-between">
-                <div>
-                  <p className="font-display text-xl font-extrabold text-ink">Нужны мастера</p>
-                  <p className="mt-0.5 text-xs text-ink-soft">Реальные задачи от людей рядом с вами</p>
-                </div>
-                <div className="flex items-center gap-3">
-                  <button type="button" onClick={() => setShuffleSeed((n) => n + 1)} className="-my-1.5 inline-flex items-center py-1.5 text-xs font-extrabold text-accent-ink">Другие</button>
-                  <Link href="/orders" className="-my-1.5 inline-flex items-center py-1.5 text-xs font-extrabold text-accent-ink">Все заказы</Link>
-                </div>
-              </div>
-              {randomOrders.length > 0 ? (
-                <div className="grid gap-3 sm:grid-cols-2">
-                  {randomOrders.slice(0, 4).map((order) => (
-                    <OrderCard key={order.id} order={order} fullWidth />
-                  ))}
-                </div>
-              ) : (
-                <div className="rounded-2xl border border-dashed border-line bg-paper p-8 text-center text-sm text-ink-soft">Пока нет открытых заказов</div>
-              )}
-            </div>
+          <section className="min-w-0 space-y-9">
+            <FeedCarousel
+              title="Нужны мастера"
+              subtitle="Свежие задачи от людей рядом с вами"
+              allHref="/orders"
+              allLabel="Все заказы"
+              onShuffle={() => setShuffleSeed((n) => n + 1)}
+              emptyLabel="Пока нет открытых заказов"
+            >
+              {feedOrders.map((order) => (
+                <OrderCard key={order.id} order={order} />
+              ))}
+            </FeedCarousel>
 
-            <ProjectCard />
+            <FeedCarousel
+              title="Проекты"
+              subtitle="Свежие проекты и идеи для вдохновения"
+              allHref="/projects"
+              allLabel="Все проекты"
+              emptyLabel="Пока нет опубликованных проектов"
+            >
+              {feedProjects.map((project) => (
+                <FeedProjectCard key={project.id} project={project} />
+              ))}
+            </FeedCarousel>
 
-            {newsArticles.length > 0 && (
-              <section>
-                <div className="mb-3 flex items-end justify-between">
-                  <div>
-                    <p className="font-display text-xl font-extrabold text-ink">Знания и идеи</p>
-                    <p className="mt-0.5 text-xs text-ink-soft">Статьи, кейсы и полезные материалы</p>
-                  </div>
-                  <Link href="/articles" className="-my-1.5 inline-flex items-center py-1.5 text-xs font-extrabold text-accent-ink">Смотреть все</Link>
-                </div>
-                {/* Фильтр по темам стоит здесь, а не в шапке ленты: он относится
-                    именно к этому блоку, и вверху страницы выглядел как
-                    unexplained-переключатель без связи с содержимым. */}
-                <div className="mb-3 flex gap-2 overflow-x-auto no-scrollbar">
-                  <button onClick={() => setActiveTopic(null)} className={`inline-flex min-h-10 shrink-0 items-center rounded-full border px-3.5 py-1.5 text-xs font-bold ${activeTopic === null ? "border-accent bg-accent text-night" : "border-line bg-paper text-ink-soft"}`}>Все темы</button>
-                  {ARTICLE_TOPICS.map((topic) => (
-                    <button key={topic.id} onClick={() => setActiveTopic(topic.id)} className={`inline-flex min-h-10 shrink-0 items-center rounded-full border px-3.5 py-1.5 text-xs font-semibold ${activeTopic === topic.id ? "border-accent bg-accent-soft text-accent-ink" : "border-line bg-paper text-ink-soft"}`}>{topic.label}</button>
-                  ))}
-                </div>
-                <div className="grid gap-3 sm:grid-cols-2">
-                  {newsArticles.slice(0, 4).map((article) => (
-                    <ArticleCard key={article.id} article={article} fullWidth />
-                  ))}
-                </div>
-              </section>
-            )}
+            <FeedCarousel
+              title="Журнал"
+              subtitle="Статьи, кейсы и разборы"
+              allHref="/articles"
+              tabs={JOURNAL_TABS}
+              activeTab={journalTab}
+              onTabChange={(id) => setJournalTab(id as JournalTab)}
+              emptyLabel="Пока нет статей"
+            >
+              {journalArticles.map((article) => (
+                <ArticleCard key={article.id} article={article} />
+              ))}
+            </FeedCarousel>
 
-            {promoArticles.length > 0 && (
-              <section>
-                <div className="mb-3 flex items-end justify-between">
-                  <div>
-                    <p className="font-display text-xl font-extrabold text-ink">Материалы и предложения</p>
-                    <p className="mt-0.5 text-xs text-ink-soft">Полезное от магазинов и производителей</p>
-                  </div>
-                  <Link href="/shops" className="-my-1.5 inline-flex items-center py-1.5 text-xs font-extrabold text-accent-ink">Все предложения</Link>
-                </div>
-                <div className="grid gap-3 sm:grid-cols-2">
-                  {promoArticles.slice(0, 2).map((article) => (
-                    <ArticleCard key={article.id} article={article} fullWidth />
-                  ))}
-                </div>
-              </section>
+            {offerArticles.length > 0 && (
+              <FeedCarousel
+                title="Товары и услуги"
+                subtitle="Материалы и предложения магазинов"
+                allHref="/shops"
+                allLabel="Все предложения"
+              >
+                {offerArticles.map((article) => (
+                  <ArticleCard key={article.id} article={article} />
+                ))}
+              </FeedCarousel>
             )}
           </section>
 
@@ -204,7 +175,7 @@ export default function FeedPage() {
             <div className="rounded-2xl border border-line bg-paper p-4">
               <div className="mb-4 flex items-center justify-between">
                 <p className="font-display text-sm font-extrabold">Популярные специалисты</p>
-                <Link href="/specialists" className="-my-1.5 inline-flex items-center py-1.5 text-xs font-bold text-accent-ink">Все</Link>
+                <Link href="/specialists" className="-my-1.5 inline-flex min-h-6 items-center px-1 py-1.5 text-xs font-bold text-accent-ink">Все</Link>
               </div>
               <div className="space-y-3">
                 {specialists.map((person) => (

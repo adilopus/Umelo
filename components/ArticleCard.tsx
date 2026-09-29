@@ -29,7 +29,7 @@ export function ArticleCard({
     <Link
       href={`/articles/${article.id}`}
       className={`block overflow-hidden rounded-2xl border border-line bg-paper transition hover:shadow-card-hover ${
-        fullWidth ? "w-full" : "w-64 shrink-0"
+        fullWidth ? "w-full" : "w-64 shrink-0 snap-start"
       }`}
     >
       <div className="relative aspect-[5/3] w-full overflow-hidden bg-ink">

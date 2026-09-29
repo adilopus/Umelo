@@ -66,7 +66,7 @@ export function ScrollRow({
 
       <div
         ref={ref}
-        className={`no-scrollbar flex overflow-x-auto scroll-smooth ${innerClassName}`}
+        className={`no-scrollbar flex snap-x snap-proximity overflow-x-auto scroll-smooth ${innerClassName}`}
       >
         {children}
       </div>

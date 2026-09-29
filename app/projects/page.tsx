@@ -3,13 +3,9 @@
 import Link from "next/link";
 import { useState } from "react";
 import { ArrowRight, Bookmark, Heart, MapPin, Plus } from "lucide-react";
+import { projectsByNewest, SEED_PROJECTS } from "@/lib/mockProjects";
 
-const projects = [
-  { title: "Кухня в современном стиле", author: "Мария Смирнова", location: "Rotterdam", tag: "Интерьер", likes: 128 },
-  { title: "Загородный дом в скандинавском стиле", author: "Алексей Петров", location: "Utrecht", tag: "Дом", likes: 96 },
-  { title: "Ремонт ванной комнаты", author: "Анна К.", location: "Rotterdam", tag: "Ремонт", likes: 74 },
-  { title: "Терраса и ландшафт участка", author: "Дмитрий Орлов", location: "Delft", tag: "Ландшафт", likes: 61 },
-];
+const projects = projectsByNewest(SEED_PROJECTS);
 
 export default function ProjectsPage() {
   const [saved, setSaved] = useState<string[]>([]);
