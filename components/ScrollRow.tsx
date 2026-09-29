@@ -66,6 +66,7 @@ export function ScrollRow({
 
       <div
         ref={ref}
+        data-carousel=""
         className={`no-scrollbar flex snap-x snap-proximity overflow-x-auto scroll-smooth ${innerClassName}`}
       >
         {children}

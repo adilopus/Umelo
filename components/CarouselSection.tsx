@@ -3,19 +3,19 @@
 import Link from "next/link";
 import { ScrollRow } from "@/components/ScrollRow";
 
-export interface FeedCarouselTab {
+export interface CarouselSectionTab {
   id: string;
   label: string;
 }
 
-export interface FeedCarouselProps {
+export interface CarouselSectionProps {
   title: string;
   subtitle?: string;
   /** Ссылка «смотреть все» в шапке секции. */
   allHref?: string;
   allLabel?: string;
   /** Вкладки-категории. Без них карусель односоставная. */
-  tabs?: FeedCarouselTab[];
+  tabs?: CarouselSectionTab[];
   activeTab?: string;
   onTabChange?: (id: string) => void;
   /** Кнопка перемешивания — для заказов, где «новые» это случайная выборка. */
@@ -32,7 +32,7 @@ export interface FeedCarouselProps {
  * вниз. Здесь карточки идут полосой фиксированной ширины, свайпаются
  * пальцем, а на десктопе листаются стрелками ScrollRow.
  */
-export function FeedCarousel({
+export function CarouselSection({
   title,
   subtitle,
   allHref,
@@ -43,7 +43,7 @@ export function FeedCarousel({
   onShuffle,
   emptyLabel = "Пока пусто",
   children,
-}: FeedCarouselProps) {
+}: CarouselSectionProps) {
   const isEmpty = !Array.isArray(children) || children.length === 0;
 
   return (

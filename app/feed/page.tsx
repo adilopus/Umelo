@@ -7,8 +7,8 @@ import { MessageCircle, Search, Star, Quote } from "lucide-react";
 import { useAppStore } from "@/lib/store";
 import { ArticleCard } from "@/components/ArticleCard";
 import { OrderCard } from "@/components/OrderCard";
-import { FeedCarousel } from "@/components/FeedCarousel";
-import { FeedProjectCard } from "@/components/FeedProjectCard";
+import { CarouselSection } from "@/components/CarouselSection";
+import { ProjectCard } from "@/components/ProjectCard";
 import { BottomNav } from "@/components/BottomNav";
 import { codesMatch } from "@/lib/orderCode";
 import { offersForFeed, topArticlesForFeed, topOrdersForFeed, topProjectsForFeed, type ArticleFeedMode } from "@/lib/feedRanking";
@@ -118,7 +118,7 @@ export default function FeedPage() {
 
         <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_300px]">
           <section className="min-w-0 space-y-9">
-            <FeedCarousel
+            <CarouselSection
               title="Нужны мастера"
               subtitle="Свежие задачи от людей рядом с вами"
               allHref="/orders"
@@ -129,9 +129,9 @@ export default function FeedPage() {
               {feedOrders.map((order) => (
                 <OrderCard key={order.id} order={order} />
               ))}
-            </FeedCarousel>
+            </CarouselSection>
 
-            <FeedCarousel
+            <CarouselSection
               title="Проекты"
               subtitle="Свежие проекты и идеи для вдохновения"
               allHref="/projects"
@@ -139,11 +139,11 @@ export default function FeedPage() {
               emptyLabel="Пока нет опубликованных проектов"
             >
               {feedProjects.map((project) => (
-                <FeedProjectCard key={project.id} project={project} />
+                <ProjectCard key={project.id} project={project} />
               ))}
-            </FeedCarousel>
+            </CarouselSection>
 
-            <FeedCarousel
+            <CarouselSection
               title="Журнал"
               subtitle="Статьи, кейсы и разборы"
               allHref="/articles"
@@ -155,10 +155,10 @@ export default function FeedPage() {
               {journalArticles.map((article) => (
                 <ArticleCard key={article.id} article={article} />
               ))}
-            </FeedCarousel>
+            </CarouselSection>
 
             {offerArticles.length > 0 && (
-              <FeedCarousel
+              <CarouselSection
                 title="Товары и услуги"
                 subtitle="Материалы и предложения магазинов"
                 allHref="/shops"
@@ -167,7 +167,7 @@ export default function FeedPage() {
                 {offerArticles.map((article) => (
                   <ArticleCard key={article.id} article={article} />
                 ))}
-              </FeedCarousel>
+              </CarouselSection>
             )}
           </section>
 
