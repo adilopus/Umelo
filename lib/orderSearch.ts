@@ -10,7 +10,9 @@ import { Order } from "./types";
  */
 
 export type OrderDatePeriod = "all" | "day" | "week" | "month";
-export type OrderSort = "new" | "budget-desc" | "budget-asc" | "distance" | "deadline";
+export type OrderSort = "new" | "old" | "budget-desc" | "budget-asc" | "distance" | "deadline";
+/** Фильтр по состоянию заказа; "all" — без ограничения. */
+export type OrderStatusFilter = "all" | Order["status"];
 
 export interface OrderFilters {
   query: string;
@@ -25,6 +27,11 @@ export interface OrderFilters {
   /** Максимальное расстояние в км; пустая строка — без ограничения. */
   maxDistanceKm: string;
   period: OrderDatePeriod;
+  /** Произвольный период «с» в формате yyyy-mm-dd; пустая строка — без ограничения. */
+  dateFrom: string;
+  /** Произвольный период «по» в формате yyyy-mm-dd; пустая строка — без ограничения. */
+  dateTo: string;
+  status: OrderStatusFilter;
 }
 
 export const EMPTY_ORDER_FILTERS: OrderFilters = {
@@ -36,6 +43,9 @@ export const EMPTY_ORDER_FILTERS: OrderFilters = {
   location: "",
   maxDistanceKm: "",
   period: "all",
+  dateFrom: "",
+  dateTo: "",
+  status: "all",
 };
 
 export const DATE_PERIODS: { id: OrderDatePeriod; label: string }[] = [
@@ -47,10 +57,23 @@ export const DATE_PERIODS: { id: OrderDatePeriod; label: string }[] = [
 
 export const ORDER_SORTS: { id: OrderSort; label: string }[] = [
   { id: "new", label: "Сначала новые" },
+  { id: "old", label: "Сначала старые" },
   { id: "budget-desc", label: "Бюджет: выше" },
   { id: "budget-asc", label: "Бюджет: ниже" },
   { id: "distance", label: "Ближайшие" },
   { id: "deadline", label: "Срочные" },
+];
+
+/**
+ * Варианты фильтра по состоянию. Подписи взяты из STATUS_META, чтобы
+ * чип в панели и чип на карточке не расходились в формулировках.
+ */
+export const ORDER_STATUS_FILTERS: { id: OrderStatusFilter; label: string }[] = [
+  { id: "all", label: "Все" },
+  { id: "open", label: "Ищем мастера" },
+  { id: "matched", label: "В работе" },
+  { id: "cancelled", label: "Отменённые" },
+  { id: "closed", label: "Завершённые" },
 ];
 
 export const DISTANCE_OPTIONS: { value: string; label: string }[] = [
@@ -74,6 +97,20 @@ function parseNumber(value: string): number | undefined {
 }
 
 /**
+ * Локальная календарная дата timestamp'а в формате `yyyy-mm-dd`.
+ *
+ * Сравниваем именно строки, а не Date: `new Date("2026-09-29")` разбирается
+ * как UTC и в московском времени даёт предыдущие сутки, из-за чего заказ
+ * за сегодня выпадал бы из фильтра «по = сегодня».
+ */
+function localDate(ts: number): string {
+  const d = new Date(ts);
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${d.getFullYear()}-${m}-${day}`;
+}
+
+/**
  * Применяет фильтры поиска. Область заказов (например, только открытые)
  * задаёт вызывающая сторона — функция лишь сужает переданный список.
  */
@@ -91,6 +128,7 @@ export function applyOrderFilters(orders: Order[], filters: OrderFilters): Order
   return orders.filter((order) => {
     if (filters.category && order.category !== filters.category) return false;
     if (filters.subcategory && order.subcategory !== filters.subcategory) return false;
+    if (filters.status !== "all" && order.status !== filters.status) return false;
 
     if (query) {
       const haystack = [
@@ -119,6 +157,14 @@ export function applyOrderFilters(orders: Order[], filters: OrderFilters): Order
 
     if (since !== undefined && order.createdAt < since) return false;
 
+    // Произвольный период. Проверяется только когда границы заданы, иначе
+    // localDate не вызывается вовсе и рендер остаётся детерминированным.
+    if (filters.dateFrom || filters.dateTo) {
+      const day = localDate(order.createdAt);
+      if (filters.dateFrom && day < filters.dateFrom) return false;
+      if (filters.dateTo && day > filters.dateTo) return false;
+    }
+
     return true;
   });
 }
@@ -126,6 +172,8 @@ export function applyOrderFilters(orders: Order[], filters: OrderFilters): Order
 export function sortOrders(orders: Order[], sort: OrderSort): Order[] {
   const list = [...orders];
   switch (sort) {
+    case "old":
+      return list.sort((a, b) => a.createdAt - b.createdAt);
     case "budget-desc":
       return list.sort((a, b) => b.budgetMax - a.budgetMax);
     case "budget-asc":
@@ -150,7 +198,14 @@ export function countActiveFilters(filters: OrderFilters): number {
   if (filters.location.trim()) count += 1;
   if (filters.maxDistanceKm) count += 1;
   if (filters.period !== "all") count += 1;
+  if (filters.dateFrom || filters.dateTo) count += 1;
+  if (filters.status !== "all") count += 1;
   return count;
+}
+
+/** Есть ли вообще хоть один фильтр — показывать или нет кнопку сброса. */
+export function hasActiveOrderFilters(filters: OrderFilters): boolean {
+  return countActiveFilters(filters) > 0;
 }
 
 /**

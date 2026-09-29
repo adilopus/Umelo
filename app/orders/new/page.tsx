@@ -27,6 +27,7 @@ import { Order, PremiseType, ConditionType, OrderMedia, OrderDocument } from "@/
 import { CATEGORIES, getSubcategories, getServices } from "@/lib/jobCategories";
 import { compressImage, videoPlaceholder } from "@/lib/imageCompress";
 import { generateOrderCode } from "@/lib/orderCode";
+import { CUSTOMER_ME } from "@/lib/mockData";
 
 const ICONS: Record<string, any> = {
   PaintRoller,
@@ -181,6 +182,7 @@ export default function NewOrderPage() {
       documents,
       createdAt: Date.now(),
       authorRole: "customer",
+      authorId: CUSTOMER_ME,
       distanceKm: 0,
       views: 0,
       status: "open",

@@ -16,9 +16,13 @@ import {
   Ticket,
   Eye,
   CalendarDays,
+  Pencil,
+  RotateCcw,
+  XCircle,
 } from "lucide-react";
 import { useAppStore } from "@/lib/store";
 import { formatOrderDate, pluralize } from "@/lib/format";
+import { CUSTOMER_ME } from "@/lib/mockData";
 
 const PREMISE_LABELS: Record<string, string> = {
   new: "Новостройка",
@@ -41,6 +45,8 @@ export default function OrderDetailPage() {
   const updateOfferStatus = useAppStore((s) => s.updateOfferStatus);
   const addResponse = useAppStore((s) => s.addResponse);
   const matchOrder = useAppStore((s) => s.matchOrder);
+  const cancelOrder = useAppStore((s) => s.cancelOrder);
+  const restoreOrder = useAppStore((s) => s.restoreOrder);
   const useFreeResponseOrTicket = useAppStore((s) => s.useFreeResponseOrTicket);
   const spendTicket = useAppStore((s) => s.spendTicket);
   const ticketsBalance = useAppStore((s) => s.ticketsBalance);
@@ -62,6 +68,10 @@ export default function OrderDetailPage() {
   const [responseNotice, setResponseNotice] = useState<string | null>(null);
   const [inviteError, setInviteError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  // Права задаёт не роль, а авторство: заказчиков в каталоге много, и
+  // каждый видит чужие заказы. Без этой проверки любой из них получил бы
+  // кнопки «Изменить» и «Отменить» на чужой карточке.
+  const isAuthor = order?.authorId === CUSTOMER_ME;
 
   if (!order) {
     return (
@@ -324,7 +334,7 @@ export default function OrderDetailPage() {
             </div>
           )}
 
-          {role === "customer" && order.status === "open" && (
+          {role === "customer" && isAuthor && order.status === "open" && (
             <Link
               href={`/specialists?orderId=${encodeURIComponent(order.id)}`}
               className="flex w-full items-center justify-center gap-2 rounded-xl bg-accent py-3 text-sm font-bold text-night"
@@ -333,8 +343,46 @@ export default function OrderDetailPage() {
             </Link>
           )}
 
+          {/* Заказчик-автор: правка карточки и отмена/восстановление.
+              Исполнителю доступно другое — отклонить предложение в разделе
+              «Предложения», отклонить отклик он тоже не может. */}
+          {role === "customer" && isAuthor && (
+            <div className="flex flex-wrap gap-2">
+              {(order.status === "open" || order.status === "cancelled") && (
+                <Link
+                  href={`/orders/${order.id}/edit`}
+                  className="inline-flex min-h-11 flex-1 items-center justify-center gap-1.5 rounded-xl border border-line px-3.5 py-2 text-xs font-bold text-ink-soft"
+                >
+                  <Pencil size={14} /> Изменить заказ
+                </Link>
+              )}
+              {order.status === "cancelled" ? (
+                <button
+                  type="button"
+                  onClick={() => restoreOrder(order.id)}
+                  className="inline-flex min-h-11 flex-1 items-center justify-center gap-1.5 rounded-xl bg-accent px-3.5 py-2 text-xs font-bold text-night"
+                >
+                  <RotateCcw size={14} /> Восстановить заказ
+                </button>
+              ) : (
+                order.status === "open" && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      cancelOrder(order.id);
+                      setInviteError(null);
+                    }}
+                    className="inline-flex min-h-11 flex-1 items-center justify-center gap-1.5 rounded-xl border border-danger/30 px-3.5 py-2 text-xs font-bold text-danger"
+                  >
+                    <XCircle size={14} /> Отменить заказ
+                  </button>
+                )
+              )}
+            </div>
+          )}
+
           {/* Заказчик: список полученных откликов */}
-          {role === "customer" && offers.length > 0 && (
+          {role === "customer" && isAuthor && offers.length > 0 && (
             <div className="space-y-2 rounded-2xl border border-line p-4">
               <p className="font-display text-sm font-bold">Предложения специалистам ({offers.length})</p>
               {offers.map((offer) => (
@@ -353,7 +401,7 @@ export default function OrderDetailPage() {
             </div>
           )}
 
-          {role === "customer" && order.status === "open" && (
+          {role === "customer" && isAuthor && order.status === "open" && (
             <div className="space-y-3">
               <p className="font-display text-sm font-bold">
                 Отклики мастеров ({responses.length})

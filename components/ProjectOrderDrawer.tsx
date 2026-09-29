@@ -5,6 +5,7 @@ import { ArrowRight, Check, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useAppStore } from "@/lib/store";
 import { Order } from "@/lib/types";
+import { CUSTOMER_ME } from "@/lib/mockData";
 
 type Props = {
   onClose: () => void;
@@ -84,6 +85,7 @@ export function ProjectOrderDrawer({ onClose, projectTitle, projectLocation, pro
       documents: [],
       createdAt: Date.now(),
       authorRole: "customer",
+      authorId: CUSTOMER_ME,
       distanceKm: undefined,
       views: 0,
       status: "open",

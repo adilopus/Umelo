@@ -17,7 +17,7 @@ import {
   SpecialistReview,
   MasterProfile,
 } from "./types";
-import { SEED_ORDERS } from "./mockData";
+import { backfillOrderAuthor, SEED_ORDERS } from "./mockData";
 import { SEED_PROJECTS, type FeedProject } from "./mockProjects";
 import { SEED_ARTICLES } from "./mockArticles";
 import { SEED_USERS } from "./mockUsers";
@@ -101,12 +101,14 @@ interface AppState {
   unlockAdmin: () => void;
 
   addOrder: (order: Order) => void;
+  updateOrder: (orderId: string, patch: Partial<Order>) => void;
   addResponse: (response: Response) => void;
   sendOffer: (orderId: string, specialistName: string) => void;
   updateOfferStatus: (offerId: string, status: OfferStatus) => void;
   acceptOffer: (offerId: string) => void;
   matchOrder: (orderId: string) => void;
   cancelOrder: (orderId: string) => void;
+  restoreOrder: (orderId: string) => void;
   deleteOrder: (orderId: string) => void;
   incrementViews: (orderId: string) => void;
   addMessage: (message: ChatMessage) => void;
@@ -396,6 +398,24 @@ export const useAppStore = create<AppState>()(
         })),
 
       addOrder: (order) => set((state) => ({ orders: [order, ...state.orders] })),
+      // Правка карточки автором. id, code, authorId и createdAt неприкосновенны:
+      // по id идёт роутинг, по code — поиск и переписка, а createdAt задаёт
+      // позицию в сортировке, и её сдвиг при правке сбивал бы «сначала новые».
+      updateOrder: (orderId, patch) =>
+        set((state) => ({
+          orders: state.orders.map((order) =>
+            order.id === orderId
+              ? {
+                  ...order,
+                  ...patch,
+                  id: order.id,
+                  code: order.code,
+                  authorId: order.authorId,
+                  createdAt: order.createdAt,
+                }
+              : order
+          ),
+        })),
       addResponse: (response) =>
         set((state) => ({ responses: [...state.responses, response] })),
       sendOffer: (orderId, specialistName) =>
@@ -450,8 +470,22 @@ export const useAppStore = create<AppState>()(
       cancelOrder: (orderId) =>
         set((state) => ({
           orders: state.orders.map((o) =>
-            o.id === orderId ? { ...o, status: "cancelled" } : o
+            // Уже отменённый заказ повторно не трогаем, иначе previousStatus
+            // перезаписался бы на "cancelled" и восстановление стало бы некуда.
+            o.id === orderId && o.status !== "cancelled"
+              ? { ...o, previousStatus: o.status, status: "cancelled" }
+              : o
           ),
+        })),
+      // Возвращает заказ в тот статус, в котором он был до отмены, — из
+      // отменённого «в работе» нельзя просто вернуть в «Ищем мастера».
+      restoreOrder: (orderId) =>
+        set((state) => ({
+          orders: state.orders.map((o) => {
+            if (o.id !== orderId || o.status !== "cancelled") return o;
+            const { previousStatus, ...rest } = o;
+            return { ...rest, status: previousStatus ?? "open" };
+          }),
         })),
       deleteOrder: (orderId) =>
         set((state) => ({ orders: state.orders.filter((o) => o.id !== orderId) })),
@@ -543,7 +577,10 @@ export const useAppStore = create<AppState>()(
     }),
     {
       name: "umelo-storage",
-      version: 7,
+      // v8: у заказов появился authorId (владелец) и previousStatus (статус
+      // до отмены, нужен для «Восстановить»). Без поднятия версии migrate не
+      // отработал бы, и у сохранённых заказов не было бы владельца.
+      version: 8,
       storage: {
         getItem: (name) => {
           const value = rawLocalStorage.getItem(name);
@@ -572,7 +609,7 @@ export const useAppStore = create<AppState>()(
             whatsapp: old.personalData?.whatsapp ?? "",
             bio: old.personalData?.bio ?? "",
           },
-          orders: old.orders ?? SEED_ORDERS,
+          orders: (old.orders ?? SEED_ORDERS).map(backfillOrderAuthor),
           messages: old.messages ?? [],
           responses: old.responses ?? [],
           offers: old.offers ?? [],

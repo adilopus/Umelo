@@ -9,6 +9,14 @@ function placeholder(bg: string, label: string): string {
   return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
 }
 
+/**
+ * Текущий заказчик. Заказы с таким authorId считаются «моими»: только их
+ * видно в «Моих заказах», и только их автору разрешены правка и отмена.
+ * Остальные seed-заказы принадлежат другим заказчикам — на них автор
+ * не может ни редактировать, ни отменять, даже если смотрит ту же страницу.
+ */
+export const CUSTOMER_ME = "customer-me";
+
 export const SEED_ORDERS: Order[] = [
   {
     id: "seed-1",
@@ -30,6 +38,7 @@ export const SEED_ORDERS: Order[] = [
     documents: [],
     createdAt: Date.now() - 1000 * 60 * 40,
     authorRole: "customer",
+    authorId: CUSTOMER_ME,
     distanceKm: 1.2,
     views: 34,
     status: "open",
@@ -58,6 +67,7 @@ export const SEED_ORDERS: Order[] = [
     documents: [],
     createdAt: Date.now() - 1000 * 60 * 120,
     authorRole: "customer",
+    authorId: CUSTOMER_ME,
     distanceKm: 3.4,
     views: 51,
     status: "open",
@@ -82,6 +92,7 @@ export const SEED_ORDERS: Order[] = [
     documents: [],
     createdAt: Date.now() - 1000 * 60 * 200,
     authorRole: "customer",
+    authorId: CUSTOMER_ME,
     distanceKm: 0.8,
     views: 12,
     status: "open",
@@ -109,9 +120,14 @@ export const SEED_ORDERS: Order[] = [
     documents: [],
     createdAt: Date.now() - 1000 * 60 * 300,
     authorRole: "customer",
+    authorId: CUSTOMER_ME,
     distanceKm: 12.6,
     views: 8,
-    status: "open",
+    status: "cancelled",
+    // Отменённый заказ хранит статус, в котором был до отмены, — иначе
+    // «Восстановить» возвращал бы его в «Ищем мастера» даже после того,
+    // как работа уже была отдана мастеру.
+    previousStatus: "open",
   },
   // Ниже — заказы, добавленные вместе с каруселями ленты: «Нужны мастера»
   // показывает 10 свежих задач, а на старте было всего четыре сида, из-за
@@ -139,9 +155,10 @@ export const SEED_ORDERS: Order[] = [
     documents: [],
     createdAt: Date.now() - 1000 * 60 * 55,
     authorRole: "customer",
+    authorId: CUSTOMER_ME,
     distanceKm: 3.4,
     views: 21,
-    status: "open",
+    status: "matched",
   },
   {
     id: "seed-6",
@@ -163,6 +180,7 @@ export const SEED_ORDERS: Order[] = [
     documents: [],
     createdAt: Date.now() - 1000 * 60 * 130,
     authorRole: "customer",
+    authorId: "customer-2",
     distanceKm: 5.1,
     views: 47,
     status: "open",
@@ -187,6 +205,7 @@ export const SEED_ORDERS: Order[] = [
     documents: [],
     createdAt: Date.now() - 1000 * 60 * 190,
     authorRole: "customer",
+    authorId: "customer-3",
     distanceKm: 9.8,
     views: 63,
     status: "open",
@@ -211,6 +230,7 @@ export const SEED_ORDERS: Order[] = [
     documents: [],
     createdAt: Date.now() - 1000 * 60 * 320,
     authorRole: "customer",
+    authorId: "customer-2",
     distanceKm: 18.2,
     views: 91,
     status: "open",
@@ -235,6 +255,7 @@ export const SEED_ORDERS: Order[] = [
     documents: [],
     createdAt: Date.now() - 1000 * 60 * 25,
     authorRole: "customer",
+    authorId: "customer-4",
     distanceKm: 2.1,
     views: 15,
     status: "open",
@@ -259,8 +280,24 @@ export const SEED_ORDERS: Order[] = [
     documents: [],
     createdAt: Date.now() - 1000 * 60 * 95,
     authorRole: "customer",
+    authorId: "customer-3",
     distanceKm: 6.7,
     views: 29,
     status: "open",
   },
 ];
+
+/**
+ * Достраивает `authorId` у заказов, сохранённых до появления этого поля.
+ *
+ * Без этого «Мои заказы» у вернувшихся пользователей оказались бы пустыми:
+ * у всех записанных заказов поле отсутствовало бы, и фильтр по автору
+ * не нашёл бы ни одного. Seed-заказы получают владельца из SEED_ORDERS,
+ * а заказы, созданные самим пользователем, считаются его собственными —
+ * иначе он потерял бы их из «Моих заказов» после обновления.
+ */
+export function backfillOrderAuthor(order: Order): Order {
+  if (order.authorId) return order;
+  const seed = SEED_ORDERS.find((s) => s.id === order.id);
+  return { ...order, authorId: seed ? seed.authorId : CUSTOMER_ME };
+}
