@@ -128,7 +128,7 @@ export default function CabinetPage() {
         })}
       </div>
 
-      <main className="flex-1 overflow-y-auto px-4 py-4 pb-24 lg:mx-auto lg:w-full lg:max-w-content lg:pb-12">
+      <main className="flex-1 overflow-y-auto px-4 pt-6 pb-24 sm:px-6 lg:px-8 lg:mx-auto lg:w-full lg:max-w-content lg:pb-12">
         {isAdmin && (
           <div className="mb-4 space-y-2 rounded-2xl border border-line p-4">
             <p className="flex items-center gap-1.5 font-display text-sm font-bold">

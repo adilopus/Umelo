@@ -79,7 +79,7 @@ export default function ArticleDetailPage() {
           )}
         </div>
 
-        <div className="space-y-4 p-4">
+        <div className="space-y-4 px-4 pb-4 pt-6 sm:px-6 lg:px-8">
           <div>
             <p className="text-xs font-medium uppercase tracking-wide text-ok">
               {topicLabel(article.topic)}

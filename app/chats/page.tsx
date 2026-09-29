@@ -21,7 +21,7 @@ export default function ChatsListPage() {
       <header className="border-b border-line px-4 py-3 lg:mx-auto lg:w-full lg:max-w-content lg:border-0 lg:px-0 lg:pb-4 lg:pt-8">
         <p className="font-display text-lg font-extrabold">Чаты</p>
       </header>
-      <main className="flex-1 px-4 py-4 pb-24 lg:mx-auto lg:w-full lg:max-w-content lg:pb-12">
+      <main className="flex-1 px-4 pt-6 pb-24 sm:px-6 lg:px-8 lg:mx-auto lg:w-full lg:max-w-content lg:pb-12">
         {chatOrders.length === 0 && (
           <div className="mt-16 flex flex-col items-center gap-2 text-center">
             <MessageCircle size={32} className="text-ink-faint" />

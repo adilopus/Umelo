@@ -31,7 +31,7 @@ export default function CreatePage() {
   const options = OPTIONS[role];
 
   return (
-    <main className="min-h-[calc(100vh-64px)] bg-surface px-4 py-8 sm:px-6 lg:px-8">
+    <main className="min-h-[calc(100vh-64px)] px-4 pb-8 pt-6 sm:px-6 lg:px-8 lg:pt-8">
       <div className="mx-auto max-w-content">
         <p className="text-xs font-bold uppercase tracking-[0.14em] text-accent-ink">UMELO</p>
         <h1 className="mt-1 font-display text-3xl font-extrabold text-ink">Создать</h1>

@@ -268,7 +268,7 @@ export default function NewOrderPage() {
       </aside>
 
       <div className="flex flex-1 flex-col lg:rounded-2xl lg:border lg:border-line lg:bg-paper lg:shadow-card">
-      <main className="flex-1 overflow-y-auto px-4 py-5 lg:px-8 lg:py-8">
+      <main className="flex-1 overflow-y-auto px-4 pb-5 pt-6 sm:px-6 lg:px-8 lg:pt-8">
         {/* Шаг 0: категория */}
         {step === 0 && (
           <div className="grid grid-cols-2 gap-3 lg:grid-cols-3">

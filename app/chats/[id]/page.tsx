@@ -54,7 +54,7 @@ export default function ChatPage() {
         </div>
       )}
 
-      <main className="flex-1 space-y-2 overflow-y-auto px-4 py-4 lg:mx-auto lg:w-full lg:max-w-content">
+      <main className="flex-1 space-y-2 overflow-y-auto px-4 pt-6 sm:px-6 lg:px-8 lg:mx-auto lg:w-full lg:max-w-content">
         {messages.length === 0 && <p className="mt-6 text-center text-xs text-ink-faint">Защищённый чат открыт. Можно обсудить детали, стоимость и сроки.</p>}
         {messages.map((m) => (
           <div key={m.id} className={`max-w-[75%] rounded-2xl px-3 py-2 text-sm ${m.author === role ? "ml-auto bg-accent text-night rounded-tr-sm" : "mr-auto bg-surface text-ink rounded-tl-sm"}`}>

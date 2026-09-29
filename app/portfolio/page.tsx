@@ -151,7 +151,7 @@ export default function PortfolioPage() {
   if (role !== "master") {
     return (
       <div className="flex flex-1 flex-col">
-        <main className="flex-1 px-4 py-10 text-center lg:mx-auto lg:w-full lg:max-w-content">
+        <main className="flex-1 px-4 pb-10 pt-6 text-center sm:px-6 lg:px-8 lg:mx-auto lg:w-full lg:max-w-content">
           <p className="text-sm text-ink-soft">
             Портфолио заполняет исполнитель. Посмотреть работы мастеров можно в
             каталоге специалистов.
@@ -196,7 +196,7 @@ export default function PortfolioPage() {
         </div>
       </header>
 
-      <main className="flex-1 space-y-5 px-4 py-4 pb-24 lg:mx-auto lg:w-full lg:max-w-page lg:pb-12">
+      <main className="flex-1 space-y-5 px-4 pt-6 pb-24 sm:px-6 lg:px-8 lg:mx-auto lg:w-full lg:max-w-page lg:pb-12">
         <section className="rounded-2xl border border-line bg-paper p-4">
           <div className="flex items-start gap-4">
             <div className="h-16 w-16 shrink-0 overflow-hidden rounded-2xl bg-surface">

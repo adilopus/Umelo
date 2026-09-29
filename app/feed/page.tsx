@@ -115,7 +115,7 @@ export default function FeedPage() {
   }
 
   return (
-    <div className="flex min-h-[calc(100vh-64px)] flex-1 flex-col bg-surface">
+    <div className="flex min-h-[calc(100vh-64px)] flex-1 flex-col ">
       <header className="sticky top-0 z-20 border-b border-line bg-paper/95 backdrop-blur lg:hidden">
         <div className="flex h-14 items-center justify-between px-4"><button onClick={handleLogoTap} className="flex items-center gap-2" aria-label="UMELO"><img src="/icons/logo-mark.png" alt="" className="h-7 w-7" /><span className="font-display text-lg font-extrabold text-ink">UMELO</span></button><div className="flex items-center gap-1"><Link href="/chats" aria-label="Сообщения" className="flex h-10 w-10 items-center justify-center rounded-full text-ink-soft transition hover:bg-surface hover:text-ink"><MessageCircle size={18} /></Link></div></div>
         <div className="px-4 pb-3"><div className={`flex items-center gap-2 rounded-full border bg-surface px-3 py-2 ${searchError ? "border-red-300" : "border-line"}`}><Search size={15} className="text-ink-faint" /><input value={searchValue} onChange={(e) => { setSearchValue(e.target.value); setSearchError(null); }} onKeyDown={(e) => e.key === "Enter" && handleSearch()} placeholder="Поиск по UMELO" className="min-h-8 min-w-0 flex-1 bg-transparent text-xs outline-none" /></div>{searchError && <p className="px-2 pt-1 text-xs text-danger">{searchError}</p>}</div>

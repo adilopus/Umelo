@@ -60,7 +60,7 @@ export default function AdminPage() {
         ))}
       </div>
 
-      <main className="flex-1 space-y-2 overflow-y-auto px-4 py-4 pb-10 lg:mx-auto lg:w-full lg:max-w-content">
+      <main className="flex-1 space-y-2 overflow-y-auto px-4 pt-6 pb-10 sm:px-6 lg:px-8 lg:mx-auto lg:w-full lg:max-w-content">
         {tab === "orders" &&
           orders.map((o) => (
             <div key={o.id} className="flex items-center gap-3 rounded-xl border border-line p-3">

@@ -32,9 +32,9 @@ export default function ArticlesPage() {
         <p className="font-display text-sm font-bold lg:text-lg">Статьи и новости</p>
       </header>
 
-      <main className="flex-1 pb-24 pt-4 lg:pb-12">
-        <div className="mx-auto w-full max-w-page lg:px-6">
-          <div className="flex items-center gap-2 px-3 lg:px-0">
+      <main className="flex-1 px-4 pt-6 pb-24 sm:px-6 lg:px-8 lg:pb-12">
+        <div className="mx-auto w-full max-w-page">
+          <div className="flex items-center gap-2 lg:px-0">
             <button
               onClick={() => setActiveTopic(null)}
               className={`inline-flex min-h-10 shrink-0 items-center rounded-full border px-3 py-1.5 text-xs font-medium ${

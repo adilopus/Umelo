@@ -89,7 +89,7 @@ export default function SpecialistsPage() {
   }
 
   return (
-    <main className="min-h-[calc(100vh-64px)] bg-surface px-4 pb-16 pt-8 sm:px-6 lg:px-8">
+    <main className="min-h-[calc(100vh-64px)] px-4 pb-16 pt-6 sm:px-6 lg:px-8 lg:pt-8">
       <div className="mx-auto max-w-page">
         <p className="text-xs font-bold uppercase tracking-[0.14em] text-accent-ink">Люди UMELO</p>
         <div className="flex flex-wrap items-end justify-between gap-4">

@@ -14,7 +14,7 @@ export default function OffersPage() {
 
   if (role !== "master") {
     return (
-      <main className="mx-auto w-full max-w-content px-4 py-10">
+      <main className="mx-auto w-full max-w-content px-4 pb-10 pt-6 sm:px-6 lg:px-8">
         <div className="rounded-2xl border border-line bg-paper p-6 text-center">
           <h1 className="font-display text-xl font-extrabold">Предложения</h1>
           <p className="mt-2 text-sm text-ink-soft">Этот раздел предназначен для специалиста. Переключите роль на «Я исполнитель» в профиле.</p>
@@ -28,7 +28,7 @@ export default function OffersPage() {
   const archived = offers.filter((o) => o.status === "accepted" || o.status === "declined" || o.status === "cancelled");
 
   return (
-    <main className="min-h-[calc(100vh-64px)] bg-surface px-4 py-8 sm:px-6 lg:px-8">
+    <main className="min-h-[calc(100vh-64px)] px-4 pb-8 pt-6 sm:px-6 lg:px-8 lg:pt-8">
       <div className="mx-auto max-w-content">
         <div className="flex items-end justify-between gap-4">
           <div>

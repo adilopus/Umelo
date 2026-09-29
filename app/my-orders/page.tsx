@@ -25,7 +25,7 @@ export default function MyOrdersPage() {
         <header className="border-b border-line px-4 py-3 lg:mx-auto lg:w-full lg:max-w-content lg:border-0 lg:px-0 lg:pb-4 lg:pt-8">
           <p className="font-display text-lg font-extrabold">Мои заказы</p>
         </header>
-        <main className="flex-1 px-4 py-10 text-center lg:mx-auto lg:w-full lg:max-w-content">
+        <main className="flex-1 px-4 pb-10 pt-6 text-center sm:px-6 lg:px-8 lg:mx-auto lg:w-full lg:max-w-content">
           <p className="text-sm text-ink-soft">
             Администратор управляет всеми заказами через панель администратора.
           </p>
@@ -62,7 +62,7 @@ export default function MyOrdersPage() {
             </div>
           </div>
         </header>
-        <main className="flex-1 space-y-3 px-4 py-4 pb-24 lg:mx-auto lg:w-full lg:max-w-content lg:pb-12">
+        <main className="flex-1 space-y-3 px-4 pt-6 pb-24 sm:px-6 lg:px-8 lg:mx-auto lg:w-full lg:max-w-content lg:pb-12">
           {myResponseOrders.length === 0 && (
             <div className="mt-10 text-center">
               <p className="text-sm text-ink-soft">
@@ -128,7 +128,7 @@ export default function MyOrdersPage() {
         <p className="font-display text-lg font-extrabold">Мои заказы</p>
       </header>
 
-      <main className="flex-1 space-y-3 px-4 py-4 pb-24 lg:mx-auto lg:w-full lg:max-w-content lg:pb-12">
+      <main className="flex-1 space-y-3 px-4 pt-6 pb-24 sm:px-6 lg:px-8 lg:mx-auto lg:w-full lg:max-w-content lg:pb-12">
         {orders.length === 0 && (
           <p className="mt-10 text-center text-sm text-ink-soft">
             Вы ещё не публиковали заказы.
