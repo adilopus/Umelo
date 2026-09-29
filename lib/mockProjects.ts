@@ -373,3 +373,68 @@ export const SEED_PROJECTS: FeedProject[] = [
 export function projectsByNewest(list: FeedProject[]): FeedProject[] {
   return [...list].sort((a, b) => b.createdAt - a.createdAt);
 }
+
+/**
+ * Пул фотографий по темам для галереи на странице проекта.
+ *
+ * У каждого проекта в SEED_PROJECTS только один coverUrl, а галерея со
+ * стрелками требует минимум несколько кадров. Заводить по пять URL на
+ * каждый из двадцати проектов — это восемьдесят выдуманных ссылок, которые
+ * рано или поздно отдадут 404. Поэтому галерея собирается из собственного
+ * обложечного фото проекта плюс несколько кадров той же темы: подборки
+ * всегда тематически осмысленные и не разъезжаются по сюжету.
+ */
+const PROJECT_PHOTO_POOLS: Record<ProjectTopic, string[]> = {
+  Интерьер: [
+    "https://images.unsplash.com/photo-1600607688969-a5bfcd646154?auto=format&fit=crop&w=1400&q=90",
+    "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=1400&q=90",
+    "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1400&q=90",
+  ],
+  Дизайн: [
+    "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1400&q=90",
+    "https://images.unsplash.com/photo-1587654780291-39c9404d746b?auto=format&fit=crop&w=1400&q=90",
+    "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1400&q=90",
+  ],
+  Ремонт: [
+    "https://images.unsplash.com/photo-1589939705384-5185137a7f0f?auto=format&fit=crop&w=1400&q=90",
+    "https://images.unsplash.com/photo-1562259949-e8e7680d7823?auto=format&fit=crop&w=1400&q=90",
+    "https://images.unsplash.com/photo-1615529162924-f8605388461d?auto=format&fit=crop&w=1400&q=90",
+  ],
+  Дом: [
+    "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1400&q=90",
+    "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1400&q=90",
+    "https://images.unsplash.com/photo-1568605114967-8130f3a36994?auto=format&fit=crop&w=1400&q=90",
+  ],
+  Ландшафт: [
+    "https://images.unsplash.com/photo-1558904541-efa843a96f01?auto=format&fit=crop&w=1400&q=90",
+    "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=1400&q=90",
+    "https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=1400&q=90",
+  ],
+};
+
+/**
+ * Идентификатор снимка в URL Unsplash — часть пути до `?`.
+ *
+ * Сравнивать URL целиком нельзя: обложки лежат с `w=1200`, а пул тем с
+ * `w=1400`, и один и тот же кадр проходил бы как два разных фото и
+ * показывался в галерее дважды в разном разрешении.
+ */
+function photoId(url: string): string {
+  return url.split("?")[0];
+}
+
+/** Галерея проекта: своя обложка + кадры его основной темы. */
+export function projectGallery(project: FeedProject, limit = 5): string[] {
+  const pool = PROJECT_PHOTO_POOLS[project.topics[0]] ?? [];
+  const seen = new Set<string>([photoId(project.coverUrl)]);
+  const shots: string[] = [project.coverUrl];
+
+  for (const url of pool) {
+    const id = photoId(url);
+    if (seen.has(id)) continue;
+    seen.add(id);
+    shots.push(url);
+    if (shots.length >= limit) break;
+  }
+  return shots;
+}

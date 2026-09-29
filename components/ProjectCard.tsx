@@ -28,11 +28,10 @@ function SafeImage({ src, alt, className }: { src: string; alt: string; classNam
  */
 export function ProjectCard({ project }: { project: FeedProject }) {
   const [saved, setSaved] = useState(false);
-  const href = project.id === "modern-kitchen" ? "/projects/modern-kitchen" : "/projects";
 
   return (
     <div className="group relative w-72 shrink-0 snap-start overflow-hidden rounded-2xl border border-line bg-paper transition hover:shadow-card-hover">
-      <Link href={href} className="block">
+      <Link href={`/projects/${project.id}`} className="block">
         <div className="relative aspect-[16/10] overflow-hidden bg-surface">
           <SafeImage
             src={project.coverUrl}
