@@ -116,6 +116,7 @@ export default function OrdersCatalogPage() {
     <main className="flex-1">
       <PageShell padBottom="pb-12">
         <PageHeader
+          eyebrow="Создавай, реализовывай!"
           title="Заказы"
           subtitle={`${openOrders.length} открытых ${pluralize(openOrders.length, "заказ", "заказа", "заказов")}`}
           actions={

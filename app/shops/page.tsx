@@ -16,8 +16,8 @@ export default function ShopsPage() {
     <main>
       <PageShell>
         <PageHeader
-          eyebrow="Экосистема"
-          title="Магазины и материалы"
+          eyebrow="Маркет UMELO"
+          title="Товары и материалы"
           subtitle="Материалы и инструменты, привязанные к реальным проектам."
         >
           <div className="mt-5 flex items-center gap-2 rounded-2xl border border-line bg-paper px-4 py-3">

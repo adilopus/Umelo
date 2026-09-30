@@ -54,7 +54,11 @@ export default function MyOrdersPage() {
     return (
       <main className="flex-1">
         <PageShell>
-          <PageHeader title="Мои заказы" />
+          <PageHeader
+            eyebrow="Создавай, реализовывай!"
+            title="Мои заказы"
+            subtitle="Размести заказ и рассматривай предложения."
+          />
           <p className="text-sm text-ink-soft">
             Администратор управляет всеми заказами через панель администратора.
           </p>
@@ -149,7 +153,11 @@ export default function MyOrdersPage() {
   return (
     <main className="flex-1">
       <PageShell padBottom="pb-12">
-        <PageHeader title="Мои заказы" />
+        <PageHeader
+          eyebrow="Создавай, реализовывай!"
+          title="Мои заказы"
+          subtitle="Размести заказ и рассматривай предложения."
+        />
         {myOrders.length === 0 ? (
           <div className="mt-10 text-center">
             <p className="text-sm text-ink-soft">Вы ещё не публиковали заказы.</p>

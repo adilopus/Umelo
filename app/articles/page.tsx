@@ -30,7 +30,13 @@ export default function ArticlesPage() {
   return (
     <main className="flex-1">
       <PageShell padBottom="pb-12">
-        <PageHeader back fallbackHref="/feed" title="Статьи и новости">
+        <PageHeader
+          back
+          fallbackHref="/feed"
+          eyebrow="Блог UMELO"
+          title="Статьи и новости"
+          subtitle="Читай, вдохновляйся, будь в тренде."
+        >
           <div className="mt-5 flex items-center gap-2">
             <button
               onClick={() => setActiveTopic(null)}
