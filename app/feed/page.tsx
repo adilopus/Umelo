@@ -9,6 +9,8 @@ import { ArticleCard } from "@/components/ArticleCard";
 import { OrderCard } from "@/components/OrderCard";
 import { CarouselSection } from "@/components/CarouselSection";
 import { ProjectCard } from "@/components/ProjectCard";
+import { PageHeader } from "@/components/ui/PageHeader";
+import { PageShell } from "@/components/ui/PageShell";
 import { BottomNav } from "@/components/BottomNav";
 import { codesMatch } from "@/lib/orderCode";
 import { offersForFeed, topArticlesForFeed, topOrdersForFeed, topProjectsForFeed, type ArticleFeedMode } from "@/lib/feedRanking";
@@ -101,20 +103,18 @@ export default function FeedPage() {
   }
 
   return (
-    <div className="flex min-h-[calc(100vh-64px)] flex-1 flex-col ">
+    <main className="flex flex-1 flex-col">
       <header className="sticky top-0 z-20 border-b border-line bg-paper/95 backdrop-blur lg:hidden">
         <div className="flex h-14 items-center justify-between px-4"><button onClick={handleLogoTap} className="flex items-center gap-2" aria-label="UMELO"><img src="/icons/logo-mark.png" alt="" className="h-7 w-7" /><span className="font-display text-lg font-extrabold text-ink">UMELO</span></button><div className="flex items-center gap-1"><Link href="/chats" aria-label="Сообщения" className="flex h-10 w-10 items-center justify-center rounded-full text-ink-soft transition hover:bg-surface hover:text-ink"><MessageCircle size={18} /></Link></div></div>
         <div className="px-4 pb-3"><div className={`flex items-center gap-2 rounded-full border bg-surface px-3 py-2 ${searchError ? "border-red-300" : "border-line"}`}><Search size={15} className="text-ink-faint" /><input value={searchValue} onChange={(e) => { setSearchValue(e.target.value); setSearchError(null); }} onKeyDown={(e) => e.key === "Enter" && handleSearch()} placeholder="Поиск по UMELO" className="min-h-8 min-w-0 flex-1 bg-transparent text-xs outline-none" /></div>{searchError && <p className="px-2 pt-1 text-xs text-danger">{searchError}</p>}</div>
       </header>
 
-      <main className="mx-auto w-full max-w-shell flex-1 px-4 pb-28 pt-6 sm:px-6 lg:px-8 lg:pb-12">
-        <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-accent-ink">UMELO · для тех, кто строит</p>
-            <h1 className="mt-1 max-w-content font-display text-2xl font-extrabold tracking-tight text-ink sm:text-3xl sm:leading-[1.05]">Вдохновение и идеи</h1>
-            <p className="mt-1 max-w-form text-sm text-ink-soft">Проекты, специалисты, материалы и реальные задачи — всё в одном месте.</p>
-          </div>
-        </div>
+      <PageShell padBottom="pb-12">
+        <PageHeader
+          eyebrow="UMELO · для тех, кто строит"
+          title="Вдохновение и идеи"
+          subtitle="Проекты, специалисты, материалы и реальные задачи — всё в одном месте."
+        />
 
         <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_300px]">
           <section className="min-w-0 space-y-9">
@@ -210,8 +210,8 @@ export default function FeedPage() {
             </div>
           </aside>
         </div>
-      </main>
+      </PageShell>
       <BottomNav />
-    </div>
+    </main>
   );
 }

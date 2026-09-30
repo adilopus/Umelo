@@ -10,6 +10,8 @@ import { useAppStore } from "@/lib/store";
 import { ProposeWorkModal } from "@/components/ProposeWorkModal";
 import { SPECIALIST_ME } from "@/lib/mockSpecialists";
 import { pluralize } from "@/lib/format";
+import { PageHeader } from "@/components/ui/PageHeader";
+import { PageShell } from "@/components/ui/PageShell";
 
 const FILTERS = [
   "Все",
@@ -89,28 +91,26 @@ export default function SpecialistsPage() {
   }
 
   return (
-    <main className="min-h-[calc(100vh-64px)] px-4 pb-16 pt-6 sm:px-6 lg:px-8 lg:pt-8">
-      <div className="mx-auto max-w-page">
-        <p className="text-xs font-bold uppercase tracking-[0.14em] text-accent-ink">Люди UMELO</p>
-        <div className="flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <h1 className="mt-1 font-display text-3xl font-extrabold text-ink">Специалисты</h1>
-            <p className="mt-1 text-sm text-ink-soft">
-              Выбирайте исполнителя по работам, опыту и отзывам.
-            </p>
-          </div>
-          {role === "master" && (
-            <Link
-              href="/offers"
-              className="hidden rounded-xl border border-line bg-paper px-4 py-2.5 text-sm font-semibold text-ink lg:block"
-            >
-              Мои предложения
-            </Link>
-          )}
-        </div>
+    <main>
+      <PageShell>
+        <PageHeader
+          eyebrow="Люди UMELO"
+          title="Специалисты"
+          subtitle="Выбирайте исполнителя по работам, опыту и отзывам."
+          actions={
+            role === "master" ? (
+              <Link
+                href="/offers"
+                className="hidden rounded-xl border border-line bg-paper px-4 py-2.5 text-sm font-semibold text-ink lg:block"
+              >
+                Мои предложения
+              </Link>
+            ) : undefined
+          }
+        />
 
         {presetOrder && (
-          <div className="mt-5 rounded-2xl border border-accent/30 bg-accent-soft px-4 py-3 text-sm text-ink">
+          <div className="rounded-2xl border border-accent/30 bg-accent-soft px-4 py-3 text-sm text-ink">
             <b>Выберите специалиста для заказа № {presetOrder.code}.</b> Предложение отправится на
             существующий заказ — новый заказ создаваться не будет.
           </div>
@@ -275,7 +275,7 @@ export default function SpecialistsPage() {
             })}
           </div>
         )}
-      </div>
+      </PageShell>
 
       {proposing && (
         <ProposeWorkModal

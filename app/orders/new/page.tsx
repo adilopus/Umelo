@@ -27,6 +27,7 @@ import { Order, PremiseType, ConditionType, OrderMedia, OrderDocument } from "@/
 import { CATEGORIES, getSubcategories, getServices } from "@/lib/jobCategories";
 import { compressImage, videoPlaceholder } from "@/lib/imageCompress";
 import { generateOrderCode } from "@/lib/orderCode";
+import { PageShell } from "@/components/ui/PageShell";
 import { CUSTOMER_ME } from "@/lib/mockData";
 
 const ICONS: Record<string, any> = {
@@ -201,32 +202,34 @@ export default function NewOrderPage() {
   }
 
   return (
-    <div className="flex flex-1 flex-col lg:mx-auto lg:w-full lg:max-w-page lg:flex-row lg:gap-8 lg:px-6 lg:py-8">
-      <header className="flex items-center gap-3 border-b border-line px-4 py-3 lg:hidden">
-        <button
-          onClick={() => (step === 0 ? router.push("/feed") : setStep(step - 1))}
-          className="-m-2 rounded-full p-2 text-ink-soft active:bg-surface"
-          aria-label="Назад"
-        >
-          <ChevronLeft size={22} />
-        </button>
-        <div className="flex-1">
-          <p className="font-display text-sm font-bold">{STEP_LABELS[step]}</p>
-          <div className="mt-1.5 flex gap-1">
-            {STEP_LABELS.map((_, i) => (
-              <div
-                key={i}
-                className={`h-1 flex-1 rounded-full ${i <= step ? "bg-accent" : "bg-line"}`}
-              />
-            ))}
+    <main className="flex flex-1 flex-col">
+      <PageShell padBottom="pb-8">
+        <header className="flex items-center gap-3 border-b border-line pb-3 lg:hidden">
+          <button
+            onClick={() => (step === 0 ? router.push("/feed") : setStep(step - 1))}
+            className="-m-2 rounded-full p-2 text-ink-soft active:bg-surface"
+            aria-label="Назад"
+          >
+            <ChevronLeft size={22} />
+          </button>
+          <div className="flex-1">
+            <p className="font-display text-sm font-bold">{STEP_LABELS[step]}</p>
+            <div className="mt-1.5 flex gap-1">
+              {STEP_LABELS.map((_, i) => (
+                <div
+                  key={i}
+                  className={`h-1 flex-1 rounded-full ${i <= step ? "bg-accent" : "bg-line"}`}
+                />
+              ))}
+            </div>
           </div>
-        </div>
-      </header>
+        </header>
 
+      <div className="mt-5 grid gap-6 lg:grid-cols-[256px_minmax(0,1fr)] lg:gap-8">
       {/* Десктоп: боковая панель шагов вместо тонкой полоски прогресса —
           удобнее для мыши, видно все шаги сразу, можно вернуться на
           пройденный шаг кликом. */}
-      <aside className="hidden shrink-0 lg:block lg:w-64">
+      <aside className="hidden shrink-0 lg:block">
         <button
           onClick={() => router.push("/feed")}
           className="mb-5 flex items-center gap-1.5 text-sm text-ink-soft transition hover:text-ink"
@@ -270,7 +273,7 @@ export default function NewOrderPage() {
       </aside>
 
       <div className="flex flex-1 flex-col lg:rounded-2xl lg:border lg:border-line lg:bg-paper lg:shadow-card">
-      <main className="flex-1 overflow-y-auto px-4 pb-5 pt-6 sm:px-6 lg:px-8 lg:pt-8">
+      <div className="flex-1 pb-5">
         {/* Шаг 0: категория */}
         {step === 0 && (
           <div className="grid grid-cols-2 gap-3 lg:grid-cols-3">
@@ -687,9 +690,9 @@ export default function NewOrderPage() {
             </p>
           </div>
         )}
-      </main>
+      </div>
 
-      <footer className="border-t border-line px-4 py-3 lg:px-8 lg:py-5">
+      <footer className="border-t border-line py-3 lg:py-5">
         {publishError && (
           <p className="mb-2 rounded-lg bg-danger-soft px-3 py-2 text-xs text-danger">
             {publishError}
@@ -713,6 +716,8 @@ export default function NewOrderPage() {
         )}
       </footer>
       </div>
-    </div>
+      </div>
+      </PageShell>
+    </main>
   );
 }

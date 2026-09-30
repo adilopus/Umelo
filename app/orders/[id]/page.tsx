@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import {
-  ChevronLeft,
   MapPin,
   Clock,
   Ruler,
@@ -23,6 +22,8 @@ import {
 import { useAppStore } from "@/lib/store";
 import { formatOrderDate, pluralize } from "@/lib/format";
 import { CUSTOMER_ME } from "@/lib/mockData";
+import { PageHeader } from "@/components/ui/PageHeader";
+import { PageShell } from "@/components/ui/PageShell";
 
 const PREMISE_LABELS: Record<string, string> = {
   new: "Новостройка",
@@ -126,19 +127,9 @@ export default function OrderDetailPage() {
   }
 
   return (
-    <div className="flex flex-1 flex-col">
-      <header className="sticky top-0 z-10 flex items-center gap-3 border-b border-line bg-paper/95 px-4 py-3 backdrop-blur lg:mx-auto lg:w-full lg:max-w-content">
-        <button
-          onClick={() => router.back()}
-          className="rounded-full p-1 text-ink-soft active:bg-surface"
-          aria-label="Назад"
-        >
-          <ChevronLeft size={22} />
-        </button>
-        <p className="truncate font-display text-sm font-bold">{order.serviceName}</p>
-      </header>
-
-      <main className="flex-1 overflow-y-auto pb-28 lg:mx-auto lg:w-full lg:max-w-content">
+    <main className="flex-1">
+      <PageShell padBottom="pb-28">
+        <PageHeader back fallbackHref="/orders" title={order.serviceName} />
         {order.media.length > 0 && (
           <div className="relative aspect-[4/3] w-full bg-ink">
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -438,7 +429,7 @@ export default function OrderDetailPage() {
             </div>
           )}
         </div>
-      </main>
-    </div>
+      </PageShell>
+    </main>
   );
 }

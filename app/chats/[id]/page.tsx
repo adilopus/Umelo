@@ -2,7 +2,9 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
-import { ChevronLeft, Send, MapPin, Check } from "lucide-react";
+import { Send, MapPin, Check } from "lucide-react";
+import { PageHeader } from "@/components/ui/PageHeader";
+import { PageShell } from "@/components/ui/PageShell";
 import { useAppStore } from "@/lib/store";
 
 export default function ChatPage() {
@@ -39,36 +41,41 @@ export default function ChatPage() {
   }
 
   return (
-    <div className="flex flex-1 flex-col">
-      <header className="sticky top-0 z-10 flex items-center gap-3 border-b border-line bg-paper/95 px-4 py-3 backdrop-blur lg:mx-auto lg:w-full lg:max-w-content">
-        <button onClick={() => router.push(role === "master" && offer ? "/offers" : "/chats")} className="rounded-full p-1 text-ink-soft active:bg-surface" aria-label="Назад"><ChevronLeft size={22} /></button>
-        <div className="h-9 w-9 shrink-0 overflow-hidden rounded-lg bg-ink">{order.media[0] && <img src={order.media[0].dataUrl} alt="" className="h-full w-full object-cover" />}</div>
-        <div className="min-w-0 flex-1"><p className="truncate font-display text-sm font-bold">{order.serviceName}</p><p className="text-xs text-ink-faint">№ {order.code}</p></div>
-      </header>
+    <main className="flex-1">
+      <PageShell padBottom="pb-4">
+        <PageHeader
+          back
+          fallbackHref={role === "master" && offer ? "/offers" : "/chats"}
+          title={order.serviceName}
+          subtitle={`№ ${order.code}`}
+        />
 
-      {offer && offer.status !== "accepted" && role === "master" && (
-        <div className="mx-auto mt-3 w-full max-w-content rounded-2xl border border-accent/30 bg-accent-soft p-4">
-          <p className="text-xs font-bold uppercase tracking-wider text-accent-ink">Предложение работы</p>
-          <p className="mt-1 text-sm text-ink-soft">Можно обсудить детали в чате, а затем принять или отклонить заказ.</p>
-          <button onClick={() => acceptOffer(offer.id)} className="mt-3 flex items-center gap-2 rounded-xl bg-accent px-4 py-2.5 text-xs font-bold text-night"><Check size={14} /> Принять заказ</button>
-        </div>
-      )}
-
-      <main className="flex-1 space-y-2 overflow-y-auto px-4 pt-6 sm:px-6 lg:px-8 lg:mx-auto lg:w-full lg:max-w-content">
-        {messages.length === 0 && <p className="mt-6 text-center text-xs text-ink-faint">Защищённый чат открыт. Можно обсудить детали, стоимость и сроки.</p>}
-        {messages.map((m) => (
-          <div key={m.id} className={`max-w-[75%] rounded-2xl px-3 py-2 text-sm ${m.author === role ? "ml-auto bg-accent text-night rounded-tr-sm" : "mr-auto bg-surface text-ink rounded-tl-sm"}`}>
-            {m.text}
+        {offer && offer.status !== "accepted" && role === "master" && (
+          <div className="mt-4 w-full rounded-2xl border border-accent/30 bg-accent-soft p-4">
+            <p className="text-xs font-bold uppercase tracking-wider text-accent-ink">Предложение работы</p>
+            <p className="mt-1 text-sm text-ink-soft">Можно обсудить детали в чате, а затем принять или отклонить заказ.</p>
+            <button onClick={() => acceptOffer(offer.id)} className="mt-3 flex items-center gap-2 rounded-xl bg-accent px-4 py-2.5 text-xs font-bold text-night"><Check size={14} /> Принять заказ</button>
           </div>
-        ))}
-        <div ref={bottomRef} />
-      </main>
+        )}
 
-      <footer className="flex items-center gap-2 border-t border-line px-3 py-2.5 lg:mx-auto lg:w-full lg:max-w-content">
-        <button onClick={shareLocation} className="shrink-0 rounded-full border border-line p-2.5 text-ink-soft" aria-label="Отправить геолокацию"><MapPin size={18} /></button>
-        <input value={text} onChange={(e) => setText(e.target.value)} onKeyDown={(e) => e.key === "Enter" && send()} placeholder="Написать сообщение…" className="flex-1 rounded-full border border-line px-4 py-2.5 text-sm" />
-        <button onClick={send} className="shrink-0 rounded-full bg-accent p-2.5 text-night" aria-label="Отправить"><Send size={18} /></button>
+        <div className="mt-5 space-y-2">
+          {messages.length === 0 && <p className="mt-6 text-center text-xs text-ink-faint">Защищённый чат открыт. Можно обсудить детали, стоимость и сроки.</p>}
+          {messages.map((m) => (
+            <div key={m.id} className={`max-w-[75%] rounded-2xl px-3 py-2 text-sm ${m.author === role ? "ml-auto bg-accent text-night rounded-tr-sm" : "mr-auto bg-surface text-ink rounded-tl-sm"}`}>
+              {m.text}
+            </div>
+          ))}
+          <div ref={bottomRef} />
+        </div>
+      </PageShell>
+
+      <footer className="border-t border-line bg-paper px-3 py-2.5">
+        <div className="mx-auto flex w-full max-w-shell items-center gap-2 px-1 sm:px-3">
+          <button onClick={shareLocation} className="shrink-0 rounded-full border border-line p-2.5 text-ink-soft" aria-label="Отправить геолокацию"><MapPin size={18} /></button>
+          <input value={text} onChange={(e) => setText(e.target.value)} onKeyDown={(e) => e.key === "Enter" && send()} placeholder="Написать сообщение…" className="flex-1 rounded-full border border-line px-4 py-2.5 text-sm" />
+          <button onClick={send} className="shrink-0 rounded-full bg-accent p-2.5 text-night" aria-label="Отправить"><Send size={18} /></button>
+        </div>
       </footer>
-    </div>
+    </main>
   );
 }

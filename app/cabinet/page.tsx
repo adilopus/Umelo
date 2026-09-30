@@ -24,6 +24,8 @@ import { SubscriptionPanel } from "@/components/SubscriptionPanel";
 import { MasterProfilePanel } from "@/components/MasterProfilePanel";
 import { ContentDashboard } from "@/components/ContentDashboard";
 import { PersonalDataPanel } from "@/components/PersonalDataPanel";
+import { PageHeader } from "@/components/ui/PageHeader";
+import { PageShell } from "@/components/ui/PageShell";
 
 type TabId = "personal" | "stats" | "extra" | "favorites" | "subscription";
 
@@ -104,33 +106,32 @@ export default function CabinetPage() {
   ];
 
   return (
-    <div className="flex flex-1 flex-col">
-      <header className="border-b border-line px-4 py-3 lg:mx-auto lg:w-full lg:max-w-content lg:border-0 lg:px-0 lg:pb-4 lg:pt-8">
-        <p className="font-display text-lg font-extrabold">Личный кабинет</p>
+    <main className="flex-1">
+      <PageShell padBottom="pb-12">
+        <PageHeader title="Личный кабинет">
+          <div className="flex gap-1 overflow-x-auto border-b border-line no-scrollbar">
+            {tabs.map((t) => {
+              const Icon = t.icon;
+              const active = tab === t.id;
+              return (
+                <button
+                  key={t.id}
+                  onClick={() => setTab(t.id)}
+                  className={`flex shrink-0 items-center gap-1.5 border-b-2 px-3 py-2.5 text-xs font-semibold transition ${
+                    active ? "border-accent text-accent-ink" : "border-transparent text-ink-faint"
+                  }`}
+                >
+                  <Icon size={14} /> {t.label}
+                </button>
+              );
+            })}
+          </div>
+        </PageHeader>
+
         <RoleBadge role={role} />
-      </header>
-
-      <div className="flex gap-1 overflow-x-auto border-b border-line px-4 no-scrollbar lg:mx-auto lg:w-full lg:max-w-content lg:border-0 lg:px-0">
-        {tabs.map((t) => {
-          const Icon = t.icon;
-          const active = tab === t.id;
-          return (
-            <button
-              key={t.id}
-              onClick={() => setTab(t.id)}
-              className={`flex shrink-0 items-center gap-1.5 border-b-2 px-3 py-2.5 text-xs font-semibold transition ${
-                active ? "border-accent text-accent-ink" : "border-transparent text-ink-faint"
-              }`}
-            >
-              <Icon size={14} /> {t.label}
-            </button>
-          );
-        })}
-      </div>
-
-      <main className="flex-1 overflow-y-auto px-4 pt-6 pb-24 sm:px-6 lg:px-8 lg:mx-auto lg:w-full lg:max-w-content lg:pb-12">
+        <div className="max-w-form">
         {isAdmin && (
-          <div className="mb-4 space-y-2 rounded-2xl border border-line p-4">
+          <div className="mb-4 max-w-form space-y-2 rounded-2xl border border-line p-4">
             <p className="flex items-center gap-1.5 font-display text-sm font-bold">
               <Crown size={16} className="text-accent-ink" /> Администратор
             </p>
@@ -155,9 +156,10 @@ export default function CabinetPage() {
         )}
         {tab === "favorites" && <FavoritesPanel />}
         {tab === "subscription" && <SubscriptionPanel />}
-      </main>
+      </div>
+      </PageShell>
 
       <BottomNav />
-    </div>
+    </main>
   );
 }

@@ -20,6 +20,7 @@ import {
   X,
 } from "lucide-react";
 import { useAppStore } from "@/lib/store";
+import { PageShell } from "@/components/ui/PageShell";
 import { ProposeWorkModal } from "@/components/ProposeWorkModal";
 import { formatDate, pluralize } from "@/lib/format";
 import type { PortfolioItem } from "@/lib/types";
@@ -207,11 +208,11 @@ export default function SpecialistDetailPage() {
   }
 
   return (
-    <main className="min-h-screen pb-24 lg:pb-16">
-      <div className="mx-auto max-w-page px-4 pt-6 sm:px-6 lg:px-8 lg:pt-8">
+    <main>
+      <PageShell padBottom="pb-16">
         <Link
           href="/specialists"
-          className="mb-5 -my-1.5 inline-flex items-center gap-2 py-1.5 text-xs font-bold text-ink-soft transition hover:text-ink"
+          className="mb-5 inline-flex items-center gap-2 text-xs font-bold text-ink-soft transition hover:text-ink"
         >
           <ArrowLeft size={15} /> Все специалисты
         </Link>
@@ -475,7 +476,7 @@ export default function SpecialistDetailPage() {
             </div>
           </aside>
         </div>
-      </div>
+      </PageShell>
 
       {openItem && (
         <PortfolioModal

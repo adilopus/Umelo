@@ -20,6 +20,8 @@ import type { ConditionType, OrderDocument, OrderMedia, PremiseType } from "@/li
 import { STATUS_META } from "@/lib/status";
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
+import { PageHeader } from "@/components/ui/PageHeader";
+import { PageShell } from "@/components/ui/PageShell";
 
 const PREMISE_OPTIONS: { id: PremiseType; label: string }[] = [
   { id: "new", label: "Новостройка" },
@@ -42,23 +44,13 @@ function readFileAsDataUrl(file: File): Promise<string> {
 
 function Guard({ title, text, backHref }: { title: string; text: string; backHref: string }) {
   return (
-    <div className="flex flex-1 flex-col">
-      <header className="flex items-center gap-3 border-b border-line px-4 py-3">
-        <Link
-          href={backHref}
-          aria-label="Назад"
-          className="-m-2 rounded-full p-2 text-ink-soft active:bg-surface"
-        >
-          <ChevronLeft size={22} />
-        </Link>
-        <p className="font-display text-lg font-extrabold">Изменение заказа</p>
-      </header>
-      <main className="flex-1 px-4 pt-10 text-center sm:px-6">
+    <main className="flex-1">
+      <PageShell padBottom="pb-10">
         <p className="font-display text-base font-bold">{title}</p>
         <p className="mt-2 text-sm text-ink-soft">{text}</p>
         <ButtonLinkBack href={backHref} />
-      </main>
-    </div>
+      </PageShell>
+    </main>
   );
 }
 
@@ -215,27 +207,21 @@ export default function EditOrderPage() {
   }
 
   return (
-    <div className="flex flex-1 flex-col">
-      <header className="flex items-center gap-3 border-b border-line px-4 py-3 lg:mx-auto lg:w-full lg:max-w-content lg:border-0 lg:px-0 lg:pb-4 lg:pt-8">
-        <button
-          onClick={() => router.push(`/orders/${order.id}`)}
-          aria-label="Назад"
-          className="-m-2 rounded-full p-2 text-ink-soft active:bg-surface"
-        >
-          <ChevronLeft size={22} />
-        </button>
-        <div className="min-w-0 flex-1">
-          <p className="font-display text-lg font-extrabold">Изменение заказа</p>
-          <p className="flex items-center gap-2 text-xs text-ink-soft">
-            № {order.code}
-            <Chip size="sm" tone={STATUS_META[order.status].tone}>
-              {STATUS_META[order.status].label}
-            </Chip>
-          </p>
+    <main className="flex-1">
+      <PageShell padBottom="pb-12">
+        <PageHeader
+          back
+          fallbackHref={`/orders/${order.id}`}
+          title="Изменение заказа"
+          subtitle={`№ ${order.code}`}
+        />
+        <div className="-mt-4 mb-6 flex items-center gap-2">
+          <Chip size="sm" tone={STATUS_META[order.status].tone}>
+            {STATUS_META[order.status].label}
+          </Chip>
         </div>
-      </header>
 
-      <main className="flex-1 space-y-6 px-4 pt-6 pb-32 sm:px-6 lg:px-8 lg:mx-auto lg:w-full lg:max-w-content lg:pb-12">
+        <div className="max-w-form space-y-6">
         <p className="rounded-xl bg-accent-soft px-3 py-2.5 text-xs text-accent-ink">
           Меняется содержание заказа. Номер, дата размещения и авторство остаются прежними —
           по номеру мастера уже переписываются.
@@ -513,10 +499,11 @@ export default function EditOrderPage() {
             {error}
           </p>
         )}
-      </main>
+        </div>
+      </PageShell>
 
       <div className="fixed inset-x-0 bottom-0 z-20 border-t border-line bg-paper px-4 py-3 lg:static lg:border-0 lg:bg-transparent lg:px-0">
-        <div className="mx-auto flex max-w-content gap-2">
+        <div className="mx-auto flex max-w-form gap-2">
           <Button
             variant="outline"
             full
@@ -529,6 +516,6 @@ export default function EditOrderPage() {
           </Button>
         </div>
       </div>
-    </div>
+    </main>
   );
 }

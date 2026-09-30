@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { ArrowRight, BriefcaseBusiness, FileText, ImagePlus, PackagePlus, Search, ShoppingBag } from "lucide-react";
 import { useAppStore } from "@/lib/store";
+import { PageHeader } from "@/components/ui/PageHeader";
+import { PageShell } from "@/components/ui/PageShell";
 
 const OPTIONS = {
   customer: [
@@ -31,13 +33,15 @@ export default function CreatePage() {
   const options = OPTIONS[role];
 
   return (
-    <main className="min-h-[calc(100vh-64px)] px-4 pb-8 pt-6 sm:px-6 lg:px-8 lg:pt-8">
-      <div className="mx-auto max-w-content">
-        <p className="text-xs font-bold uppercase tracking-[0.14em] text-accent-ink">UMELO</p>
-        <h1 className="mt-1 font-display text-3xl font-extrabold text-ink">Создать</h1>
-        <p className="mt-2 text-sm text-ink-soft">Выберите действие в соответствии с вашей ролью.</p>
+    <main>
+      <PageShell padBottom="pb-10">
+        <PageHeader
+          eyebrow="UMELO"
+          title="Создать"
+          subtitle="Выберите действие в соответствии с вашей ролью."
+        />
 
-        <div className="mt-7 grid gap-3 sm:grid-cols-2">
+        <div className="mt-7 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {options.map(({ title, text, href, icon: Icon }) => (
             <Link key={href} href={href} className="group rounded-2xl border border-line bg-paper p-5 transition hover:-translate-y-0.5 hover:border-accent hover:shadow-card-hover">
               <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-accent-soft text-ink">
@@ -59,7 +63,7 @@ export default function CreatePage() {
           <p className="mt-2 font-display text-base font-extrabold">«Предложить работу» не создаёт новый заказ.</p>
           <p className="mt-1 text-xs leading-5 text-white/60">Для существующего заказа специалист выбирается отдельно — через раздел «Специалисты» или страницу самого заказа.</p>
         </div>
-      </div>
+      </PageShell>
     </main>
   );
 }

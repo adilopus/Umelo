@@ -5,6 +5,8 @@ import Link from "next/link";
 import { Trash2, Ban, CheckCircle2, Star } from "lucide-react";
 import { useAppStore } from "@/lib/store";
 import { BackButton } from "@/components/ui/BackButton";
+import { PageHeader } from "@/components/ui/PageHeader";
+import { PageShell } from "@/components/ui/PageShell";
 
 type Tab = "orders" | "articles" | "users";
 
@@ -36,31 +38,28 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="flex flex-1 flex-col">
-      <header className="flex items-center gap-3 border-b border-line px-4 py-3 lg:mx-auto lg:w-full lg:max-w-content">
-        <BackButton fallbackHref="/profile" />
-        <p className="font-display text-sm font-bold">Панель администратора</p>
-      </header>
+    <main className="flex-1">
+      <PageShell padBottom="pb-10">
+        <PageHeader back fallbackHref="/profile" title="Панель администратора">
+          <div className="flex border-b border-line">
+            {([
+              ["orders", `Заказы (${orders.length})`],
+              ["articles", `Статьи (${articles.length})`],
+              ["users", `Пользователи (${users.length})`],
+            ] as [Tab, string][]).map(([id, label]) => (
+              <button
+                key={id}
+                onClick={() => setTab(id)}
+                className={`border-b-2 px-3 py-2.5 text-xs font-semibold ${
+                  tab === id ? "border-accent text-accent-ink" : "border-transparent text-ink-faint"
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </PageHeader>
 
-      <div className="flex border-b border-line px-4 lg:mx-auto lg:w-full lg:max-w-content">
-        {([
-          ["orders", `Заказы (${orders.length})`],
-          ["articles", `Статьи (${articles.length})`],
-          ["users", `Пользователи (${users.length})`],
-        ] as [Tab, string][]).map(([id, label]) => (
-          <button
-            key={id}
-            onClick={() => setTab(id)}
-            className={`border-b-2 px-3 py-2.5 text-xs font-semibold ${
-              tab === id ? "border-accent text-accent-ink" : "border-transparent text-ink-faint"
-            }`}
-          >
-            {label}
-          </button>
-        ))}
-      </div>
-
-      <main className="flex-1 space-y-2 overflow-y-auto px-4 pt-6 pb-10 sm:px-6 lg:px-8 lg:mx-auto lg:w-full lg:max-w-content">
         {tab === "orders" &&
           orders.map((o) => (
             <div key={o.id} className="flex items-center gap-3 rounded-xl border border-line p-3">
@@ -150,7 +149,7 @@ export default function AdminPage() {
         {tab === "users" && users.length === 0 && (
           <p className="text-center text-sm text-ink-soft">Пользователей нет.</p>
         )}
-      </main>
-    </div>
+      </PageShell>
+    </main>
   );
 }

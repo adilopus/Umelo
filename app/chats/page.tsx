@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useAppStore } from "@/lib/store";
 import { BottomNav } from "@/components/BottomNav";
 import { MessageCircle } from "lucide-react";
+import { PageHeader } from "@/components/ui/PageHeader";
+import { PageShell } from "@/components/ui/PageShell";
 
 export default function ChatsListPage() {
   const orders = useAppStore((s) => s.orders);
@@ -17,18 +19,16 @@ export default function ChatsListPage() {
   const chatOrders = orders.filter((o) => chatOrderIds.has(o.id));
 
   return (
-    <div className="flex flex-1 flex-col">
-      <header className="border-b border-line px-4 py-3 lg:mx-auto lg:w-full lg:max-w-content lg:border-0 lg:px-0 lg:pb-4 lg:pt-8">
-        <p className="font-display text-lg font-extrabold">Чаты</p>
-      </header>
-      <main className="flex-1 px-4 pt-6 pb-24 sm:px-6 lg:px-8 lg:mx-auto lg:w-full lg:max-w-content lg:pb-12">
+    <main className="flex-1">
+      <PageShell padBottom="pb-12">
+        <PageHeader title="Чаты" />
         {chatOrders.length === 0 && (
           <div className="mt-16 flex flex-col items-center gap-2 text-center">
             <MessageCircle size={32} className="text-ink-faint" />
             <p className="text-sm text-ink-soft">Здесь появятся переговоры по заказам и предложениям.</p>
           </div>
         )}
-        <div className="space-y-2">
+        <div className="grid gap-2 lg:grid-cols-2">
           {chatOrders.map((order) => {
             const last = messages.filter((m) => m.orderId === order.id).slice(-1)[0];
             const offer = offers.find((o) => o.orderId === order.id && ["pending", "snoozed", "accepted"].includes(o.status));
@@ -45,8 +45,8 @@ export default function ChatsListPage() {
             );
           })}
         </div>
-      </main>
+      </PageShell>
       <BottomNav />
-    </div>
+    </main>
   );
 }

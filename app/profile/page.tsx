@@ -13,6 +13,8 @@ import {
 import { useAppStore } from "@/lib/store";
 import { BottomNav } from "@/components/BottomNav";
 import { ROLE_OPTIONS } from "@/lib/roles";
+import { PageHeader } from "@/components/ui/PageHeader";
+import { PageShell } from "@/components/ui/PageShell";
 
 const ROLE_CHOICES = ROLE_OPTIONS.filter((r) => r.id !== "admin");
 
@@ -39,12 +41,9 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="flex flex-1 flex-col">
-      <header className="border-b border-line px-4 py-3 lg:mx-auto lg:w-full lg:max-w-content lg:border-0 lg:px-0 lg:pb-4 lg:pt-8">
-        <p className="font-display text-lg font-extrabold">Профиль</p>
-      </header>
-
-      <main className="flex-1 space-y-5 px-4 pt-6 pb-24 sm:px-6 lg:px-8 lg:mx-auto lg:w-full lg:max-w-content lg:pb-12">
+    <main className="flex-1">
+      <PageShell padBottom="pb-12">
+        <PageHeader title="Профиль" />
         {isAuthenticated ? (
           <div className="flex items-center gap-3 rounded-2xl border border-line p-4">
             <div className="flex h-14 w-14 items-center justify-center rounded-full bg-surface">
@@ -185,9 +184,9 @@ export default function ProfilePage() {
           Верификация через Госуслуги/СБП пока не подключена в этой демо-версии — добавляется
           на следующем этапе разработки.
         </div>
-      </main>
+      </PageShell>
 
       <BottomNav />
-    </div>
+    </main>
   );
 }

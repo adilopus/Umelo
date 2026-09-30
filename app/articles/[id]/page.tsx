@@ -2,7 +2,9 @@
 
 import { useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { ChevronLeft, Eye, MousePointerClick, ExternalLink, PlayCircle, Heart, Bookmark } from "lucide-react";
+import { Eye, MousePointerClick, ExternalLink, PlayCircle, Heart, Bookmark } from "lucide-react";
+import { PageHeader } from "@/components/ui/PageHeader";
+import { PageShell } from "@/components/ui/PageShell";
 import { useAppStore } from "@/lib/store";
 import { formatDate } from "@/lib/format";
 import { topicLabel } from "@/lib/articleTopics";
@@ -53,19 +55,9 @@ export default function ArticleDetailPage() {
   const clicksCount = Number.isFinite(article.clicks) ? article.clicks : 0;
 
   return (
-    <div className="flex flex-1 flex-col">
-      <header className="sticky top-0 z-10 flex items-center gap-3 border-b border-line bg-paper/95 px-4 py-3 backdrop-blur lg:mx-auto lg:w-full lg:max-w-content">
-        <button
-          onClick={() => router.back()}
-          className="rounded-full p-1 text-ink-soft active:bg-surface"
-          aria-label="Назад"
-        >
-          <ChevronLeft size={22} />
-        </button>
-        <p className="truncate font-display text-sm font-bold">{article.title}</p>
-      </header>
-
-      <main className="flex-1 overflow-y-auto pb-12 lg:mx-auto lg:w-full lg:max-w-content">
+    <main className="flex-1">
+      <PageShell padBottom="pb-12">
+        <PageHeader back fallbackHref="/articles" title={article.title} />
         <div className="relative aspect-[16/9] w-full bg-ink">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={article.coverUrl} alt="" className="h-full w-full object-cover" />
@@ -140,7 +132,7 @@ export default function ArticleDetailPage() {
             </button>
           )}
         </div>
-      </main>
-    </div>
+      </PageShell>
+    </main>
   );
 }

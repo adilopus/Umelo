@@ -9,6 +9,8 @@ import { ArticleCard } from "@/components/ArticleCard";
 import { ScrollRow } from "@/components/ScrollRow";
 import { BottomNav } from "@/components/BottomNav";
 import { ARTICLE_TOPICS } from "@/lib/articleTopics";
+import { PageHeader } from "@/components/ui/PageHeader";
+import { PageShell } from "@/components/ui/PageShell";
 
 export default function ArticlesPage() {
   const router = useRouter();
@@ -26,15 +28,10 @@ export default function ArticlesPage() {
   }, [articles, activeTopic]);
 
   return (
-    <div className="flex flex-1 flex-col">
-      <header className="sticky top-0 z-10 flex items-center gap-3 border-b border-line bg-paper/95 px-4 py-3 backdrop-blur lg:mx-auto lg:w-full lg:max-w-page lg:px-6">
-        <BackButton className="lg:hidden" />
-        <p className="font-display text-sm font-bold lg:text-lg">Статьи и новости</p>
-      </header>
-
-      <main className="flex-1 px-4 pt-6 pb-24 sm:px-6 lg:px-8 lg:pb-12">
-        <div className="mx-auto w-full max-w-page">
-          <div className="flex items-center gap-2 lg:px-0">
+    <main className="flex-1">
+      <PageShell padBottom="pb-12">
+        <PageHeader back fallbackHref="/feed" title="Статьи и новости">
+          <div className="mt-5 flex items-center gap-2">
             <button
               onClick={() => setActiveTopic(null)}
               className={`inline-flex min-h-10 shrink-0 items-center rounded-full border px-3 py-1.5 text-xs font-medium ${
@@ -61,22 +58,22 @@ export default function ArticlesPage() {
               ))}
             </ScrollRow>
           </div>
+        </PageHeader>
 
-          <div className="mt-4 grid grid-cols-1 gap-3 px-3 sm:grid-cols-2 lg:grid-cols-4 lg:gap-4 lg:px-0">
-            {items.map((article) => (
-              <ArticleCard key={article.id} article={article} fullWidth />
-            ))}
-          </div>
-
-          {items.length === 0 && (
-            <p className="mt-10 text-center text-sm text-ink-soft">
-              По этой теме пока нет статей.
-            </p>
-          )}
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4 lg:gap-4">
+          {items.map((article) => (
+            <ArticleCard key={article.id} article={article} fullWidth />
+          ))}
         </div>
-      </main>
+
+        {items.length === 0 && (
+          <p className="mt-10 text-center text-sm text-ink-soft">
+            По этой теме пока нет статей.
+          </p>
+        )}
+      </PageShell>
 
       <BottomNav />
-    </div>
+    </main>
   );
 }

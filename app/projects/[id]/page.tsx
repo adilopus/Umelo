@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";
 import { ProjectOrderDrawer } from "@/components/ProjectOrderDrawer";
+import { PageShell } from "@/components/ui/PageShell";
 import { useAppStore } from "@/lib/store";
 import { projectGallery, type FeedProject } from "@/lib/mockProjects";
 import {
@@ -59,8 +60,9 @@ export default function ProjectDetailPage() {
 
 function ProjectNotFound({ id }: { id: string }) {
   return (
-    <main className="min-h-[calc(100vh-64px)] px-4 py-16 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-page rounded-[26px] border border-line bg-paper px-6 py-14 text-center">
+    <main>
+      <PageShell padBottom="pb-16">
+        <div className="rounded-[26px] border border-line bg-paper px-6 py-14 text-center">
         <p className="text-xs font-bold uppercase tracking-[0.14em] text-accent-ink">Проекты</p>
         <h1 className="mt-2 font-display text-2xl font-extrabold text-ink">
           Проект не найден
@@ -76,7 +78,8 @@ function ProjectNotFound({ id }: { id: string }) {
         >
           <ArrowLeft size={15} /> Ко всем проектам
         </Link>
-      </div>
+        </div>
+      </PageShell>
     </main>
   );
 }
@@ -113,8 +116,8 @@ function ProjectView({ project }: { project: FeedProject }) {
   ];
 
   return (
-    <main className="min-h-screen pb-24 lg:pb-16">
-      <div className="mx-auto max-w-page px-4 pt-6 sm:px-6 lg:px-8 lg:pt-8">
+    <main>
+      <PageShell padBottom="pb-16">
         <Link href="/projects" className="mb-5 -my-1.5 inline-flex items-center gap-2 py-1.5 text-xs font-bold text-ink-soft transition hover:text-ink">
           <ArrowLeft size={15} /> Все проекты
         </Link>
@@ -223,7 +226,7 @@ function ProjectView({ project }: { project: FeedProject }) {
             <div className="mt-4 rounded-[24px] bg-night p-5 text-white"><p className="text-xs font-extrabold uppercase tracking-[0.15em] text-accent">Понравился проект?</p><p className="mt-2 font-display text-lg font-extrabold leading-tight">Найдите специалистов и материалы для своей версии.</p><button onClick={() => setShowOrderDrawer(true)} className="mt-4 flex w-full items-center justify-center gap-2 rounded-full bg-accent px-4 py-3 text-xs font-extrabold text-ink">Создать заказ <Send size={14} /></button></div>
           </aside>
         </div>
-      </div>
+      </PageShell>
 
       {showOrderDrawer && (
         <ProjectOrderDrawer

@@ -4,6 +4,8 @@ import Link from "next/link";
 import { Archive, Check, MessageCircle, RotateCcw, Send, X } from "lucide-react";
 import { useAppStore } from "@/lib/store";
 import { formatOrderDate } from "@/lib/format";
+import { PageHeader } from "@/components/ui/PageHeader";
+import { PageShell } from "@/components/ui/PageShell";
 
 export default function OffersPage() {
   const role = useAppStore((s) => s.role);
@@ -14,12 +16,14 @@ export default function OffersPage() {
 
   if (role !== "master") {
     return (
-      <main className="mx-auto w-full max-w-content px-4 pb-10 pt-6 sm:px-6 lg:px-8">
-        <div className="rounded-2xl border border-line bg-paper p-6 text-center">
-          <h1 className="font-display text-xl font-extrabold">Предложения</h1>
-          <p className="mt-2 text-sm text-ink-soft">Этот раздел предназначен для специалиста. Переключите роль на «Я исполнитель» в профиле.</p>
-          <Link href="/profile" className="mt-4 inline-block rounded-xl bg-accent px-5 py-2.5 text-sm font-bold text-night">Открыть профиль</Link>
-        </div>
+      <main>
+        <PageShell padBottom="pb-10">
+          <div className="rounded-2xl border border-line bg-paper p-6 text-center">
+            <h1 className="font-display text-xl font-extrabold">Только для исполнителей</h1>
+            <p className="mt-2 text-sm text-ink-soft">Раздел «Предложения» доступен только тем, кто выполняет заказы. Переключите роль в профиле, чтобы увидеть его.</p>
+            <Link href="/profile" className="mt-4 inline-block rounded-xl bg-accent px-5 py-2.5 text-sm font-bold text-night">Сменить роль</Link>
+          </div>
+        </PageShell>
       </main>
     );
   }
@@ -28,16 +32,18 @@ export default function OffersPage() {
   const archived = offers.filter((o) => o.status === "accepted" || o.status === "declined" || o.status === "cancelled");
 
   return (
-    <main className="min-h-[calc(100vh-64px)] px-4 pb-8 pt-6 sm:px-6 lg:px-8 lg:pt-8">
-      <div className="mx-auto max-w-content">
-        <div className="flex items-end justify-between gap-4">
-          <div>
-            <p className="text-xs font-bold uppercase tracking-[0.14em] text-accent-ink">Для специалиста</p>
-            <h1 className="mt-1 font-display text-3xl font-extrabold text-ink">Предложения</h1>
-            <p className="mt-1 text-sm text-ink-soft">Заказчики могут предложить вам уже опубликованный заказ.</p>
-          </div>
-          <Link href="/my-orders" className="hidden rounded-xl border border-line bg-paper px-4 py-2.5 text-sm font-semibold lg:block">Мои отклики</Link>
-        </div>
+    <main>
+      <PageShell padBottom="pb-10">
+        <PageHeader
+          eyebrow="Для специалиста"
+          title="Предложения"
+          subtitle="Заказчики могут предложить вам уже опубликованный заказ."
+          actions={
+            <Link href="/my-orders" className="hidden rounded-xl border border-line bg-paper px-4 py-2.5 text-sm font-semibold lg:block">
+              Мои отклики
+            </Link>
+          }
+        />
 
         <section className="mt-6 space-y-3">
           {active.length === 0 && (
@@ -101,7 +107,7 @@ export default function OffersPage() {
             </div>
           </section>
         )}
-      </div>
+      </PageShell>
     </main>
   );
 }

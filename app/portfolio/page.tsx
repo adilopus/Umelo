@@ -25,6 +25,8 @@ import { Stars } from "@/components/ui/Stars";
 import { Modal } from "@/components/ui/Modal";
 import { Chip } from "@/components/ui/Chip";
 import { Button, ButtonLink } from "@/components/ui/Button";
+import { PageHeader } from "@/components/ui/PageHeader";
+import { PageShell } from "@/components/ui/PageShell";
 import type { PortfolioItem } from "@/lib/types";
 
 const MAX_PHOTOS = 8;
@@ -150,8 +152,8 @@ export default function PortfolioPage() {
 
   if (role !== "master") {
     return (
-      <div className="flex flex-1 flex-col">
-        <main className="flex-1 px-4 pb-10 pt-6 text-center sm:px-6 lg:px-8 lg:mx-auto lg:w-full lg:max-w-content">
+      <main className="flex-1">
+        <PageShell padBottom="pb-10">
           <p className="text-sm text-ink-soft">
             Портфолио заполняет исполнитель. Посмотреть работы мастеров можно в
             каталоге специалистов.
@@ -162,41 +164,36 @@ export default function PortfolioPage() {
           >
             Открыть каталог специалистов
           </Link>
-        </main>
+        </PageShell>
         <BottomNav />
-      </div>
+      </main>
     );
   }
 
   return (
-    <div className="flex flex-1 flex-col">
-      <header className="border-b border-line px-4 py-3 lg:mx-auto lg:w-full lg:max-w-page lg:border-0 lg:px-0 lg:pb-4 lg:pt-8">
-        <div className="flex items-center justify-between gap-3">
-          <div>
-            <p className="font-display text-lg font-extrabold">Моё портфолио</p>
-            <p className="text-xs text-ink-soft">
-              {myWorks.length} {pluralize(myWorks.length, "работа", "работы", "работ")} ·{" "}
-              {myReviews.length} {pluralize(myReviews.length, "отзыв", "отзыва", "отзывов")}
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
-            <Link
-              href="/specialists/me"
-              className="hidden rounded-xl bg-accent-soft px-3 py-2 text-xs font-bold text-accent-ink sm:block"
-            >
-              Как видят заказчики
-            </Link>
-            <button
-              onClick={() => setShowForm((v) => !v)}
-              className="flex items-center gap-1.5 rounded-xl bg-accent px-3.5 py-2 text-xs font-bold text-night"
-            >
-              <Plus size={14} /> Добавить работу
-            </button>
-          </div>
-        </div>
-      </header>
+    <main className="flex-1">
+      <PageShell padBottom="pb-12">
+        <PageHeader
+          title="Моё портфолио"
+          subtitle={`${myWorks.length} ${pluralize(myWorks.length, "работа", "работы", "работ")} · ${myReviews.length} ${pluralize(myReviews.length, "отзыв", "отзыва", "отзывов")}`}
+          actions={
+            <>
+              <Link
+                href="/specialists/me"
+                className="hidden rounded-xl bg-accent-soft px-3 py-2 text-xs font-bold text-accent-ink lg:block"
+              >
+                Как видят заказчики
+              </Link>
+              <button
+                onClick={() => setShowForm((v) => !v)}
+                className="flex items-center gap-1.5 rounded-xl bg-accent px-3.5 py-2 text-xs font-bold text-night"
+              >
+                <Plus size={14} /> Добавить работу
+              </button>
+            </>
+          }
+        />
 
-      <main className="flex-1 space-y-5 px-4 pt-6 pb-24 sm:px-6 lg:px-8 lg:mx-auto lg:w-full lg:max-w-page lg:pb-12">
         <section className="rounded-2xl border border-line bg-paper p-4">
           <div className="flex items-start gap-4">
             <div className="h-16 w-16 shrink-0 overflow-hidden rounded-2xl bg-surface">
@@ -523,7 +520,7 @@ export default function PortfolioPage() {
             </div>
           )}
         </section>
-      </main>
+      </PageShell>
 
       {selected && (
         <Modal open onClose={() => setSelectedId(null)} title={selected.title} width="lg">
@@ -608,6 +605,6 @@ export default function PortfolioPage() {
       )}
 
       <BottomNav />
-    </div>
+    </main>
   );
 }

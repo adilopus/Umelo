@@ -11,6 +11,8 @@ import { CATEGORIES } from "@/lib/jobCategories";
 import { pluralize } from "@/lib/format";
 import { Pill, PillGroup } from "@/components/ui/Pill";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { PageHeader } from "@/components/ui/PageHeader";
+import { PageShell } from "@/components/ui/PageShell";
 import { Button } from "@/components/ui/Button";
 import {
   applyOrderFilters,
@@ -111,28 +113,22 @@ export default function OrdersCatalogPage() {
   }
 
   return (
-    <div className="flex flex-1 flex-col">
-      <header className="border-b border-line px-4 py-3 lg:mx-auto lg:w-full lg:max-w-page lg:border-0 lg:px-0 lg:pb-4 lg:pt-8">
-        <div className="flex items-center justify-between gap-3">
-          <div>
-            <p className="font-display text-lg font-extrabold">Заказы</p>
-            <p className="text-xs text-ink-soft">
-              {openOrders.length} открытых{" "}
-              {pluralize(openOrders.length, "заказ", "заказа", "заказов")}
-            </p>
-          </div>
-          {role === "master" && (
-            <Link
-              href="/my-orders"
-              className="shrink-0 rounded-xl bg-accent-soft px-3 py-2 text-xs font-bold text-accent-ink"
-            >
-              Мои отклики
-            </Link>
-          )}
-        </div>
-      </header>
-
-      <main className="flex-1 px-4 pt-6 pb-24 sm:px-6 lg:px-8 lg:mx-auto lg:w-full lg:max-w-page lg:pb-12">
+    <main className="flex-1">
+      <PageShell padBottom="pb-12">
+        <PageHeader
+          title="Заказы"
+          subtitle={`${openOrders.length} открытых ${pluralize(openOrders.length, "заказ", "заказа", "заказов")}`}
+          actions={
+            role === "master" ? (
+              <Link
+                href="/my-orders"
+                className="hidden shrink-0 rounded-xl bg-accent-soft px-3 py-2 text-xs font-bold text-accent-ink lg:block"
+              >
+                Мои отклики
+              </Link>
+            ) : undefined
+          }
+        />
         <div className="rounded-2xl border border-line bg-paper shadow-card">
           <div className="flex gap-2 p-2.5">
             <label className="relative min-w-0 flex-1">
@@ -384,7 +380,7 @@ export default function OrdersCatalogPage() {
             }
           />
         ) : (
-          <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
+          <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
             {result.map((order) => (
               <OrderCard
                 key={order.id}
@@ -396,9 +392,9 @@ export default function OrdersCatalogPage() {
             ))}
           </div>
         )}
-      </main>
+      </PageShell>
 
       <BottomNav />
-    </div>
+    </main>
   );
 }

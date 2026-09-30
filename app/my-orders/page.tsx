@@ -19,6 +19,8 @@ import {
 } from "@/lib/orderSearch";
 import { Chip } from "@/components/ui/Chip";
 import { ButtonLink } from "@/components/ui/Button";
+import { PageHeader } from "@/components/ui/PageHeader";
+import { PageShell } from "@/components/ui/PageShell";
 
 const ACTION_CLASS =
   "inline-flex min-h-11 items-center justify-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-bold transition";
@@ -50,20 +52,18 @@ export default function MyOrdersPage() {
 
   if (role === "admin") {
     return (
-      <div className="flex flex-1 flex-col">
-        <header className="border-b border-line px-4 py-3 lg:mx-auto lg:w-full lg:max-w-content lg:border-0 lg:px-0 lg:pb-4 lg:pt-8">
-          <p className="font-display text-lg font-extrabold">Мои заказы</p>
-        </header>
-        <main className="flex-1 px-4 pb-10 pt-6 text-center sm:px-6 lg:px-8 lg:mx-auto lg:w-full lg:max-w-content">
+      <main className="flex-1">
+        <PageShell>
+          <PageHeader title="Мои заказы" />
           <p className="text-sm text-ink-soft">
             Администратор управляет всеми заказами через панель администратора.
           </p>
           <Link href="/admin" className="mt-3 inline-block text-sm font-semibold text-accent-ink">
             Открыть панель администратора
           </Link>
-        </main>
+        </PageShell>
         <BottomNav />
-      </div>
+      </main>
     );
   }
 
@@ -73,25 +73,20 @@ export default function MyOrdersPage() {
     const myResponseOrders = orders.filter((o) => respondedOrderIds.has(o.id));
 
     return (
-      <div className="flex flex-1 flex-col">
-        <header className="border-b border-line px-4 py-3 lg:mx-auto lg:w-full lg:max-w-content lg:border-0 lg:px-0 lg:pb-4 lg:pt-8">
-          <div className="flex items-center justify-between gap-3">
-            <div>
-              <p className="font-display text-lg font-extrabold">Мои отклики</p>
-              <p className="text-xs text-ink-soft">
-                {myResponseOrders.length}{" "}
-                {pluralize(myResponseOrders.length, "отклик", "отклика", "откликов")}
-              </p>
-            </div>
-            <div className="flex items-center gap-2">
-              <Link href="/orders" className="rounded-xl bg-accent-soft px-3 py-2 text-xs font-bold text-accent-ink">
-                Все заказы
-              </Link>
-              <Link href="/offers" className="rounded-xl bg-accent-soft px-3 py-2 text-xs font-bold text-accent-ink">Предложения</Link>
-            </div>
-          </div>
-        </header>
-        <main className="flex-1 space-y-3 px-4 pt-6 pb-24 sm:px-6 lg:px-8 lg:mx-auto lg:w-full lg:max-w-content lg:pb-12">
+      <main className="flex-1">
+        <PageShell padBottom="pb-12">
+          <PageHeader
+            title="Мои отклики"
+            subtitle={`${myResponseOrders.length} ${pluralize(myResponseOrders.length, "отклик", "отклика", "откликов")}`}
+            actions={
+              <>
+                <Link href="/orders" className="hidden rounded-xl bg-accent-soft px-3 py-2 text-xs font-bold text-accent-ink lg:block">
+                  Все заказы
+                </Link>
+                <Link href="/offers" className="hidden rounded-xl bg-accent-soft px-3 py-2 text-xs font-bold text-accent-ink lg:block">Предложения</Link>
+              </>
+            }
+          />
           {myResponseOrders.length === 0 && (
             <div className="mt-10 text-center">
               <p className="text-sm text-ink-soft">
@@ -145,19 +140,16 @@ export default function MyOrdersPage() {
               </Link>
             );
           })}
-        </main>
+        </PageShell>
         <BottomNav />
-      </div>
+      </main>
     );
   }
 
   return (
-    <div className="flex flex-1 flex-col">
-      <header className="border-b border-line px-4 py-3 lg:mx-auto lg:w-full lg:max-w-content lg:border-0 lg:px-0 lg:pb-4 lg:pt-8">
-        <p className="font-display text-lg font-extrabold">Мои заказы</p>
-      </header>
-
-      <main className="flex-1 px-4 pt-6 pb-24 sm:px-6 lg:px-8 lg:mx-auto lg:w-full lg:max-w-content lg:pb-12">
+    <main className="flex-1">
+      <PageShell padBottom="pb-12">
+        <PageHeader title="Мои заказы" />
         {myOrders.length === 0 ? (
           <div className="mt-10 text-center">
             <p className="text-sm text-ink-soft">Вы ещё не публиковали заказы.</p>
@@ -176,7 +168,7 @@ export default function MyOrdersPage() {
               found={visible.length}
             />
 
-            <div className="space-y-3">
+            <div className="grid gap-3 lg:grid-cols-2">
               {visible.length === 0 && (
                 <p className="py-8 text-center text-sm text-ink-soft">
                   Ни один заказ не подходит под выбранные фильтры.
@@ -317,7 +309,7 @@ export default function MyOrdersPage() {
             </div>
           </>
         )}
-      </main>
+      </PageShell>
 
       {/* Дублируем кнопку размещения заказа здесь же — на "Моих заказах"
           у заказчика логично сразу предложить создать ещё один, а не
@@ -334,6 +326,6 @@ export default function MyOrdersPage() {
       </div>
 
       <BottomNav />
-    </div>
+    </main>
   );
 }
