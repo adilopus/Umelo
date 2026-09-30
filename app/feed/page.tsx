@@ -134,7 +134,7 @@ export default function FeedPage() {
             <CarouselSection
               title="Проекты"
               subtitle="Свежие проекты и идеи для вдохновения"
-              allHref="/projects"
+              allHref="/articles?tab=projects"
               allLabel="Все проекты"
               emptyLabel="Пока нет опубликованных проектов"
             >

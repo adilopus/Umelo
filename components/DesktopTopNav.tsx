@@ -25,19 +25,19 @@ export function DesktopTopNav() {
   const [searchValue, setSearchValue] = useState("");
   const [searchError, setSearchError] = useState(false);
 
-  const baseNavLinks = [
+  const navLinks = [
     { href: "/feed", label: "Лента" },
-    { href: "/projects", label: "Проекты" },
     // У исполнителя «Заказы» — каталог открытых заказов, у остальных — свои.
     { href: myOrdersTabHref(role), label: "Заказы" },
+    // «Предложения» есть только у исполнителя и относится к его работе с
+    // заказами, поэтому стоит сразу за «Заказами».
+    ...(role === "master" ? [{ href: "/offers", label: "Предложения" }] : []),
     { href: "/specialists", label: "Специалисты" },
-    { href: "/shops", label: "Магазины" },
+    // Проекты — подраздел Журнала, отдельного пункта в меню у них нет.
     { href: "/articles", label: "Журнал" },
     { href: "/community", label: "Сообщество" },
+    { href: "/shops", label: "Магазины" },
   ];
-  const navLinks = role === "master"
-    ? [...baseNavLinks.slice(0, 3), { href: "/offers", label: "Предложения" }, ...baseNavLinks.slice(3)]
-    : baseNavLinks;
 
   function handleSearch() {
     if (!searchValue.trim()) return;

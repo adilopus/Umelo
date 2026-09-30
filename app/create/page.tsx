@@ -16,7 +16,7 @@ const OPTIONS = {
     { title: "Мои предложения", text: "Заказы, которые заказчики предложили вам.", href: "/offers", icon: BriefcaseBusiness },
   ],
   blogger: [
-    { title: "Новый проект", text: "Опубликовать визуальный проект.", href: "/projects?create=project", icon: ImagePlus },
+    { title: "Новый проект", text: "Опубликовать визуальный проект.", href: "/articles?tab=projects&create=project", icon: ImagePlus },
     { title: "Новая публикация", text: "Добавить материал в Журнал.", href: "/articles?create=article", icon: FileText },
   ],
   seller: [

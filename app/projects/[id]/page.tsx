@@ -73,7 +73,7 @@ function ProjectNotFound({ id }: { id: string }) {
             : "Не удалось определить, какой проект открыть."}
         </p>
         <Link
-          href="/projects"
+          href="/articles?tab=projects"
           className="mt-6 inline-flex h-11 items-center gap-2 rounded-full bg-accent px-5 text-xs font-extrabold text-ink"
         >
           <ArrowLeft size={15} /> Ко всем проектам
@@ -118,7 +118,7 @@ function ProjectView({ project }: { project: FeedProject }) {
   return (
     <main>
       <PageShell padBottom="pb-16">
-        <Link href="/projects" className="mb-5 -my-1.5 inline-flex items-center gap-2 py-1.5 text-xs font-bold text-ink-soft transition hover:text-ink">
+        <Link href="/articles?tab=projects" className="mb-5 -my-1.5 inline-flex items-center gap-2 py-1.5 text-xs font-bold text-ink-soft transition hover:text-ink">
           <ArrowLeft size={15} /> Все проекты
         </Link>
 
